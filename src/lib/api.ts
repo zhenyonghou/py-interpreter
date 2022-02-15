@@ -11,12 +11,11 @@ const genAst = async (pyCode: string) => {
         "code": encodeURIComponent(pyCode),
     }
     let binaryString = pako.gzip(JSON.stringify(data), { to: 'string' });
-    const blob = await MMFetch.postRaw('/api/ast/trans', binaryString).then(resp => resp.blob())
+    const blob = await MMFetch.postRaw('/api/ast/gen', binaryString).then(resp => resp.blob())
     const buf: any = await readBlob(blob)
     try {
         let decompressData = pako.ungzip(new Uint8Array(buf), { "to": "string" })
         let obj = JSON.parse(decompressData)
-        console.log(obj)
 
         let ret: Kv = {
             'err_code': obj.err_code,
@@ -26,15 +25,17 @@ const genAst = async (pyCode: string) => {
 
         if (obj.data) {
             ret.ast = JSON.parse(decodeURIComponent(obj.data))
+            // 打印出ast
+            console.log(JSON.stringify(ret.ast, null, 4))
         }
 
-        if (obj.err_msg) {
+        if (obj.msg) {
             ret.msg = decodeURIComponent(obj.msg)
         }
         return ret
     } catch (err) {
-        console.log("Error " + err)
-        return ""
+        console.error("Error " + err)
+        return null
     }
 }
 

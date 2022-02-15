@@ -1,11 +1,19 @@
-import code_001 from "./t_001"
-import { genAst } from "../src/lib/api"
+import code_001 from './t_001'
+import code_002 from './t_002'
+import code_003 from './t_003'
+import code_004 from './t_004'
+import code_005 from './t_005'
 
-const codeList = [code_001]
+
+import { genAst } from '../src/lib/api'
+import Interpreter from '../src/interpreter/interpreter'
+import * as AstTree from '../src/interpreter/ast-tree'
+
+const codeList = [code_005]
 
 const start = () => {
     // Interpreter.GlobalDeclaration.setWithSets(py_builtins)
-    // const interpreter = new Interpreter()
+    const interpreter = new Interpreter()
 
     console.log("====================== test start ======================")
     codeList.forEach(async (pyCode, index) => {
@@ -13,11 +21,10 @@ const start = () => {
         console.log(pyCode)
 
         const ast = await genAst(pyCode)
-        console.log('gen ast:\n')
         console.log(ast)
-        // interpreter.parse(code)
-    
-        // interpreter.run()
+        interpreter.init(ast.ast as AstTree.Node)
+
+        interpreter.run()
     })
     console.log("====================== test end ======================")
 }

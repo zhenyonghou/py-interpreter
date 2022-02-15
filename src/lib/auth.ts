@@ -1,9 +1,5 @@
-
 export default class Auth {
-  constructor() {
-
-  }
-
+  
   static saveAuthData(obj: any) {
     localStorage.setItem('auth_data', JSON.stringify(obj));
   }
