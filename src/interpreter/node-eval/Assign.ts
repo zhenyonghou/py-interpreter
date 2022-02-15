@@ -1,7 +1,9 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {AssignContext} from '../eval-context'
-import {evalBegin, evalEnd} from '../utils'
+import ScopeHelper from '../scope-helper'
+import {evalBegin, evalEnd, Assert} from '../utils'
+import { NameRet } from '../types'
 
 const Assign = {
     type: "Assign",
@@ -21,12 +23,13 @@ const Assign = {
 
         // 解析完成value之后
         if (ctx.targetIndex_ == 0) {
-            ctx.assignValue_ = ctx.value_
+            ctx.assignValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
         }
 
         // 处理上一次解析完的target(变量名)
         if (ctx.targetIndex_ > 0) {
-            state.scope.assign(ctx.value_, ctx.assignValue_)
+            Assert(ctx.value_ instanceof NameRet)
+            state.scope.assign(ctx.value_.name, ctx.assignValue_)
         }
 
         if (ctx.targetIndex_ < node.targets.length) {

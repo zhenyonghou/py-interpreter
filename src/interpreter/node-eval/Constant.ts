@@ -2,7 +2,7 @@ import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {ConstantContext} from '../eval-context'
 import {evalBegin, evalEnd} from '../utils'
-import {ConstantValue} from '../value'
+import {ConstantRet} from '../types'
 
 const Constant = {
     type: "Constant",
@@ -16,7 +16,7 @@ const Constant = {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantValue(node.value)
+        ss[ss.length - 1].ctx.value_ = new ConstantRet(node.value)
         evalEnd(state)
     }
 }

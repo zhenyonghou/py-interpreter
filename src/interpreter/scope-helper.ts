@@ -1,6 +1,6 @@
 
 import { Scope } from "./scope"
-import {ConstantValue} from './value'
+import {ConstantRet, NameRet} from './types'
 
 class ScopeHelper {
     static lookup(scope: Scope, varName: string): any {
@@ -22,11 +22,13 @@ class ScopeHelper {
     //     obj[prop] = val
     // }
 
-    static lookupX(scope: Scope, x: string | ConstantValue): any {
+    static lookupX(scope: Scope, x: string | ConstantRet | NameRet): any {
         if (typeof x === "string") {
             return ScopeHelper.lookup(scope, x)
-        } else if (x instanceof ConstantValue) {
+        } else if (x instanceof ConstantRet) {
             return x.value
+        } else if (x instanceof NameRet) {
+            return ScopeHelper.lookup(scope, x.name)
         } else {
             throw new Error(`lookupX不支持该类型:${x}`)
         }

@@ -2,7 +2,7 @@ import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {UnaryOpContext} from '../eval-context'
 import {evalBegin, evalEnd} from '../utils'
-import {ConstantValue} from '../value'
+import {ConstantRet} from '../types'
 import ScopeHelper from '../scope-helper'
 
 const UnaryOp = {
@@ -28,19 +28,19 @@ const UnaryOp = {
         switch (operator) {
             case "Not":
                 if (!v) {
-                    retValue = new ConstantValue(true)
+                    retValue = new ConstantRet(true)
                 } else {
-                    retValue = new ConstantValue(false)
+                    retValue = new ConstantRet(false)
                 }
                 break
             case "Invert":
-                retValue = new ConstantValue(~v)
+                retValue = new ConstantRet(~v)
                 break
             case "UAdd":
-                retValue = new ConstantValue(+v)
+                retValue = new ConstantRet(+v)
                 break
             case "USub":
-                retValue = new ConstantValue(-v)
+                retValue = new ConstantRet(-v)
                 break
             default:
                 throw new Error(`不支持操作符${operator}`)

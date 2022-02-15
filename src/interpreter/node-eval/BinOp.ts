@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import {BinOpContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import {ConstantValue} from '../value'
+import {ConstantRet} from '../types'
 
 const BinOp = {
     type: "BinOp",
@@ -61,7 +61,7 @@ const BinOp = {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantValue(value)
+        ss[ss.length - 1].ctx.value_ = new ConstantRet(value)
         evalEnd(state)
     }
 }

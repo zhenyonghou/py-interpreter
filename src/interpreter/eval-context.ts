@@ -116,6 +116,17 @@ class UnaryOpContext extends BaseEvalContext {
     }
 }
 
+class ListContext extends BaseEvalContext {
+    n_: number
+    list_: Array<any>
+
+    constructor() {
+        super()
+        this.n_ = 0
+        this.list_ = []
+    }
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -124,18 +135,8 @@ const ContextSets: KV = {
     Expr: ExprContext,
     Call: CallContext,
     BinOp: BinOpContext,
+    List: ListContext,
 
-    Add: BaseEvalContext, 
-    Sub: BaseEvalContext,
-    Mult: BaseEvalContext,
-    Div: BaseEvalContext,
-    Mod: BaseEvalContext,
-    Pow: BaseEvalContext,
-    LShift: BaseEvalContext,
-    RShift: BaseEvalContext,
-    BitOr: BaseEvalContext,
-    BitXor: BaseEvalContext,
-    BitAnd: BaseEvalContext,
     Compare: CompareContext,
     BoolOp: BoolOpContext,
     UnaryOp: UnaryOpContext
@@ -147,4 +148,4 @@ const createContext = (node: AstTree.Node) => {
 }
 
 export {BaseEvalContext, ModuleContext, AssignContext, ConstantContext, NameContext, ExprContext, CallContext, BinOpContext,
-    CompareContext, BoolOpContext, UnaryOpContext, createContext}
+    CompareContext, BoolOpContext, UnaryOpContext, ListContext, createContext}

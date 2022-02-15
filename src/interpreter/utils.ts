@@ -8,4 +8,10 @@ const evalEnd = (state: State) => {
     console.log('<-', state.node.type, state.ctx)
 }
 
-export {evalBegin, evalEnd}
+const Assert = (condition: boolean, message: string="Assert警告") => {
+    if (!condition) {
+        throw new Error(message)
+    }
+}
+
+export {evalBegin, evalEnd, Assert}

@@ -75,7 +75,7 @@ interface Compare extends BaseNode {
 }
 
 interface CompareOperator extends BaseNode {
-    type: "Eq" | "NotEq" | "Gt" | "GtE" | "Lt" | "LtE"
+    type: "Eq" | "NotEq" | "Gt" | "GtE" | "Lt" | "LtE" | "In" | "NotIn"
 }
 
 interface BoolOp extends BaseNode {
@@ -96,35 +96,14 @@ interface UnaryOpOperator extends BaseNode {
     type: "Not" | "Invert" | "UAdd" | "USub"
 }
 
-// // compare operator
-// interface Eq extends BaseNode {
-//     type: "Eq"
-// }
+interface List extends BaseNode {
+    type: "List"
+    elts: Array<any>
+}
 
-// interface NotEq extends BaseNode {
-//     type: "NotEq"
-// }
-
-// interface Gt extends BaseNode {
-//     type: "Gt"
-// }
-
-// interface GtE extends BaseNode {
-//     type: "GtE"
-// }
-
-// interface Lt extends BaseNode {
-//     type: "Lt"
-// }
-
-// interface LtE extends BaseNode {
-//     type: "LtE"
-// }
-
-
-type Node = Name | Constant | Module| Expr | Assign | Call | BinOp | BinOpOperator | Compare | CompareOperator | BoolOp | BoolOpOperator |
-    UnaryOp | UnaryOpOperator
+type Node = Name | Constant | Module| Expr | Assign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
+    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator}
+    UnaryOp, UnaryOpOperator, List}

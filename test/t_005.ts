@@ -1,9 +1,9 @@
 const pycode = `\
 l = [0, 1, 2]
 a = 1
-b = 3
+b = a
 
-a in list
-b not in list
+a in l
+b not in l
 `
 export default pycode

@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import {CompareContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import {ConstantValue} from '../value'
+import {ConstantRet} from '../types'
 
 const Compare = {
     type: "Compare",
@@ -30,12 +30,12 @@ const Compare = {
                 // 比较
                 const leftValue = ScopeHelper.lookupX(state.scope, ctx.left_)
                 const rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)
-                const operator = (node.ops[ctx.n_-1] as AstTree.CompareOperator).type // 直译前一个comparator operator
+                const operator = node.ops[ctx.n_-1].type // 直译前一个comparator operator
                 switch(operator) {
                     case "Eq":
                         if (leftValue != rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantValue(false)
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
                             return
                         }
@@ -43,7 +43,7 @@ const Compare = {
                     case "NotEq":
                         if (leftValue == rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantValue(false)
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
                             return
                         }
@@ -51,7 +51,7 @@ const Compare = {
                     case "Gt":
                         if (leftValue <= rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantValue(false)
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
                             return
                         }
@@ -59,7 +59,7 @@ const Compare = {
                     case "GtE":
                         if (leftValue < rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantValue(false)
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
                             return
                         }
@@ -67,7 +67,7 @@ const Compare = {
                     case "Lt":
                         if (leftValue >= rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantValue(false)
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
                             return
                         }
@@ -75,7 +75,23 @@ const Compare = {
                     case "LtE":
                         if (leftValue > rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantValue(false)
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            evalEnd(state)
+                            return
+                        }
+                        break
+                    case "In":
+                        if (!(rightValue.includes(leftValue))) {  // 结束
+                            ss.pop()
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            evalEnd(state)
+                            return
+                        }
+                        break
+                    case "NotIn":
+                        if (rightValue.includes(leftValue)) {  // 结束
+                            ss.pop()
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
                             return
                         }
@@ -89,7 +105,7 @@ const Compare = {
                     return new State(node.comparators[ctx.n_++], state.scope)
                 } else { // 结束
                     ss.pop()
-                    ss[ss.length - 1].ctx.value_ = new ConstantValue(true)
+                    ss[ss.length - 1].ctx.value_ = new ConstantRet(true)
                     evalEnd(state)
                     return
                 }
