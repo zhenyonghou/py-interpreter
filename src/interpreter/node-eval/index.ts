@@ -5,11 +5,13 @@ import Expr from './Expr'
 import Call from './Call'
 import Constant from './Constant'
 import BinOp from './BinOp'
-// import {Add, Sub, Mult, Div, Mod, Pow, LShift, RShift, BitOr, BitXor, BitAnd} from './operator'
 import Compare from './Compare'
 import BoolOp from './BoolOp'
 import UnaryOp from './UnaryOp'
 import List from './List'
+import While from './While'
+import Pass from './Pass'
+import AugAssign from './AugAssign'
 
 import {State, StateStack} from '../state'
 
@@ -32,18 +34,9 @@ class NodeEval extends Map {
         this.addEval(BoolOp)
         this.addEval(UnaryOp)
         this.addEval(List)
-
-        // this.addEval(Add)
-        // this.addEval(Sub)
-        // this.addEval(Mult)
-        // this.addEval(Div)
-        // this.addEval(Mod)
-        // this.addEval(Pow)
-        // this.addEval(LShift)
-        // this.addEval(RShift)
-        // this.addEval(BitOr)
-        // this.addEval(BitXor)
-        // this.addEval(BitAnd)
+        this.addEval(While)
+        this.addEval(Pass)
+        this.addEval(AugAssign)
     }
 
     addEval(e: IEval) {

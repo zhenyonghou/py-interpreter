@@ -50,6 +50,17 @@ interface Assign extends BaseNode {
     value: Constant
 }
 
+interface AugAssign extends BaseNode {
+    type: "Assign"
+    target: Name
+    op: AugAssignOperator
+    value: Constant
+}
+
+interface AugAssignOperator extends BaseNode {
+    type: "Add" | "Sub" | "Mult" | "Div" | "Mod"
+}
+
 interface Call extends BaseNode {
     type: "Call"
     func: Name,
@@ -101,9 +112,20 @@ interface List extends BaseNode {
     elts: Array<any>
 }
 
+interface While extends BaseNode {
+    type: "While"
+    test: any
+    body: Array<any>
+    orelse: Array<any>
+}
+
+interface Pass extends BaseNode {
+    type: "Pass"
+}
+
 type Node = Name | Constant | Module| Expr | Assign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
-    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List
+    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | Pass | AugAssign
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List}
+    UnaryOp, UnaryOpOperator, List, While, Pass, AugAssign}

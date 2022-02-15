@@ -44,6 +44,19 @@ class AssignContext extends BaseEvalContext {
     }
 }
 
+class AugAssignContext extends BaseEvalContext {
+    valueDone_: boolean
+    targetDone_: boolean
+
+    rightValue_: any
+
+    constructor() {
+        super()
+        this.valueDone_ = false
+        this.targetDone_ = false
+    }
+}
+
 class ConstantContext extends BaseEvalContext {
 
 }
@@ -127,6 +140,29 @@ class ListContext extends BaseEvalContext {
     }
 }
 
+class WhileContext extends BaseEvalContext {
+    n_: number
+
+    testValue_: any
+    bodyN_: number
+
+    constructor() {
+        super()
+        this.n_ = 0
+        this.bodyN_ = 0
+    }
+
+    reset() {
+        this.n_ = 0
+        this.testValue_ = null
+        this.bodyN_ = 0
+    }
+}
+
+class PassContext extends BaseEvalContext {
+
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -135,11 +171,13 @@ const ContextSets: KV = {
     Expr: ExprContext,
     Call: CallContext,
     BinOp: BinOpContext,
-    List: ListContext,
-
     Compare: CompareContext,
     BoolOp: BoolOpContext,
-    UnaryOp: UnaryOpContext
+    UnaryOp: UnaryOpContext,
+    List: ListContext,
+    While: WhileContext,
+    Pass: PassContext,
+    AugAssign: AugAssignContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -147,5 +185,6 @@ const createContext = (node: AstTree.Node) => {
     return new ContextSets[node.type]
 }
 
-export {BaseEvalContext, ModuleContext, AssignContext, ConstantContext, NameContext, ExprContext, CallContext, BinOpContext,
-    CompareContext, BoolOpContext, UnaryOpContext, ListContext, createContext}
+export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
+    CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, 
+    WhileContext, PassContext, createContext}
