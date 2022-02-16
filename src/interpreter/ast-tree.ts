@@ -119,13 +119,41 @@ interface While extends BaseNode {
     orelse: Array<any>
 }
 
+interface If extends BaseNode {
+    type: "If"
+    test: any
+    body: Array<any>
+    orelse: Array<any>
+}
+
 interface Pass extends BaseNode {
     type: "Pass"
 }
 
-type Node = Name | Constant | Module| Expr | Assign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
-    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | Pass | AugAssign
+interface Continue extends BaseNode {
+    type: "Continue"
+}
+
+interface Break extends BaseNode {
+    type: "Break"
+}
+
+interface Return extends BaseNode {
+    type: "Return"
+    value: any
+}
+
+interface For extends BaseNode {
+    type: "For"
+    target: Name
+    iter: Name | Constant
+    body: Array<any>
+    orelse: Array<any>
+}
+
+type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
+    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return
 
 export {Node, NodeType,
-    Name, Constant, Module, Expr, Assign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, While, Pass, AugAssign}
+    Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
+    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return}

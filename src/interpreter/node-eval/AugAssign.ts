@@ -51,7 +51,7 @@ const AugAssign = {
             default:
                 throw new Error(`不支持的操作符${operator}`)
         }
-        state.scope.assign(ctx.value_.name, value)
+        state.scope.set(ctx.value_.name, value)
 
         ss.pop()
         evalEnd(state)

@@ -6,13 +6,15 @@ import code_004 from './t_004'
 import code_005 from './t_005'
 // 测试用例: 循环控制
 import code_050 from './t_050'
-
+import code_051 from './t_051'
+import code_052 from './t_052'
+import code_053 from './t_053'
 
 import { genAst } from '../src/lib/api'
 import Interpreter from '../src/interpreter/interpreter'
 import * as AstTree from '../src/interpreter/ast-tree'
 
-const codeList = [code_050]
+const codeList = [code_053]
 
 const start = () => {
     // Interpreter.GlobalDeclaration.setWithSets(py_builtins)

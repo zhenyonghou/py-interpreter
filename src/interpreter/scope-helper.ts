@@ -7,9 +7,9 @@ class ScopeHelper {
         return scope.get(varName)
     }
 
-    // static assign(scope: Scope, varName: string, val: any) {
-    //     scope.set(varName, val)
-    // }
+    static set(scope: Scope, varName: string, val: any) {
+        scope.set(varName, val)
+    }
 
     // prop类型: string | number | bigint | boolean | RegExp | null | bigint
     // static lookupMember(scope: Scope, objName: string, prop: any): any {
@@ -21,6 +21,26 @@ class ScopeHelper {
     //     const obj = ScopeHelper.lookup(scope, objName)
     //     obj[prop] = val
     // }
+
+    /**
+     * 使用场景：为变量赋值的时候，比如参数赋值，for循环的target
+     * @param scope 
+     * @param x 
+     * @param val 
+     */
+    static setX(scope: Scope, x: string|NameRet, val: any): any {
+        if (typeof x === 'string') {
+            ScopeHelper.set(scope, x, val)
+        } else if (x instanceof NameRet) {
+            ScopeHelper.set(scope, x.name, val)
+        } 
+        // else if (x instanceof MemberRet) {
+        //     ScopeHelper.assignMember(scope, x.objName, x.prop, val)
+        // } 
+        else {
+            throw new Error(`不支持的类型:${x}`)
+        }
+    }
 
     static lookupX(scope: Scope, x: string | ConstantRet | NameRet): any {
         if (typeof x === "string") {
@@ -57,19 +77,6 @@ class ScopeHelper {
     //         // console.warn('lookupX好像不支持该类型:', x)
     //         throw new Error(`lookupX不支持该类型:${x}`)
     //         return x
-    //     }
-    // }
-
-    // // 实际上不处理ArrayRet类型，逻辑也走不到这里，为了不报错才加上的
-    // static assignX(scope: Scope, x: string|IdentifierRet|MemberRet|ArrayRet, val: any): any {
-    //     if (typeof x === 'string') {
-    //         ScopeHelper.assign(scope, x, val)
-    //     } else if (x instanceof IdentifierRet) {
-    //         ScopeHelper.assign(scope, x.name, val)
-    //     } else if (x instanceof MemberRet) {
-    //         ScopeHelper.assignMember(scope, x.objName, x.prop, val)
-    //     } else {
-    //         throw new Error(`不支持的类型:${x}`)
     //     }
     // }
 }

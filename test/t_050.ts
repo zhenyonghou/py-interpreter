@@ -1,3 +1,4 @@
+// 控制 - while
 const pycode = `\
 a = 0
 while a < 100:

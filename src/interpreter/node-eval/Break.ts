@@ -3,8 +3,8 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import { ControlKey } from '../types'
 
-const Pass = {
-    type: "Pass",
+const Break = {
+    type: "Break",
     eval: (ss: StateStack, state: State) => {
         // const node = state.node as AstTree.Pass
         // if (!ctx.begin) {
@@ -13,9 +13,9 @@ const Pass = {
         // }
 
         ss.pop()
-        ss[ss.length - 1].ctx.control_ = ControlKey.Pass
+        ss[ss.length - 1].ctx.control_ = ControlKey.Break
         // evalEnd(state)
     }
 }
 
-export default Pass
+export default Break

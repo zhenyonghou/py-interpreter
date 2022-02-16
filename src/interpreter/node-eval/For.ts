@@ -1,25 +1,25 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
-import {evalBegin, evalEnd} from '../utils'
-import {WhileContext} from '../eval-context'
+import {Assert, evalBegin, evalEnd} from '../utils'
+import {ForContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 
 /**
  * 遇到break时候结束程序，不需要通知上层；遇到return时需要告知上层
  */
-const While = {
-    type: "While",
+const For = {
+    type: "For",
     eval: (ss: StateStack, state: State) => {
-        const node = state.node as AstTree.While
-        const ctx = state.ctx as WhileContext
+        const node = state.node as AstTree.For
+        const ctx = state.ctx as ForContext
         if (!ctx.begin) {
             ctx.begin = true
             evalBegin(state)
         }
 
         if (ctx.control_ == "continue") {
-            ctx.reset()
-            // return
+            ctx.continue()
+            return
         } else if (ctx.control_ == "break") {
             ss.pop()
             evalEnd(state)
@@ -34,34 +34,39 @@ const While = {
             return
         }
 
-        // 执行test
-        if (ctx.n_ === 0) {
-            ctx.n_++
+        if (!ctx.init_) {
+            ctx.init_ = true
 
-            if (node.test) {
-                return new State(node.test, state.scope)
-            }
+            Assert(node.target.id.length > 0)
+            ctx.targetName_ = node.target.id
+
+            // 解释iter
+            return new State(node.iter, state.scope)
         }
 
-        // 判断test
-        if (ctx.n_ === 1) {
-            ctx.n_++
-            ctx.testValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+        if (ctx.iterIndex_ == 0) {
+            ctx.iterValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
         }
-        
-        if (ctx.testValue_) {
+
+        if (ctx.iterIndex_ < ctx.iterValue_.length) {
+            const currentItem = ctx.iterValue_[ctx.iterIndex_]
+            // 为target赋值
+            ScopeHelper.setX(state.scope, ctx.targetName_, currentItem)
+
+            // 处理body
             if (ctx.bodyN_ < node.body.length) {
                 return new State(node.body[ctx.bodyN_++], state.scope)
             } else {
-                // 下次再去执行test
-                ctx.reset()
+                // 处理完body, 继续循环
+                ctx.continue()
                 return
             }
         }
+
         // 结束
         ss.pop()
         evalEnd(state)
     }
 }
 
-export default While
+export default For

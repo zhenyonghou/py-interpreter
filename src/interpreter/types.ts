@@ -24,5 +24,12 @@ class SimpleValue {
     }
 }
 
+enum ControlKey {
+    Null     = "",
+    Pass     = "pass",
+    Continue = "continue",
+    Break    = "break",
+    Return   = "return"
+}
 
-export {KV, ConstantRet, NameRet, SimpleValue}
+export {KV, ConstantRet, NameRet, SimpleValue, ControlKey}

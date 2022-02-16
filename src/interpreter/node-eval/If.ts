@@ -1,27 +1,31 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
-import {WhileContext} from '../eval-context'
+import {IfContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 
-/**
- * 遇到break时候结束程序，不需要通知上层；遇到return时需要告知上层
- */
-const While = {
-    type: "While",
+const If = {
+    type: "If",
     eval: (ss: StateStack, state: State) => {
-        const node = state.node as AstTree.While
-        const ctx = state.ctx as WhileContext
+        const node = state.node as AstTree.If
+        const ctx = state.ctx as IfContext
         if (!ctx.begin) {
             ctx.begin = true
             evalBegin(state)
         }
 
         if (ctx.control_ == "continue") {
-            ctx.reset()
-            // return
+            ss.pop()
+            const parentCtx = ss[ss.length - 1].ctx
+            parentCtx.control_ = ctx.control_
+
+            evalEnd(state)
+            return
         } else if (ctx.control_ == "break") {
             ss.pop()
+            const parentCtx = ss[ss.length - 1].ctx
+            parentCtx.control_ = ctx.control_
+
             evalEnd(state)
             return
         } else if (ctx.control_ == "return") {
@@ -52,10 +56,10 @@ const While = {
         if (ctx.testValue_) {
             if (ctx.bodyN_ < node.body.length) {
                 return new State(node.body[ctx.bodyN_++], state.scope)
-            } else {
-                // 下次再去执行test
-                ctx.reset()
-                return
+            }
+        } else {
+            if (ctx.bodyN_ < node.orelse.length) {
+                return new State(node.orelse[ctx.bodyN_++], state.scope)
             }
         }
         // 结束
@@ -64,4 +68,4 @@ const While = {
     }
 }
 
-export default While
+export default If

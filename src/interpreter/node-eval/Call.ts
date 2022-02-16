@@ -3,6 +3,7 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
+import { ConstantRet } from '../types'
 
 const Call = {
     type: "Call",
@@ -44,12 +45,19 @@ const Call = {
             ctx.doneExec_ = true
 
             const func = ScopeHelper.lookupX(state.scope, ctx.func_)
-            const ret = func.apply(null, ctx.args_)   // 返回nextState
-            return ret
+            const ret = func.apply(null, ctx.args_)   // 内置函数返回的是值，自定义函数返回的是nextState
+            if (ret instanceof State) {
+                return ret
+            } else {
+                ss.pop()
+                ss[ss.length - 1].ctx.value_ = new ConstantRet(ret)
+                evalEnd(state)
+                return
+            }
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = ctx.return_value_
+        ss[ss.length - 1].ctx.value_ = ctx.returnData_
         evalEnd(state)
     }
 }

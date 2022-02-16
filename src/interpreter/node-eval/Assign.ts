@@ -29,7 +29,7 @@ const Assign = {
         // 处理上一次解析完的target(变量名)
         if (ctx.targetIndex_ > 0) {
             Assert(ctx.value_ instanceof NameRet)
-            state.scope.assign(ctx.value_.name, ctx.assignValue_)
+            state.scope.set(ctx.value_.name, ctx.assignValue_)
         }
 
         if (ctx.targetIndex_ < node.targets.length) {

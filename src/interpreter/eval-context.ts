@@ -1,25 +1,19 @@
 import * as AstTree from './ast-tree'
-import {KV} from './types'
+import {KV, ControlKey} from './types'
 
 class BaseEvalContext {
     value_: any
-
-    return_: boolean
-    return_value_: any
-
-    control_: string    // break, continue, return
+    control_: ControlKey
+    returnData_: any
 
     begin: boolean
 
     constructor() {
         this.begin = false  // 标记已经开始解析
-
         this.value_ = null
 
-        this.return_ = false
-        this.return_value_ = null
-
-        this.control_ = ""
+        this.control_ = ControlKey.Null
+        this.returnData_ = null
     }
 }
 
@@ -156,16 +150,59 @@ class WhileContext extends BaseEvalContext {
         this.n_ = 0
         this.testValue_ = null
         this.bodyN_ = 0
+
+        this.control_ = ControlKey.Null
+        this.returnData_ = null
+        this.value_ = null
     }
 }
 
-class PassContext extends BaseEvalContext {
+class ForContext extends BaseEvalContext {
+    targetName_: string
 
+    init_: boolean
+    iterValue_: Array<any>
+    iterIndex_: number
+    bodyN_: number
+
+    constructor() {
+        super()
+        this.iterValue_ = []
+        this.iterIndex_ = 0
+        this.bodyN_ = 0
+    }
+
+    continue() {
+        this.bodyN_ = 0
+        this.iterIndex_++
+
+        this.control_ = ControlKey.Null
+        this.returnData_ = null
+        this.value_ = null
+    }
+}
+
+class IfContext extends BaseEvalContext {
+    n_: number
+
+    testValue_: any
+    bodyN_: number
+
+    constructor() {
+        super()
+        this.n_ = 0
+        this.bodyN_ = 0
+    }
+}
+
+class ReturnContext extends BaseEvalContext {
+    retValueDone_: boolean
 }
 
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
+    AugAssign: AugAssignContext,
     Constant: ConstantContext,
     Name: NameContext,
     Expr: ExprContext,
@@ -176,8 +213,12 @@ const ContextSets: KV = {
     UnaryOp: UnaryOpContext,
     List: ListContext,
     While: WhileContext,
-    Pass: PassContext,
-    AugAssign: AugAssignContext,
+    For: ForContext,
+    If: IfContext,
+    Pass: BaseEvalContext,
+    Continue: BaseEvalContext,
+    Break: BaseEvalContext,
+    Return: ReturnContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -187,4 +228,4 @@ const createContext = (node: AstTree.Node) => {
 
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
     CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, 
-    WhileContext, PassContext, createContext}
+    WhileContext, ForContext, IfContext, ReturnContext, createContext}

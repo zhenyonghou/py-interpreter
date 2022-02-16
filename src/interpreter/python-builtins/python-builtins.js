@@ -249,6 +249,7 @@ function zip() {
 }
 
 export {
+    range,
     print,
     max,
     min,
