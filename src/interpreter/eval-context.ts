@@ -199,6 +199,18 @@ class ReturnContext extends BaseEvalContext {
     retValueDone_: boolean
 }
 
+class FunctionDefContext extends BaseEvalContext {
+    
+}
+
+class FunctionRunContext extends BaseEvalContext {
+    bodyN_: number
+    constructor() {
+        super()
+        this.bodyN_ = 0
+    }
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -219,6 +231,8 @@ const ContextSets: KV = {
     Continue: BaseEvalContext,
     Break: BaseEvalContext,
     Return: ReturnContext,
+    FunctionDef: FunctionDefContext,
+    FunctionRun: FunctionRunContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -228,4 +242,4 @@ const createContext = (node: AstTree.Node) => {
 
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
     CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, 
-    WhileContext, ForContext, IfContext, ReturnContext, createContext}
+    WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, createContext}

@@ -151,9 +151,43 @@ interface For extends BaseNode {
     orelse: Array<any>
 }
 
+interface arg extends BaseNode {
+    type: "arg"
+    arg: string
+    annotation: any
+}
+
+interface arguments extends BaseNode {
+    type: "arguments"
+    posonlyargs: Array<any>
+    args: Array<arg>
+    vararg: any
+    kwonlyargs: Array<any>
+    kw_defaults: Array<any>
+    kwarg: any
+    defaults: Array<any>
+}
+
+interface FunctionDef extends BaseNode {
+    type: "FunctionDef"
+    name: string
+    args: arguments
+    body: Array<any>
+    decorator_list: Array<any>
+    returns: any
+}
+
+// 自定义的节点，在函数执行时使用
+class FunctionRun implements BaseNode {
+    type: string = "FunctionRun"
+    // args: Array<any> = []
+    body: Array<any> = []
+}
+
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
-    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return
+    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
+    | FunctionDef | FunctionRun
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return}
+    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun}

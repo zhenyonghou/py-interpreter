@@ -21,7 +21,7 @@ const Return = {
 
         ss.pop()
         ss[ss.length - 1].ctx.control_ = ControlKey.Return
-        ss[ss.length - 1].ctx.returnData_ = new ConstantRet(ctx.value_)
+        ss[ss.length - 1].ctx.returnData_ = ctx.value_
         evalEnd(state)
     }
 }

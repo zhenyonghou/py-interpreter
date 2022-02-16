@@ -17,6 +17,8 @@ import Pass from './Pass'
 import Continue from './Continue'
 import Break from './Break'
 import Return from './Return'
+import FunctionDef from './FunctionDef'
+import FunctionRun from './FunctionRun'
 
 import {State, StateStack} from '../state'
 
@@ -47,6 +49,8 @@ class NodeEval extends Map {
         this.addEval(Continue)
         this.addEval(Break)
         this.addEval(Return)
+        this.addEval(FunctionDef)
+        this.addEval(FunctionRun)
     }
 
     addEval(e: IEval) {

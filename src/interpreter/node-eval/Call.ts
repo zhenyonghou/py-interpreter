@@ -5,6 +5,11 @@ import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import { ConstantRet } from '../types'
 
+/**
+ * 函数调用
+ * 在执行func.apply时，如果是内置函数，直接返回结果；如果是自己写的函数，返回一个State，函数体在返回的State里执行
+ */
+
 const Call = {
     type: "Call",
     eval: (ss: StateStack, state: State) => {
