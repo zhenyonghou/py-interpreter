@@ -1,12 +1,9 @@
 // function 缺省参数
 const pycode = `\
-def print_numbers(*args):            
-    for n in args:
-      print(n)
+def func_add(a, b, c=3, d=4):
+    return a + b + c + d
 
-print_numbers("hello", "w", "orld")
-
-l = [1, 2, 3, 4]
-print_numbers(*l)
+ret = func_add(0, 1, d=10)
+print(ret)
 `
 export default pycode

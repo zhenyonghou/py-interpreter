@@ -2,7 +2,7 @@ import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {Scope, ScopeType} from '../scope'
 import {Assert, evalBegin, evalEnd} from '../utils'
-import {FunctionDefContext} from '../eval-context'
+// import {FunctionDefContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import Tuple from '../python-builtins/py-tuple'
 
@@ -70,23 +70,36 @@ const createFunction = (node: AstTree.FunctionDef, scope: Scope) => {
     return createFunctionRunState
 }
 
+class FunctionDefData {
+    node: AstTree.FunctionDef = null
+    parentScope: Scope = null
+
+    constructor(node: AstTree.FunctionDef, scope: Scope) {
+        this.node = node
+        this.parentScope = scope
+    }
+}
+
 const FunctionDef = {
     type: "FunctionDef",
     eval: (ss: StateStack, state: State) => {
         const node = state.node as AstTree.FunctionDef
-        const ctx = state.ctx as FunctionDefContext
-        if (!ctx.begin) {
-            ctx.begin = true
-            evalBegin(state)
-        }
+        // const ctx = state.ctx as FunctionDefContext
+        // if (!ctx.begin) {
+        //     ctx.begin = true
+        //     evalBegin(state)
+        // }
+
+        const funcDefData = new FunctionDefData(node, state.scope)
+        state.scope.set(node.name, funcDefData)
 
         // 定义函数
-        state.scope.set(node.name, createFunction(node, state.scope))
+        // state.scope.set(node.name, createFunction(node, state.scope))
 
         // 结束
         ss.pop()
-        evalEnd(state)
+        // evalEnd(state)
     }
 }
 
-export default FunctionDef
+export {FunctionDef, FunctionDefData}

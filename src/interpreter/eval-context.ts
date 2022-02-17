@@ -1,5 +1,5 @@
 import * as AstTree from './ast-tree'
-import {KV, ControlKey} from './types'
+import {KV, ControlKey, keywordRet} from './types'
 
 class BaseEvalContext {
     value_: any
@@ -68,59 +68,34 @@ class ExprContext extends BaseEvalContext {
 }
 
 class CallContext extends BaseEvalContext {
-    funcStep_: number
-
-    // doneArgs_: boolean
-    argN_: number
-    args_: Array<any>
-
+    funcStep_: number = 0
+    argN_: number = 0
+    args_: Array<any> = []
+    keywordsN_: number = 0
+    keywords_: Array<keywordRet> = []
     func_: any
-
-    doneExec_: boolean
-    
-    constructor() {
-        super()
-        this.funcStep_ = 0
-    }
+    doneExec_: boolean = false
 }
 
 class BinOpContext extends BaseEvalContext {
-    leftDone_: boolean
-    rightDone_: boolean
-
-    // left_: any
+    leftDone_: boolean = false
+    rightDone_: boolean = false
     right_: any
 }
 
 class CompareContext extends BaseEvalContext {
-    leftDone_: boolean
+    leftDone_: boolean = false
     left_: any
-    n_: number
-
-    constructor() {
-        super()
-        this.leftDone_ = false
-        this.n_ = 0
-    }
+    n_: number = 0
 }
 
 class BoolOpContext extends BaseEvalContext {
-    n_: number
+    n_: number = 0
     left_: any
-
-    constructor() {
-        super()
-        this.n_ = 0
-    }
 }
 
 class UnaryOpContext extends BaseEvalContext {
-    operandDone_: boolean
-
-    constructor() {
-        super()
-        this.operandDone_ = false
-    }
+    operandDone_: boolean = false
 }
 
 class ListContext extends BaseEvalContext {
@@ -215,6 +190,14 @@ class StarredContext extends BaseEvalContext {
 
 }
 
+class keywordContext extends BaseEvalContext {
+    valueDone_: boolean
+    constructor() {
+        super()
+        this.valueDone_ = false
+    }
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -238,6 +221,7 @@ const ContextSets: KV = {
     FunctionDef: FunctionDefContext,
     FunctionRun: FunctionRunContext,
     Starred: StarredContext,
+    keyword: keywordContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -248,4 +232,4 @@ const createContext = (node: AstTree.Node) => {
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
     CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, 
     WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
-    createContext}
+    keywordContext, createContext}

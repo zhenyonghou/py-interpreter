@@ -61,10 +61,17 @@ interface AugAssignOperator extends BaseNode {
     type: "Add" | "Sub" | "Mult" | "Div" | "Mod"
 }
 
+interface keyword extends BaseNode {
+    type: "keyword"
+    arg: string
+    value: any
+}
+
 interface Call extends BaseNode {
     type: "Call"
     func: Name,
     args: Array<any>
+    keywords: Array<keyword>
 }
 
 interface BinOp extends BaseNode {
@@ -90,6 +97,7 @@ interface CompareOperator extends BaseNode {
 }
 
 interface BoolOp extends BaseNode {
+    type: "BoolOp"
     op: BoolOpOperator
     values: Array<any>
 }
@@ -99,6 +107,7 @@ interface BoolOpOperator extends BaseNode {
 }
 
 interface UnaryOp extends BaseNode {
+    type: "UnaryOp"
     op: UnaryOpOperator
     operand: Name
 }
@@ -169,7 +178,7 @@ interface arguments extends BaseNode {
     vararg: arg
     kwonlyargs: Array<any>
     kw_defaults: Array<any>
-    kwarg: any
+    kwarg: arg
     defaults: Array<Constant>
 }
 
@@ -191,8 +200,8 @@ class FunctionRun implements BaseNode {
 
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
-    | FunctionDef | FunctionRun | Starred
+    | FunctionDef | FunctionRun | Starred | keyword
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred}
+    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, keyword}

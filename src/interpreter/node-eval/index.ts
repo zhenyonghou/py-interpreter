@@ -17,9 +17,10 @@ import Pass from './Pass'
 import Continue from './Continue'
 import Break from './Break'
 import Return from './Return'
-import FunctionDef from './FunctionDef'
+import {FunctionDef} from './FunctionDef'
 import FunctionRun from './FunctionRun'
 import Starred from './Starred'
+import keyword from './keyword'
 
 import {State, StateStack} from '../state'
 
@@ -53,6 +54,7 @@ class NodeEval extends Map {
         this.addEval(FunctionDef)
         this.addEval(FunctionRun)
         this.addEval(Starred)
+        this.addEval(keyword)
     }
 
     addEval(e: IEval) {

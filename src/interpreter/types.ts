@@ -24,6 +24,15 @@ class StarredRet {
     }
 }
 
+class keywordRet {
+    arg: string
+    value: any
+    constructor(arg: string, value: any) {
+        this.arg = arg
+        this.value = value
+    }
+}
+
 class SimpleValue {
     value: any
     constructor(v: any) {
@@ -39,4 +48,4 @@ enum ControlKey {
     Return   = "return"
 }
 
-export {KV, ConstantRet, NameRet, StarredRet, SimpleValue, ControlKey}
+export {KV, ConstantRet, NameRet, StarredRet, keywordRet, SimpleValue, ControlKey}
