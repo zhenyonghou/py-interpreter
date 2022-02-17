@@ -211,6 +211,10 @@ class FunctionRunContext extends BaseEvalContext {
     }
 }
 
+class StarredContext extends BaseEvalContext {
+
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -233,6 +237,7 @@ const ContextSets: KV = {
     Return: ReturnContext,
     FunctionDef: FunctionDefContext,
     FunctionRun: FunctionRunContext,
+    Starred: StarredContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -242,4 +247,5 @@ const createContext = (node: AstTree.Node) => {
 
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
     CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, 
-    WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, createContext}
+    WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
+    createContext}

@@ -10,13 +10,15 @@ import code_051 from './t_051'
 import code_052 from './t_052'
 import code_053 from './t_053'
 import code_080 from './t_080'
+import code_081 from './t_081'
+import code_082 from './t_082'
 import code_100 from './t_100'
 
 import { genAst } from '../src/lib/api'
 import Interpreter from '../src/interpreter/interpreter'
 import * as AstTree from '../src/interpreter/ast-tree'
 
-const codeList = [code_080]
+const codeList = [code_082]
 
 const start = () => {
     // Interpreter.GlobalDeclaration.setWithSets(py_builtins)

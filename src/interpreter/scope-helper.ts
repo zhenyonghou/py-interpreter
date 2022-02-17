@@ -1,6 +1,7 @@
 
+import Tuple from "./python-builtins/py-tuple"
 import { Scope } from "./scope"
-import {ConstantRet, NameRet} from './types'
+import {ConstantRet, NameRet, StarredRet} from './types'
 
 class ScopeHelper {
     static lookup(scope: Scope, varName: string): any {

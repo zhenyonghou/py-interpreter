@@ -19,6 +19,7 @@ import Break from './Break'
 import Return from './Return'
 import FunctionDef from './FunctionDef'
 import FunctionRun from './FunctionRun'
+import Starred from './Starred'
 
 import {State, StateStack} from '../state'
 
@@ -51,6 +52,7 @@ class NodeEval extends Map {
         this.addEval(Return)
         this.addEval(FunctionDef)
         this.addEval(FunctionRun)
+        this.addEval(Starred)
     }
 
     addEval(e: IEval) {

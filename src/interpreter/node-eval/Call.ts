@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import { ConstantRet } from '../types'
+import { ConstantRet, StarredRet } from '../types'
 
 /**
  * 函数调用
@@ -35,8 +35,13 @@ const Call = {
 
         if (ctx.argN_ <= node.args.length) { // args not done
             if (ctx.argN_ > 0) {
-                const arg = ScopeHelper.lookupX(state.scope, ctx.value_)
-                ctx.args_.push(arg)
+                if (ctx.value_ instanceof StarredRet) {
+                    const list = ScopeHelper.lookupX(state.scope, ctx.value_.name) as Array<any>
+                    ctx.args_.push(...list)
+                } else {
+                    const arg = ScopeHelper.lookupX(state.scope, ctx.value_)
+                    ctx.args_.push(arg)
+                }
             }
 
             if (ctx.argN_ < node.args.length) {

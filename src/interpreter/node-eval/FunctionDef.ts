@@ -1,8 +1,10 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {Scope, ScopeType} from '../scope'
-import {evalBegin, evalEnd} from '../utils'
+import {Assert, evalBegin, evalEnd} from '../utils'
 import {FunctionDefContext} from '../eval-context'
+import ScopeHelper from '../scope-helper'
+import Tuple from '../python-builtins/py-tuple'
 
 const createFunction = (node: AstTree.FunctionDef, scope: Scope) => {
     const createFunctionRunState = function () {
@@ -13,14 +15,49 @@ const createFunction = (node: AstTree.FunctionDef, scope: Scope) => {
         newScope.set('arguments', arguments)
 
         // 处理参数
-        if (node.args) {
-            for (let i = 0; i < node.args.args.length; i++) {
-                const arg = node.args.args[i]
-                if (i < arguments.length) {
-                    newScope.set(arg.arg, arguments[i])
-                } else {
-                    newScope.set(arg.arg, null) // 设置缺省参数
+        const argsNode = node.args
+        if (argsNode) {
+            let inputArgsIndex = 0
+            // 处理args
+            if (argsNode.args.length > 0) {
+                for (let i = 0; i < argsNode.args.length; i++) {
+                    const arg = argsNode.args[i]
+                    if (arg.type == "arg") {
+                        if (i < arguments.length) {
+                            newScope.set(arg.arg, arguments[inputArgsIndex++])
+                        } else {
+                            break
+                        }
+                    } else {
+                        Assert(false, `不支持的类型:${arg.type}`)
+                    }
                 }
+            }
+
+            // 处理defaults
+            if (argsNode.defaults && inputArgsIndex < argsNode.args.length) {
+                let defaultIndex = argsNode.defaults.length - 1
+                for (let i = argsNode.args.length - 1; i >= inputArgsIndex; i--) {
+                    const arg = argsNode.args[i]
+                    if (arg.type == "arg") {
+                        const defaultItem = argsNode.defaults[defaultIndex--]
+                        newScope.set(arg.arg, defaultItem.value)
+                    } else {
+                        throw new Error(`在缺省参数里, arg.type必须为"arg"`)
+                    }
+                }
+            }
+
+            // 处理vararg
+            if (argsNode.vararg && inputArgsIndex < arguments.length) {
+                const varArgName = argsNode.vararg.arg
+
+                let restArgs = []
+                for (let i = inputArgsIndex; i < arguments.length; i++) {
+                    restArgs.push(arguments[i])
+                }
+                // 在python里vararg是tuple类型，而不是数组，所以做成了Tuple类型
+                newScope.set(varArgName, new Tuple(...restArgs))
             }
         }
 

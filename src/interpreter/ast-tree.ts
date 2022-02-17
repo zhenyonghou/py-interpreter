@@ -157,15 +157,20 @@ interface arg extends BaseNode {
     annotation: any
 }
 
+interface Starred extends BaseNode {
+    type: "Starred"
+    value: Name
+}
+
 interface arguments extends BaseNode {
     type: "arguments"
     posonlyargs: Array<any>
     args: Array<arg>
-    vararg: any
+    vararg: arg
     kwonlyargs: Array<any>
     kw_defaults: Array<any>
     kwarg: any
-    defaults: Array<any>
+    defaults: Array<Constant>
 }
 
 interface FunctionDef extends BaseNode {
@@ -186,8 +191,8 @@ class FunctionRun implements BaseNode {
 
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
-    | FunctionDef | FunctionRun
+    | FunctionDef | FunctionRun | Starred
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun}
+    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred}

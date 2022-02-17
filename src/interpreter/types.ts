@@ -17,6 +17,13 @@ class NameRet {
     }
 }
 
+class StarredRet {
+    name: string
+    constructor(v: string) {
+        this.name = v
+    }
+}
+
 class SimpleValue {
     value: any
     constructor(v: any) {
@@ -32,4 +39,4 @@ enum ControlKey {
     Return   = "return"
 }
 
-export {KV, ConstantRet, NameRet, SimpleValue, ControlKey}
+export {KV, ConstantRet, NameRet, StarredRet, SimpleValue, ControlKey}
