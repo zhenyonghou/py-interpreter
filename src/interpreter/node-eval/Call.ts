@@ -4,9 +4,10 @@ import {Scope, ScopeType} from '../scope'
 import {evalBegin, evalEnd, Assert} from '../utils'
 import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import { ConstantRet, keywordRet, StarredRet} from '../types'
+import { ConstantRet, keywordRet, KV, StarredRet} from '../types'
 import {FunctionDefData} from './FunctionDef'
 import Tuple from '../python-builtins/py-tuple'
+import Dict from '../python-builtins/py-dict'
 
 /**
  * 函数调用
@@ -18,6 +19,8 @@ import Tuple from '../python-builtins/py-tuple'
  */
 
 /**
+ * runFunction
+ * 
  * 返回state
  */
 const runFunction = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet>, funcDefData: FunctionDefData) => {
@@ -30,20 +33,17 @@ const runFunction = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet
         if (formalArgsNode.args.length > 0) {
             for (let i = 0; i < formalArgsNode.args.length; i++) {
                 const arg = formalArgsNode.args[i]
-                if (arg.type == "arg") {
-                    if (actualArgs.length > 0 && i < actualArgs.length) {
-                        funcScope.set(arg.arg, actualArgs[inputArgsIndex++])
-                    } else {
-                        break
-                    }
+                Assert(arg.type == "arg", `不支持的类型:${arg.type}`)
+                if (i < actualArgs.length) {
+                    funcScope.set(arg.arg, actualArgs[inputArgsIndex++])
                 } else {
-                    Assert(false, `不支持的类型:${arg.type}`)
+                    funcScope.set(arg.arg, undefined)   // 没传参的设置为默认值undefined
                 }
             }
         }
 
         // 处理defaults
-        if (formalArgsNode.defaults && inputArgsIndex < formalArgsNode.args.length) {
+        if (formalArgsNode.defaults.length > 0 && inputArgsIndex < formalArgsNode.args.length) {
             let defaultIndex = formalArgsNode.defaults.length - 1
             for (let i = formalArgsNode.args.length - 1; i >= inputArgsIndex; i--) {
                 const arg = formalArgsNode.args[i]
@@ -68,12 +68,43 @@ const runFunction = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet
             funcScope.set(varArgName, new Tuple(...restArgs))
         }
 
-        // 处理keywords
+        // 处理keywords(检查形参里是否确实有该参数，有的话就处理)
         if (actualKeywordArgs && actualKeywordArgs.length > 0) {
             for (let i = 0; i < actualKeywordArgs.length; i++) {
                 let kw = actualKeywordArgs[i]
-                funcScope.set(kw.arg, kw.value)
+
+                let find = formalArgsNode.args.findIndex(item => item.arg == kw.arg)
+                if (find >= 0) {
+                    funcScope.set(kw.arg, kw.value)
+                }
             }
+        }
+
+        // 处理kwarg(检查形参里是否确实有该参数，没有的话就加入kwarg)
+        if (formalArgsNode.kwarg) {
+            const kwargName = formalArgsNode.kwarg.arg
+            const dict = new Dict()
+            for (let i = 0; i < actualKeywordArgs.length; i++) {
+                let kw = actualKeywordArgs[i]
+                if (kw.arg == null) {   // **d形式的type属keyword，但arg是null, 其value是Dict, 需要解包处理
+                    const d = kw.value as Dict
+                    d.keys().forEach(k => {
+                        // **d里的字段如果存在于形参列表，就设置给形参，否则留在kwarg里
+                        let find = formalArgsNode.args.findIndex(item => item.arg == k)
+                        if (find == -1) {
+                            dict[k] = d[k]
+                        } else {
+                            funcScope.set(k, d[k])
+                        }
+                    })
+                } else {
+                    let find = formalArgsNode.args.findIndex(item => item.arg == kw.arg)
+                    if (find == -1) {
+                        dict[kw.arg] = kw.value 
+                    }
+                }
+            }
+            funcScope.set(kwargName, dict)
         }
     }
 

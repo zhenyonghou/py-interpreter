@@ -1,6 +1,6 @@
 
 interface KV {  // 这么做是为了解决ts(7053)问题
-    [index: string]: any;
+    [index: string]: any
 }
 
 class ConstantRet {

@@ -6,15 +6,8 @@ import { ControlKey } from '../types'
 const Pass = {
     type: "Pass",
     eval: (ss: StateStack, state: State) => {
-        // const node = state.node as AstTree.Pass
-        // if (!ctx.begin) {
-        //     ctx.begin = true
-        //     evalBegin(state)
-        // }
-
         ss.pop()
         ss[ss.length - 1].ctx.control_ = ControlKey.Pass
-        // evalEnd(state)
     }
 }
 

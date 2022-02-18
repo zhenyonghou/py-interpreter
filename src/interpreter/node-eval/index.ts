@@ -10,6 +10,7 @@ import Compare from './Compare'
 import BoolOp from './BoolOp'
 import UnaryOp from './UnaryOp'
 import List from './List'
+import Dict from './Dict'
 import While from './While'
 import For from './For'
 import If from './If'
@@ -21,6 +22,7 @@ import {FunctionDef} from './FunctionDef'
 import FunctionRun from './FunctionRun'
 import Starred from './Starred'
 import keyword from './keyword'
+import Global from './Global'
 
 import {State, StateStack} from '../state'
 
@@ -44,6 +46,7 @@ class NodeEval extends Map {
         this.addEval(BoolOp)
         this.addEval(UnaryOp)
         this.addEval(List)
+        this.addEval(Dict)
         this.addEval(While)
         this.addEval(For)
         this.addEval(If)
@@ -55,6 +58,7 @@ class NodeEval extends Map {
         this.addEval(FunctionRun)
         this.addEval(Starred)
         this.addEval(keyword)
+        this.addEval(Global)
     }
 
     addEval(e: IEval) {

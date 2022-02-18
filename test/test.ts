@@ -9,19 +9,21 @@ import code_050 from './t_050'
 import code_051 from './t_051'
 import code_052 from './t_052'
 import code_053 from './t_053'
+// 函数&参数
 import code_080 from './t_080'
 import code_081 from './t_081'
 import code_082 from './t_082'
 import code_083 from './t_083'
 import code_084 from './t_084'
-
+import code_085 from './t_085'
+// 作用域
 import code_100 from './t_100'
 
 import { genAst } from '../src/lib/api'
 import Interpreter from '../src/interpreter/interpreter'
 import * as AstTree from '../src/interpreter/ast-tree'
 
-const codeList = [code_082]
+const codeList = [code_100]
 
 const start = () => {
     // Interpreter.GlobalDeclaration.setWithSets(py_builtins)

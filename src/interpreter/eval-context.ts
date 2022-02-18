@@ -1,5 +1,6 @@
 import * as AstTree from './ast-tree'
 import {KV, ControlKey, keywordRet} from './types'
+import PyDict from './python-builtins/py-dict'
 
 class BaseEvalContext {
     value_: any
@@ -109,6 +110,11 @@ class ListContext extends BaseEvalContext {
     }
 }
 
+class DictContext extends BaseEvalContext {
+    valueIndex_: number = 0
+    dict_: PyDict = new PyDict()
+}
+
 class WhileContext extends BaseEvalContext {
     n_: number
 
@@ -211,6 +217,7 @@ const ContextSets: KV = {
     BoolOp: BoolOpContext,
     UnaryOp: UnaryOpContext,
     List: ListContext,
+    Dict: DictContext,
     While: WhileContext,
     For: ForContext,
     If: IfContext,
@@ -222,6 +229,7 @@ const ContextSets: KV = {
     FunctionRun: FunctionRunContext,
     Starred: StarredContext,
     keyword: keywordContext,
+    Global: BaseEvalContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -230,6 +238,6 @@ const createContext = (node: AstTree.Node) => {
 }
 
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
-    CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, 
+    CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, 
     WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
     keywordContext, createContext}

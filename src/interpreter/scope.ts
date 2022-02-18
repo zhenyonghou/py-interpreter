@@ -23,9 +23,9 @@ class Scope {
 
     parent: Scope
 
-    //  static GlobalDeclaration: Declaration = globalDeclaration
-
     declaration: Declaration
+
+    globals = new Set()
 
     constructor(type: ScopeType, parentScope: Scope) {
         this.type = type
@@ -33,38 +33,22 @@ class Scope {
         this.declaration = new Declaration() // 每次都新建一个全新的作用域
     }
 
-    // 变量的赋值(注意：前提是变量已经声明)
-    //  assign(name: string, value: any) {
-    //      if (this.declaration.has(name)) {
-    //          this.declaration.set(name, value)
-    //          return
-    //      }
-
-    //      if (this.parent) {
-    //          this.parent.assign(name, value)
-    //          return
-    //      }
-
-    //      if (Scope.GlobalDeclaration.has(name)) {
-    //          Scope.GlobalDeclaration.set(name, value)
-    //          return
-    //      }
-
-    //      throw new ReferenceError(`${name}尚未定义`)
-    //  }
-
     /**
      * 变量的声明&赋值
-     * 将变量作用域提升至Function
+     * 1. 将变量作用域提升至Function
+     * 2. 若设置变量值时，如果存在于global中，则仅赋值
      */
     set(name: string, value: any) {
-        let scope: Scope = this
-        // 提升变量作用域至函数级作用域
-        while (scope.parent && scope.type !== ScopeType.Function) {
-            scope = scope.parent
+        if (this.globals.has(name)) {
+            this.parent.assign(name, value)
+        } else {
+            let scope: Scope = this
+            // 提升变量作用域至函数级作用域
+            while (scope.parent && scope.type !== ScopeType.Function) {
+                scope = scope.parent
+            }
+            scope.declaration.set(name, value)
         }
-        scope.declaration.set(name, value)
-        // return scope.declaration.get(name)
     }
 
     get(name: string): any {
@@ -83,6 +67,26 @@ class Scope {
         throw new ReferenceError(`${name}尚未定义`)
     }
 
+    // 变量的赋值(注意：前提是变量已经声明) 处理global标识的变量时使用
+    assign(name: string, value: any) {
+        if (this.declaration.has(name)) {
+            this.declaration.set(name, value)
+            return
+        }
+
+        if (this.parent) {
+            this.parent.assign(name, value)
+            return
+        }
+
+        if (globalDeclaration.has(name)) {
+            globalDeclaration.set(name, value)
+            return
+        }
+
+        throw new ReferenceError(`${name}尚未定义`)
+    }
+
     lookup(name: string): any {
         return this.get(name)
     }
@@ -96,6 +100,15 @@ class Scope {
     lookupObjWithIndex(objName: string, index: number): any {
         const obj = this.lookup(objName)
         return obj[index]
+    }
+
+    addGlobal(name: string) {
+        let scope: Scope = this
+        // 提升变量作用域至函数级作用域
+        while (scope.parent && scope.type !== ScopeType.Function) {
+            scope = scope.parent
+        }
+        scope.globals.add(name)
     }
 }
 

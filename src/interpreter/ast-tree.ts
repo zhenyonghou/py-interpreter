@@ -121,6 +121,11 @@ interface List extends BaseNode {
     elts: Array<any>
 }
 
+interface Dict extends BaseNode {
+    keys: Array<Constant>
+    values: Array<Constant>
+}
+
 interface While extends BaseNode {
     type: "While"
     test: any
@@ -198,10 +203,16 @@ class FunctionRun implements BaseNode {
     body: Array<any> = []
 }
 
+interface Global extends BaseNode {
+    type: "Global"
+    names: Array<string>
+}
+
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
-    | FunctionDef | FunctionRun | Starred | keyword
+    | FunctionDef | FunctionRun | Starred | keyword | Dict | Global
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, keyword}
+    UnaryOp, UnaryOpOperator, List, Dict, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, 
+    keyword, Global}

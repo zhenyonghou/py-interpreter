@@ -5,6 +5,7 @@ def register(name, email, **kwargs):
     print(email)
     print(kwargs)
 
-register("demon", email="1@1.com", addr="shanghai", age=22)
+d = {"email":"yrr", "name":"1@1.com", "addr":"shanghai"}
+register(**d)
 `
 export default pycode

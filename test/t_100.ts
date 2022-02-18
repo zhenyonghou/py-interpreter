@@ -1,11 +1,14 @@
 // 作用域
 const pycode = `\
-g = 0
-g2 = 2
+g1 = 0
+g2 = 0
 def func():
-    global g, g2
-    g = 100
+    global g1
+    g1 = 100
+    g2 = 200
 
 func()
+print(g1)
+print(g2)
 `
 export default pycode
