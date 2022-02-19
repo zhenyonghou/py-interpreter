@@ -13,7 +13,8 @@ class ConversionNode {
     raw: string = ""
 }
 
-function tokenize(fmt: string) {
+function tokenize(f: string) {
+    let s = f
     let out: Array<ConversionNode> = []
 	let start = 0
     let infmt = false
@@ -21,10 +22,10 @@ function tokenize(fmt: string) {
     let fmtflags = "", fmtwidth = "", fmtprec = "" // fmtlen = ""
 
     let c = 0;
-	const L = fmt.length
+	let L = s.length
 
     for(let i = 0; i < L; ++i) {
-        c = fmt.charCodeAt(i)
+        c = s.charCodeAt(i)
         if (!infmt) {
             if (c != 37) continue
             start = i
@@ -52,20 +53,30 @@ function tokenize(fmt: string) {
             item.fmtflags = fmtflags
             item.fmtprec = fmtprec
             item.fmtwidth = fmtwidth
-            item.raw = fmt.substring(start, i+1)
+            item.raw = s.substring(start, i+1)
 
             infmt = false
             out.push(item)
             continue
+        } else if (c == 37) {   // %
+            infmt = false
+            s = s.replace("%%", "%")
+            L--
+            i--
+            continue
         } else {
-            Assert(false, `不支持的字符:${c}`)
+            Assert(false, `不支持的字符:${String.fromCharCode(c)}`)
         }
     }
 
-    return out
+    return {fmt: s, tokens: out}
 }
 
-function format(fmt: string, tokens: Array<ConversionNode>, args: PyTuple) {
+function format(s: string, args: PyTuple) {
+    let ret = tokenize(s)
+    let fmt = ret.fmt
+    let tokens = ret.tokens
+    
     let out = fmt
     for (let i = 0; i < tokens.length; i++) {
         let t = tokens[i]
@@ -164,7 +175,7 @@ const ModFormat = {
             rightValue = new PyTuple(rightValue)
         }
 
-        s = format(s, tokenize(s), rightValue)
+        s = format(s, rightValue)
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(s)
