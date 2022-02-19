@@ -1,10 +1,12 @@
+import PyTuple from './python-builtins/py-tuple'
+// import PyList from './python-builtins/py-list'
 
 interface KV {  // 这么做是为了解决ts(7053)问题
     [index: string]: any
 }
 
 class ConstantRet {
-    value: string | number | bigint | boolean | RegExp | null | bigint | Array<any>
+    value: string | number | bigint | boolean | RegExp | null | bigint | Array<any> | PyTuple
     constructor(v: any) {
         this.value = v
     }

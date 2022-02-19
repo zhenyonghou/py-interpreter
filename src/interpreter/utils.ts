@@ -1,11 +1,17 @@
 import {State} from './state'
 
+const printLog = true
+
 const evalBegin = (state: State) => {
-    console.log('->', state.node.type, state)
+    if (printLog) {
+        console.log('->', state.node.type, state)
+    }
 }
 
 const evalEnd = (state: State) => {
-    console.log('<-', state.node.type, state.ctx)
+    if (printLog) {
+        console.log('<-', state.node.type, state.ctx)
+    }
 }
 
 const Assert = (condition: boolean, message: string="Assert警告") => {

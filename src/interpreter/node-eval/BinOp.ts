@@ -4,6 +4,7 @@ import {evalBegin, evalEnd} from '../utils'
 import {BinOpContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {ConstantRet} from '../types'
+import {ModFormat} from '../ast-tree'
 
 const BinOp = {
     type: "BinOp",
@@ -28,6 +29,13 @@ const BinOp = {
             return new State(node.left, state.scope)
         }
 
+        if (ctx.modeFormatting) {
+            ss.pop()
+            ss[ss.length - 1].ctx.value_ = ctx.value_
+            evalEnd(state)
+            return
+        }
+
         const leftValue = ScopeHelper.lookupX(state.scope, ctx.value_)
         const rightValue = ScopeHelper.lookupX(state.scope, ctx.right_)
         const operator = node.op.type
@@ -43,7 +51,17 @@ const BinOp = {
             case 'Div':
                 value = leftValue / rightValue; break;
             case 'Mod':
-                value = leftValue % rightValue; break;
+                if (typeof leftValue == 'number') {
+                    value = leftValue % rightValue
+                } else if (typeof leftValue == 'string') {
+                    ctx.modeFormatting = true
+                    // 格式化字符串
+                    let fakeNode = new ModFormat()
+                    fakeNode.left = (node.left as AstTree.Constant).value
+                    fakeNode.right = node.right
+                    return new State(fakeNode, state.scope)
+                }
+                break;
             case 'Pow':
                 value = leftValue ** rightValue; break;
             case 'BitAnd':

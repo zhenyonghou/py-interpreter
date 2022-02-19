@@ -5,7 +5,6 @@ import {DictContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {ConstantRet} from '../types'
 
-
 const Dict = {
     type: "Dict",
     eval: (ss: StateStack, state: State) => {

@@ -38,7 +38,7 @@ class Interpreter {
             return false;
         }
 
-        console.log('state:', state)
+        // console.log('state:', state)
         const nodeEval = this.nodeEval.getEval(state.node.type)
         if (!nodeEval) {
             throw new Error(`缺少实现:${state.node.type}`)

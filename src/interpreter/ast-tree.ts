@@ -77,7 +77,7 @@ interface Call extends BaseNode {
 interface BinOp extends BaseNode {
     type: "BinOp"
     left: Name | Constant
-    right: Name | Constant
+    right: Name | Constant | Tuple
     op: BinOpOperator
 }
 
@@ -124,6 +124,11 @@ interface List extends BaseNode {
 interface Dict extends BaseNode {
     keys: Array<Constant>
     values: Array<Constant>
+}
+
+interface Tuple extends BaseNode {
+    type: "Tuple"
+    elts: Array<any>
 }
 
 interface While extends BaseNode {
@@ -208,11 +213,18 @@ interface Global extends BaseNode {
     names: Array<string>
 }
 
+// 自定义的节点，字符串格式化时使用
+class ModFormat implements BaseNode {
+    type: string = "ModFormat"
+    left: string
+    right: any
+}
+
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
-    | FunctionDef | FunctionRun | Starred | keyword | Dict | Global
+    | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, Dict, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, 
-    keyword, Global}
+    UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, 
+    keyword, Global, ModFormat}

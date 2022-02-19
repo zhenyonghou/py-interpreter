@@ -1,6 +1,7 @@
 import * as AstTree from './ast-tree'
 import {KV, ControlKey, keywordRet} from './types'
 import PyDict from './python-builtins/py-dict'
+import PyTuple from './python-builtins/py-tuple'
 
 class BaseEvalContext {
     value_: any
@@ -82,6 +83,8 @@ class BinOpContext extends BaseEvalContext {
     leftDone_: boolean = false
     rightDone_: boolean = false
     right_: any
+
+    modeFormatting: boolean = false
 }
 
 class CompareContext extends BaseEvalContext {
@@ -100,19 +103,18 @@ class UnaryOpContext extends BaseEvalContext {
 }
 
 class ListContext extends BaseEvalContext {
-    n_: number
-    list_: Array<any>
-
-    constructor() {
-        super()
-        this.n_ = 0
-        this.list_ = []
-    }
+    n_: number = 0
+    list_: Array<any> = []
 }
 
 class DictContext extends BaseEvalContext {
     valueIndex_: number = 0
     dict_: PyDict = new PyDict()
+}
+
+class TupleContext extends BaseEvalContext {
+    n_: number = 0
+    list_: PyTuple = new PyTuple()
 }
 
 class WhileContext extends BaseEvalContext {
@@ -139,19 +141,12 @@ class WhileContext extends BaseEvalContext {
 }
 
 class ForContext extends BaseEvalContext {
-    targetName_: string
+    targetName_: string = ""
 
-    init_: boolean
-    iterValue_: Array<any>
-    iterIndex_: number
-    bodyN_: number
-
-    constructor() {
-        super()
-        this.iterValue_ = []
-        this.iterIndex_ = 0
-        this.bodyN_ = 0
-    }
+    init_: boolean = false
+    iterValue_: Array<any> = []
+    iterIndex_: number = 0
+    bodyN_: number = 0
 
     continue() {
         this.bodyN_ = 0
@@ -164,20 +159,14 @@ class ForContext extends BaseEvalContext {
 }
 
 class IfContext extends BaseEvalContext {
-    n_: number
+    n_: number = 0
 
     testValue_: any
-    bodyN_: number
-
-    constructor() {
-        super()
-        this.n_ = 0
-        this.bodyN_ = 0
-    }
+    bodyN_: number = 0
 }
 
 class ReturnContext extends BaseEvalContext {
-    retValueDone_: boolean
+    retValueDone_: boolean = false
 }
 
 class FunctionDefContext extends BaseEvalContext {
@@ -185,11 +174,7 @@ class FunctionDefContext extends BaseEvalContext {
 }
 
 class FunctionRunContext extends BaseEvalContext {
-    bodyN_: number
-    constructor() {
-        super()
-        this.bodyN_ = 0
-    }
+    bodyN_: number = 0
 }
 
 class StarredContext extends BaseEvalContext {
@@ -197,11 +182,11 @@ class StarredContext extends BaseEvalContext {
 }
 
 class keywordContext extends BaseEvalContext {
-    valueDone_: boolean
-    constructor() {
-        super()
-        this.valueDone_ = false
-    }
+    valueDone_: boolean = false
+}
+
+class ModFormatContext extends BaseEvalContext {
+    rightDone_: boolean = false
 }
 
 const ContextSets: KV = {
@@ -218,6 +203,7 @@ const ContextSets: KV = {
     UnaryOp: UnaryOpContext,
     List: ListContext,
     Dict: DictContext,
+    Tuple: TupleContext,
     While: WhileContext,
     For: ForContext,
     If: IfContext,
@@ -230,14 +216,18 @@ const ContextSets: KV = {
     Starred: StarredContext,
     keyword: keywordContext,
     Global: BaseEvalContext,
+    ModFormat: ModFormatContext,
 }
 
 const createContext = (node: AstTree.Node) => {
-    console.log('node.type:', node.type)
-    return new ContextSets[node.type]
+    try {
+        return new ContextSets[node.type]
+    } catch(err) {
+        throw new Error(`Context里不支持的type:${node.type}`)
+    }
 }
 
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
-    CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, 
+    CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
     WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
-    keywordContext, createContext}
+    keywordContext, ModFormatContext, createContext}
