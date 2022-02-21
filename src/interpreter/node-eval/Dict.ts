@@ -17,9 +17,9 @@ const Dict = {
 
         if (ctx.valueIndex_ <= node.values.length) {
             if (ctx.valueIndex_ > 0) {
-                let lastKey = node.keys[ctx.valueIndex_ - 1].value
+                let key = node.keys[ctx.valueIndex_ - 1].value
                 const v = ScopeHelper.lookupX(state.scope, ctx.value_)
-                ctx.dict_[lastKey] = v
+                ctx.dict_.__setitem__(key, v)
             }
 
             if (ctx.valueIndex_ < node.values.length) {

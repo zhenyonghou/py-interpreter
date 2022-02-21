@@ -69,7 +69,7 @@ interface keyword extends BaseNode {
 
 interface Call extends BaseNode {
     type: "Call"
-    func: Name,
+    func: Name | Attribute,
     args: Array<any>
     keywords: Array<keyword>
 }
@@ -204,7 +204,6 @@ interface FunctionDef extends BaseNode {
 // 自定义的节点，在函数执行时使用
 class FunctionRun implements BaseNode {
     type: string = "FunctionRun"
-    // args: Array<any> = []
     body: Array<any> = []
 }
 
@@ -215,16 +214,41 @@ interface Global extends BaseNode {
 
 // 自定义的节点，字符串格式化时使用
 class ModFormat implements BaseNode {
-    type: string = "ModFormat"
+    type:string = "ModFormat"
     left: string
     right: any
 }
 
+interface Subscript extends BaseNode {
+    type: "Subscript"
+    value: any
+    slice: Name | Constant
+}
+
+interface Attribute extends BaseNode {
+    type: "Attribute"
+    value: any
+    attr: string
+}
+
+interface Delete extends BaseNode {
+    type: "Delete"
+    targets: Array<Name|Subscript>
+}
+
+interface Slice extends BaseNode {
+    type: "Slice"
+    lower: any
+    upper: any
+    step: any
+}
+
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
-    | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat
+    | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat | Subscript | Attribute | Delete
+    | Slice
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
     UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, 
-    keyword, Global, ModFormat}
+    keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice}

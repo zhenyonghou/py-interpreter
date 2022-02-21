@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {AugAssignContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {evalBegin, evalEnd, Assert} from '../utils'
-import { NameRet } from '../types'
+import { NameRet, SubscriptRet} from '../types'
 
 const AugAssign = {
     type: "AugAssign",
@@ -32,27 +32,70 @@ const AugAssign = {
 
         let value = ScopeHelper.lookupX(state.scope, ctx.value_)
         const operator = node.op.type
-        switch(operator) {
-            case "Add":
-                value += ctx.rightValue_
-                break
-            case "Sub":
-                value -= ctx.rightValue_
-                break
-            case "Mult":
-                value *= ctx.rightValue_
-                break
-            case "Div":
-                value /= ctx.rightValue_
-                break
-            case "Mod":
-                value %= ctx.rightValue_
-                break
-            default:
-                throw new Error(`不支持的操作符${operator}`)
+        if (ctx.value_ instanceof NameRet) {
+            switch(operator) {
+                case "Add":
+                    value += ctx.rightValue_
+                    break
+                case "Sub":
+                    value -= ctx.rightValue_
+                    break
+                case "Mult":
+                    value *= ctx.rightValue_
+                    break
+                case "Div":
+                    value /= ctx.rightValue_
+                    break
+                case "Mod":
+                    value %= ctx.rightValue_
+                    break
+                default:
+                    throw new Error(`不支持的操作符${operator}`)
+            }
+            state.scope.set(ctx.value_.name, value)
+        } else if (ctx.value_ instanceof SubscriptRet) {
+            const {obj, slice} = ctx.value_
+            switch(operator) {
+                case "Add":
+                    if (obj.hasOwnProperty('__setitem__')) {
+                        obj.__setitem__(slice, value + ctx.rightValue_)
+                    } else {
+                        obj[slice] = value + ctx.rightValue_
+                    }
+                    break
+                case "Sub":
+                    if (obj.hasOwnProperty('__setitem__')) {
+                        obj.__setitem__(slice, value - ctx.rightValue_)
+                    } else {
+                        obj[slice] = value - ctx.rightValue_
+                    }
+                    break
+                case "Mult":
+                    if (obj.hasOwnProperty('__setitem__')) {
+                        obj.__setitem__(slice, value * ctx.rightValue_)
+                    } else {
+                        obj[slice] = value * ctx.rightValue_
+                    }
+                    break
+                case "Div":
+                    if (obj.hasOwnProperty('__setitem__')) {
+                        obj.__setitem__(slice, value / ctx.rightValue_)
+                    } else {
+                        obj[slice] = value / ctx.rightValue_
+                    }
+                    break
+                case "Mod":
+                    if (obj.hasOwnProperty('__setitem__')) {
+                        obj.__setitem__(slice, value % ctx.rightValue_)
+                    } else {
+                        obj[slice] = value % ctx.rightValue_
+                    }
+                    break
+                default:
+                    throw new Error(`不支持的操作符${operator}`)
+            }
         }
-        state.scope.set(ctx.value_.name, value)
-
+        
         ss.pop()
         evalEnd(state)
     }

@@ -1,7 +1,7 @@
 
 import Tuple from "./python-builtins/py-tuple"
 import { Scope } from "./scope"
-import {ConstantRet, NameRet, StarredRet} from './types'
+import {ConstantRet, NameRet, StarredRet, SubscriptRet} from './types'
 
 class ScopeHelper {
     static lookup(scope: Scope, varName: string): any {
@@ -43,13 +43,20 @@ class ScopeHelper {
         }
     }
 
-    static lookupX(scope: Scope, x: string | ConstantRet | NameRet): any {
+    static lookupX(scope: Scope, x: string | ConstantRet | NameRet | SubscriptRet): any {
         if (typeof x === "string") {
             return ScopeHelper.lookup(scope, x)
         } else if (x instanceof ConstantRet) {
             return x.value
         } else if (x instanceof NameRet) {
             return ScopeHelper.lookup(scope, x.name)
+        } else if (x instanceof SubscriptRet) {
+            if ('__getitem__' in x.obj) {
+                return x.obj.__getitem__(x.slice)
+            } else {
+                const obj = x.obj
+                return obj[x.slice]
+            }
         } else {
             throw new Error(`lookupX不支持该类型:${x}`)
         }

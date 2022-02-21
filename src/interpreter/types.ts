@@ -5,6 +5,14 @@ interface KV {  // 这么做是为了解决ts(7053)问题
     [index: string]: any
 }
 
+enum ControlKey {
+    Null     = "",
+    Pass     = "pass",
+    Continue = "continue",
+    Break    = "break",
+    Return   = "return"
+}
+
 class ConstantRet {
     value: string | number | bigint | boolean | RegExp | null | bigint | Array<any> | PyTuple
     constructor(v: any) {
@@ -35,19 +43,31 @@ class keywordRet {
     }
 }
 
-class SimpleValue {
-    value: any
-    constructor(v: any) {
-        this.value = v
+class SubscriptRet {
+    obj: any  // object
+    slice: string | number
+
+    constructor(obj: any, slice: string | number) {
+        this.obj = obj
+        this.slice = slice
     }
 }
 
-enum ControlKey {
-    Null     = "",
-    Pass     = "pass",
-    Continue = "continue",
-    Break    = "break",
-    Return   = "return"
+class AttributeRet {
+    obj: any  // object
+    attr: string
+
+    constructor(obj: any, attr: string) {
+        this.obj = obj
+        this.attr = attr
+    }
 }
 
-export {KV, ConstantRet, NameRet, StarredRet, keywordRet, SimpleValue, ControlKey}
+// class SimpleValue {
+//     value: any
+//     constructor(v: any) {
+//         this.value = v
+//     }
+// }
+
+export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet}

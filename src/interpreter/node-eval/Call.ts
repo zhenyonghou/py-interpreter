@@ -4,10 +4,10 @@ import {Scope, ScopeType} from '../scope'
 import {evalBegin, evalEnd, Assert} from '../utils'
 import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import { ConstantRet, keywordRet, KV, StarredRet} from '../types'
+import { AttributeRet, ConstantRet, keywordRet, KV, NameRet, StarredRet} from '../types'
 import {FunctionDefData} from './FunctionDef'
 import Tuple from '../python-builtins/py-tuple'
-import Dict from '../python-builtins/py-dict'
+import { _dict } from '../python/builtins'
 
 /**
  * 函数调用
@@ -83,24 +83,26 @@ const runFunction = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet
         // 处理kwarg(检查形参里是否确实有该参数，没有的话就加入kwarg)
         if (formalArgsNode.kwarg) {
             const kwargName = formalArgsNode.kwarg.arg
-            const dict = new Dict()
+            const dict = new _dict()
             for (let i = 0; i < actualKeywordArgs.length; i++) {
                 let kw = actualKeywordArgs[i]
                 if (kw.arg == null) {   // **d形式的type属keyword，但arg是null, 其value是Dict, 需要解包处理
-                    const d = kw.value as Dict
+                    const d = kw.value as _dict
                     d.keys().forEach(k => {
                         // **d里的字段如果存在于形参列表，就设置给形参，否则留在kwarg里
                         let find = formalArgsNode.args.findIndex(item => item.arg == k)
                         if (find == -1) {
-                            dict[k] = d[k]
+                            // dict[k] = d[k]
+                            dict.__setitem__(k, d.__getitem__(k))
                         } else {
-                            funcScope.set(k, d[k])
+                            funcScope.set(k, d.__getitem__(k))
                         }
                     })
                 } else {
                     let find = formalArgsNode.args.findIndex(item => item.arg == kw.arg)
                     if (find == -1) {
-                        dict[kw.arg] = kw.value 
+                        // dict[kw.arg] = kw.value
+                        dict.__setitem__(kw.arg, kw.value)
                     }
                 }
             }
@@ -170,16 +172,20 @@ const Call = {
         if (!ctx.doneExec_) {
             ctx.doneExec_ = true
 
-            const func = ScopeHelper.lookupX(state.scope, ctx.func_)
-            if (func instanceof FunctionDefData) {
-                // 解释自定义函数: 绑定参数, 将body包装成state返回
-                return runFunction(ctx.args_, ctx.keywords_, func)
-            } else {
-                const ret = func.apply(null, ctx.args_)
-                ss.pop()
-                ss[ss.length - 1].ctx.value_ = new ConstantRet(ret)
-                evalEnd(state)
-                return
+            if (ctx.func_ instanceof AttributeRet) {
+                const {obj, attr} = ctx.func_
+                const func = obj[attr]
+                const ret = func.apply(obj, ctx.args_)
+                ctx.returnData_ = new ConstantRet(ret)
+            } else if (ctx.func_ instanceof NameRet) {
+                const func = ScopeHelper.lookupX(state.scope, ctx.func_)
+                if (func instanceof FunctionDefData) {
+                    // 解释自定义函数: 绑定参数, 将body包装成state返回
+                    return runFunction(ctx.args_, ctx.keywords_, func)
+                } else {
+                    const ret = func.apply(null, ctx.args_)
+                    ctx.returnData_ = new ConstantRet(ret)
+                }
             }
         }
 

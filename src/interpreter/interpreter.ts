@@ -4,7 +4,7 @@ import {Scope, ScopeType} from './scope'
 import {ModuleContext} from './eval-context'
 import NodeEval from './node-eval'
 import {Declaration, globalDeclaration} from './declaration'
-import * as pyBuiltins from './python-builtins/python-builtins'
+import * as pyBuiltins from './python/builtins'
 
 class Interpreter {
     ast: AstTree.Node

@@ -1,22 +1,13 @@
 import * as AstTree from './ast-tree'
-import {KV, ControlKey, keywordRet} from './types'
-import PyDict from './python-builtins/py-dict'
+import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './types'
+import {_list, _dict} from './python/builtins'
 import PyTuple from './python-builtins/py-tuple'
 
 class BaseEvalContext {
-    value_: any
-    control_: ControlKey
-    returnData_: any
-
-    begin: boolean
-
-    constructor() {
-        this.begin = false  // 标记已经开始解析
-        this.value_ = null
-
-        this.control_ = ControlKey.Null
-        this.returnData_ = null
-    }
+    begin: boolean = false
+    value_: any = null
+    control_: ControlKey = ControlKey.Null
+    returnData_: any = null
 }
 
 class ModuleContext extends BaseEvalContext {
@@ -28,29 +19,15 @@ class ModuleContext extends BaseEvalContext {
 }
 
 class AssignContext extends BaseEvalContext {
-    valueDone_: boolean
-    targetIndex_: number
-
-    assignValue_: any
-
-    constructor() {
-        super()
-        this.valueDone_ = false
-        this.targetIndex_ = 0
-    }
+    valueDone_: boolean = false
+    targetIndex_: number = 0
+    assignValue_: any = null
 }
 
 class AugAssignContext extends BaseEvalContext {
-    valueDone_: boolean
-    targetDone_: boolean
-
-    rightValue_: any
-
-    constructor() {
-        super()
-        this.valueDone_ = false
-        this.targetDone_ = false
-    }
+    valueDone_: boolean = false
+    targetDone_: boolean = false
+    rightValue_: any = null
 }
 
 class ConstantContext extends BaseEvalContext {
@@ -62,11 +39,7 @@ class NameContext extends BaseEvalContext {
 }
 
 class ExprContext extends BaseEvalContext {
-    valueDone_: boolean
-    constructor() {
-        super()
-        this.valueDone_ = false
-    }
+    valueDone_: boolean = false
 }
 
 class CallContext extends BaseEvalContext {
@@ -75,7 +48,7 @@ class CallContext extends BaseEvalContext {
     args_: Array<any> = []
     keywordsN_: number = 0
     keywords_: Array<keywordRet> = []
-    func_: any
+    func_: NameRet | AttributeRet
     doneExec_: boolean = false
 }
 
@@ -104,12 +77,12 @@ class UnaryOpContext extends BaseEvalContext {
 
 class ListContext extends BaseEvalContext {
     n_: number = 0
-    list_: Array<any> = []
+    list_: _list = new _list()
 }
 
 class DictContext extends BaseEvalContext {
     valueIndex_: number = 0
-    dict_: PyDict = new PyDict()
+    dict_: _dict = new _dict()
 }
 
 class TupleContext extends BaseEvalContext {
@@ -118,16 +91,9 @@ class TupleContext extends BaseEvalContext {
 }
 
 class WhileContext extends BaseEvalContext {
-    n_: number
-
-    testValue_: any
-    bodyN_: number
-
-    constructor() {
-        super()
-        this.n_ = 0
-        this.bodyN_ = 0
-    }
+    n_: number = 0
+    testValue_: any = null
+    bodyN_: number = 0
 
     reset() {
         this.n_ = 0
@@ -142,7 +108,6 @@ class WhileContext extends BaseEvalContext {
 
 class ForContext extends BaseEvalContext {
     targetName_: string = ""
-
     init_: boolean = false
     iterValue_: Array<any> = []
     iterIndex_: number = 0
@@ -189,6 +154,32 @@ class ModFormatContext extends BaseEvalContext {
     rightDone_: boolean = false
 }
 
+class SubscriptContext extends BaseEvalContext {
+    valueDone_: boolean = false
+    subscriptValue_: any = null
+    sliceDone_: boolean = false
+}
+
+class AttributeContext extends BaseEvalContext {
+    valueDone_: boolean = false
+    attributeValue_: any = null
+    // attrDone_: boolean = false
+}
+
+class DeleteContext extends BaseEvalContext {
+    n_: number = 0
+}
+
+class SliceContext extends BaseEvalContext {
+    lowerDone_: boolean = false
+    upperDone_: boolean = false
+    stepDone_: boolean = false
+
+    lowerValue_: any = null
+    upperValue_: any = null
+    stepValue_: any = null
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -217,6 +208,10 @@ const ContextSets: KV = {
     keyword: keywordContext,
     Global: BaseEvalContext,
     ModFormat: ModFormatContext,
+    Subscript: SubscriptContext,
+    Attribute: AttributeContext,
+    Delete: DeleteContext,
+    Slice: SliceContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -230,4 +225,4 @@ const createContext = (node: AstTree.Node) => {
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
     CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
     WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
-    keywordContext, ModFormatContext, createContext}
+    keywordContext, ModFormatContext, SubscriptContext, AttributeContext, DeleteContext, SliceContext, createContext}

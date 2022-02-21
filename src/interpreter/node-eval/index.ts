@@ -25,6 +25,10 @@ import Starred from './Starred'
 import keyword from './keyword'
 import Global from './Global'
 import ModFormat from './ModFormat'
+import Subscript from './Subscript'
+import Attribute from './Attribute'
+import Delete from './Delete'
+import Slice from './Slice'
 
 import {State, StateStack} from '../state'
 
@@ -63,6 +67,10 @@ class NodeEval extends Map {
         this.addEval(keyword)
         this.addEval(Global)
         this.addEval(ModFormat)
+        this.addEval(Subscript)
+        this.addEval(Attribute)
+        this.addEval(Delete)
+        this.addEval(Slice)
     }
 
     addEval(e: IEval) {

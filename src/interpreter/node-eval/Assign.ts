@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {AssignContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {evalBegin, evalEnd, Assert} from '../utils'
-import { NameRet } from '../types'
+import { NameRet, SubscriptRet} from '../types'
 
 const Assign = {
     type: "Assign",
@@ -28,8 +28,19 @@ const Assign = {
 
         // 处理上一次解析完的target(变量名)
         if (ctx.targetIndex_ > 0) {
-            Assert(ctx.value_ instanceof NameRet)
-            state.scope.set(ctx.value_.name, ctx.assignValue_)
+            if (ctx.value_ instanceof NameRet) {
+                state.scope.set(ctx.value_.name, ctx.assignValue_)
+            } else if (ctx.value_ instanceof SubscriptRet) {
+                const {obj, slice} = ctx.value_
+                if (obj.hasOwnProperty('__setitem__')) {
+                    obj.__setitem__(slice, ctx.assignValue_)
+                } else {
+                    obj[slice] = ctx.assignValue_
+                }
+            } else {
+                console.error(`Assign有不支持的类型:`, ctx.value_)
+                Assert(false, `Assign有不支持的类型`)
+            }
         }
 
         if (ctx.targetIndex_ < node.targets.length) {

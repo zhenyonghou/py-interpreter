@@ -9,6 +9,7 @@
  */
 
 import { globalDeclaration, Declaration } from './declaration'
+import { Assert } from './utils'
 
 /**
  * 不需要定义Enclosed，因为Scope具有层级结构，会向上查找变量.
@@ -85,6 +86,19 @@ class Scope {
         }
 
         throw new ReferenceError(`${name}尚未定义`)
+    }
+
+    del(name: string) {
+        if (this.declaration.has(name)) {
+            this.declaration.del(name)
+            return
+        }
+
+        if (this.parent) {
+            this.parent.del(name)
+            return
+        }
+        Assert(false, `del时找不到"${name}"`)
     }
 
     lookup(name: string): any {

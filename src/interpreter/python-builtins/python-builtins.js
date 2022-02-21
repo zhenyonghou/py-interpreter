@@ -249,18 +249,10 @@ function zip() {
 }
 
 export {
+    abs,
+
     range,
     print,
     max,
     min,
 }
-
-// function $Y(fetchFunc, showFunc, ctx) {
-//     return function() {
-//         fetchFunc(ctx)(
-//             function(data) {
-//                 showFunc(data, ctx);
-//             }
-//         )
-//     }
-// }
