@@ -18,7 +18,7 @@ const Tuple = {
         if (ctx.n_ <= node.elts.length) {
             if (ctx.n_ > 0) {
                 const v = ScopeHelper.lookupX(state.scope, ctx.value_)
-                ctx.list_.push(v)
+                ctx.list_.__push__(v)
             }
 
             if (ctx.n_ < node.elts.length) {

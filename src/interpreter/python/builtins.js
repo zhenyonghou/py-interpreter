@@ -518,13 +518,14 @@ class _tuple {
                 seq.push(this.__getitem__(i));
             }
             return new this.__class__(seq);
-        } else if ((index >= 0) && (index < len(this)))
-            return this._items[index];
-        else if ((index < 0) && (index >= -len(this)))
-            return this._items[index + len(this)];
-
-        else
-            throw new py_builtins.IndexError("list assignment index out of range");
+        } else if ((index >= 0) && (index < len(this))) {
+            return this._items[index]
+        }
+        else if ((index < 0) && (index >= -len(this))) {
+            return this._items[index + len(this)]
+        } else {
+            throw new py_builtins.IndexError("list assignment index out of range")
+        }
     }
     __setitem__(index, value) {
         throw new py_builtins.TypeError("'tuple' object doesn't support item assignment");
@@ -532,6 +533,11 @@ class _tuple {
     __delitem__(index) {
         throw new py_builtins.TypeError("'tuple' object doesn't support item deletion");
     }
+    __push__(...item) {
+        this._items.push(...item)
+        this._len += item.length
+    }
+
     count(value) {
         var count = 0;
 

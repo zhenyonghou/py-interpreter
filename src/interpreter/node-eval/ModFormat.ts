@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {Assert, evalBegin, evalEnd} from '../utils'
 import {ModFormatContext} from '../eval-context'
 import {ConstantRet} from '../types'
-import PyTuple from '../python-builtins/py-tuple'
+import { _tuple } from '../python/builtins'
 
 class ConversionNode {
     conversion: string = "" // 转换字符，如: "s", "d"...
@@ -72,7 +72,7 @@ function tokenize(f: string) {
     return {fmt: s, tokens: out}
 }
 
-function format(s: string, args: PyTuple) {
+function format(s: string, args: _tuple) {
     let ret = tokenize(s)
     let fmt = ret.fmt
     let tokens = ret.tokens
@@ -81,7 +81,7 @@ function format(s: string, args: PyTuple) {
     for (let i = 0; i < tokens.length; i++) {
         let t = tokens[i]
         if (t.conversion == "s") {  // %5s, %-5s
-            let arg = String(args[i])
+            let arg = String(args.__getitem__(i))
             let fmtStr = ""
             if (t.fmtwidth) {
                 let width = parseInt(t.fmtwidth)
@@ -96,7 +96,7 @@ function format(s: string, args: PyTuple) {
             out = out.replace(t.raw, fmtStr)
         } else if (t.conversion == "d") {
             // %5d 左边补空格; %05d 左边补0; %-5d 右边补空格
-            let arg = String(args[i])
+            let arg = String(args.__getitem__(i))
             let fmtStr = ""
             if (t.fmtwidth) {
                 let width = parseInt(t.fmtwidth)
@@ -115,17 +115,17 @@ function format(s: string, args: PyTuple) {
             out = out.replace(t.raw, fmtStr)
         } else if (t.conversion == "f") {
             // %.2f 保留两位小数; %05.2f 宽5位，不足补0
-            let arg = args[i] as number
+            let arg = args.__getitem__(i) as number
             let fmtStr = ""
             if (t.fmtprec) {
                 const n = Number(t.fmtprec.substring(1))
                 fmtStr = arg.toFixed(n)
             } else {
-                fmtStr = String(args[i])
+                fmtStr = String(args.__getitem__(i))
             }
             out = out.replace(t.raw, fmtStr)
         } else if (t.conversion == "x") {
-            let arg = args[i] as number
+            let arg = args.__getitem__(i) as number
             let fmtStr = arg.toString(16)
             if (t.fmtwidth) {
                 let width = parseInt(t.fmtwidth)
@@ -137,7 +137,7 @@ function format(s: string, args: PyTuple) {
             }
             out = out.replace(t.raw, fmtStr)
         } else if (t.conversion == "o") {
-            let arg = args[i] as number
+            let arg = args.__getitem__(i) as number
             let fmtStr = arg.toString(8)
             if (t.fmtwidth) {
                 let width = parseInt(t.fmtwidth)
@@ -171,8 +171,8 @@ const ModFormat = {
         let s = node.left
         let rightValue = (ctx.value_ as ConstantRet).value
 
-        if (!(rightValue instanceof PyTuple)) {
-            rightValue = new PyTuple(rightValue)
+        if (!(rightValue instanceof _tuple)) {
+            rightValue = new _tuple(rightValue)
         }
 
         s = format(s, rightValue)

@@ -1,7 +1,6 @@
 import * as AstTree from './ast-tree'
 import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './types'
-import {_list, _dict} from './python/builtins'
-import PyTuple from './python-builtins/py-tuple'
+import {_list, _dict, _tuple} from './python/builtins'
 
 class BaseEvalContext {
     begin: boolean = false
@@ -87,7 +86,7 @@ class DictContext extends BaseEvalContext {
 
 class TupleContext extends BaseEvalContext {
     n_: number = 0
-    list_: PyTuple = new PyTuple()
+    list_: _tuple = new _tuple()
 }
 
 class WhileContext extends BaseEvalContext {

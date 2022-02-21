@@ -1,5 +1,4 @@
-import PyTuple from './python-builtins/py-tuple'
-// import PyList from './python-builtins/py-list'
+import { _dict, _list, _tuple } from './python/builtins'
 
 interface KV {  // 这么做是为了解决ts(7053)问题
     [index: string]: any
@@ -14,7 +13,7 @@ enum ControlKey {
 }
 
 class ConstantRet {
-    value: string | number | bigint | boolean | RegExp | null | bigint | Array<any> | PyTuple
+    value: string | number | bigint | boolean | RegExp | null | bigint | Array<any> | _tuple | _dict | _list
     constructor(v: any) {
         this.value = v
     }
