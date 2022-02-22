@@ -81,7 +81,7 @@ const Compare = {
                         }
                         break
                     case "In":
-                        if (!(rightValue.includes(leftValue))) {  // 结束
+                        if (!(rightValue.__contains__(leftValue))) {  // 结束
                             ss.pop()
                             ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)
@@ -89,7 +89,7 @@ const Compare = {
                         }
                         break
                     case "NotIn":
-                        if (rightValue.includes(leftValue)) {  // 结束
+                        if (rightValue.__contains__(leftValue)) {  // 结束
                             ss.pop()
                             ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
                             evalEnd(state)

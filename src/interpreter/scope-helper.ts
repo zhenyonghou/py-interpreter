@@ -1,5 +1,4 @@
 
-import Tuple from "./python-builtins/py-tuple"
 import { Scope } from "./scope"
 import {ConstantRet, NameRet, StarredRet, SubscriptRet} from './types'
 

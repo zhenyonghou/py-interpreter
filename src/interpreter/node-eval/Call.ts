@@ -6,8 +6,7 @@ import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import { AttributeRet, ConstantRet, keywordRet, KV, NameRet, StarredRet} from '../types'
 import {FunctionDefData} from './FunctionDef'
-import Tuple from '../python-builtins/py-tuple'
-import { _dict } from '../python/builtins'
+import { _dict, _list, _tuple } from '../python/builtins'
 
 /**
  * 函数调用
@@ -65,7 +64,7 @@ const runFunction = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet
                 restArgs.push(actualArgs[i])
             }
             // 在python里vararg是tuple类型，而不是数组，所以做成了Tuple类型
-            funcScope.set(varArgName, new Tuple(...restArgs))
+            funcScope.set(varArgName, new _tuple(restArgs))
         }
 
         // 处理keywords(检查形参里是否确实有该参数，有的话就处理)
@@ -142,8 +141,8 @@ const Call = {
         if (node.args && ctx.argN_ <= node.args.length) { // args not done
             if (ctx.argN_ > 0) {
                 if (ctx.value_ instanceof StarredRet) {
-                    const list = ScopeHelper.lookupX(state.scope, ctx.value_.name) as Array<any>
-                    ctx.args_.push(...list)
+                    const list = ScopeHelper.lookupX(state.scope, ctx.value_.name) as _list
+                    ctx.args_.push(...list._items)
                 } else {
                     const arg = ScopeHelper.lookupX(state.scope, ctx.value_)
                     ctx.args_.push(arg)

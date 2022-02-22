@@ -3,6 +3,7 @@ import {State, StateStack} from '../state'
 import {ConstantContext} from '../eval-context'
 import {evalBegin, evalEnd} from '../utils'
 import {ConstantRet} from '../types'
+import { _str } from '../python/builtins'
 
 const Constant = {
     type: "Constant",
@@ -15,8 +16,15 @@ const Constant = {
             evalBegin(state)
         }
 
+        let _ret = null
+        if (typeof node.value == 'string') {
+            _ret = new _str(node.value)
+        } else {
+            _ret = node.value
+        }
+
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(node.value)
+        ss[ss.length - 1].ctx.value_ = new ConstantRet(_ret)
         evalEnd(state)
     }
 }

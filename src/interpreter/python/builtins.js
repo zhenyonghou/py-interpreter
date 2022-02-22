@@ -1,3 +1,4 @@
+// 参考自:https://github.com/qsnake/py2js
 
 var py_builtins = {}
 
@@ -498,7 +499,7 @@ class _tuple {
     }
     __contains__(item) {
         for (var index in this._items) {
-            if (py_builtins.eq(item, this._items[index])) {
+            if (eq(item, this._items[index])) {
                 return true;
             }
         }
