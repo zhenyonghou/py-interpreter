@@ -1,10 +1,11 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
-import {evalBegin, evalEnd} from '../utils'
+import {Assert, evalBegin, evalEnd} from '../utils'
 import {BinOpContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {ConstantRet} from '../types'
 import {ModFormat} from '../ast-tree'
+import { iterate, iter, _list, _str, _tuple } from '../python/builtins'
 
 const BinOp = {
     type: "BinOp",
@@ -43,37 +44,70 @@ const BinOp = {
         let value
         switch(operator) {
             case 'Add':
-                value = leftValue + rightValue; break;
+                if (leftValue instanceof Object || rightValue instanceof Object) {
+                    if (leftValue instanceof _str && rightValue instanceof _str) {
+                        let s = leftValue._obj.concat(rightValue._obj)
+                        value = new _str(s)
+                    } else if (leftValue instanceof _tuple && rightValue instanceof _tuple) {
+                        value = leftValue.__concat__(rightValue)
+                    } else if (leftValue instanceof _list && rightValue instanceof _list) {
+                        value = leftValue.__concat__(rightValue)
+                    } else {
+                        Assert(false, `未支持的类型`)
+                    }
+                } else {
+                    value = leftValue + rightValue
+                }
+                break
             case 'Sub':
-                value = leftValue - rightValue; break;
+                value = leftValue - rightValue
+                break
             case 'Mult':
-                value = leftValue * rightValue; break;
+                if (leftValue instanceof _list && typeof rightValue == 'number') {
+                    value = leftValue
+                    for (let i = 0; i < rightValue; i++) {
+                        value = value.__concat__(leftValue)
+                    }
+                } else if (leftValue instanceof _tuple && typeof rightValue == 'number') {
+                    value = leftValue
+                    for (let i = 0; i < rightValue; i++) {
+                        value = value.__concat__(leftValue)
+                    }
+                } else {
+                    value = leftValue * rightValue
+                }
+                break
             case 'Div':
                 value = leftValue / rightValue; break;
             case 'Mod':
-                if (typeof leftValue == 'number') {
+                if (typeof leftValue == 'number' && typeof rightValue == 'number') {
                     value = leftValue % rightValue
-                } else if (typeof leftValue == 'string') {
+                } else if (leftValue instanceof _str) {
                     ctx.modeFormatting = true
-                    // 格式化字符串
                     let fakeNode = new ModFormat()
-                    fakeNode.left = (node.left as AstTree.Constant).value
+                    fakeNode.left = leftValue
                     fakeNode.right = node.right
                     return new State(fakeNode, state.scope)
                 }
                 break;
             case 'Pow':
-                value = leftValue ** rightValue; break;
+                value = leftValue ** rightValue
+                break
             case 'BitAnd':
-                value = leftValue & rightValue; break;
+                value = leftValue & rightValue
+                break
             case 'BitOr':
-                value = leftValue | rightValue; break;
+                value = leftValue | rightValue
+                break
             case 'BitXor':
-                value = leftValue ^ rightValue; break;
+                value = leftValue ^ rightValue
+                break
             case 'LShift':
-                value = leftValue << rightValue; break;
+                value = leftValue << rightValue
+                break
             case 'RShift':
-                value = leftValue >> rightValue; break;
+                value = leftValue >> rightValue
+                break
             default:
                 throw SyntaxError('未处理的op: ' + operator);
         }

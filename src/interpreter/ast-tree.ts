@@ -1,3 +1,4 @@
+import { _str } from "./python/builtins"
 
 enum NodeType {
     Module = "Module"
@@ -215,7 +216,7 @@ interface Global extends BaseNode {
 // 自定义的节点，字符串格式化时使用
 class ModFormat implements BaseNode {
     type:string = "ModFormat"
-    left: string
+    left: _str
     right: any
 }
 
@@ -243,12 +244,23 @@ interface Slice extends BaseNode {
     step: any
 }
 
+interface Import extends BaseNode {
+    type: "Import"
+    names: Array<alias>
+}
+
+interface alias extends BaseNode {
+    type: "alias",
+    name: string    // "time",
+    asname: any     // null
+}
+
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
     | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat | Subscript | Attribute | Delete
-    | Slice
+    | Slice | Import | alias
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
     UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, 
-    keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice}
+    keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice, Import, alias}

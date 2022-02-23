@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {Assert, evalBegin, evalEnd} from '../utils'
 import {ModFormatContext} from '../eval-context'
 import {ConstantRet} from '../types'
-import { _tuple } from '../python/builtins'
+import { _tuple, _str} from '../python/builtins'
 
 class ConversionNode {
     conversion: string = "" // 转换字符，如: "s", "d"...
@@ -168,17 +168,16 @@ const ModFormat = {
             return new State(node.right, state.scope)
         }
 
-        let s = node.left
         let rightValue = (ctx.value_ as ConstantRet).value
 
         if (!(rightValue instanceof _tuple)) {
-            rightValue = new _tuple(rightValue)
+            rightValue = new _tuple([rightValue])
         }
 
-        s = format(s, rightValue)
+        let s = format(node.left._obj, rightValue)
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(s)
+        ss[ss.length - 1].ctx.value_ = new ConstantRet(new _str(s))
         evalEnd(state)
     }
 }

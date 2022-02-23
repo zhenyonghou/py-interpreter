@@ -29,6 +29,7 @@ import Subscript from './Subscript'
 import Attribute from './Attribute'
 import Delete from './Delete'
 import Slice from './Slice'
+import Import from './Import'
 
 import {State, StateStack} from '../state'
 
@@ -71,6 +72,7 @@ class NodeEval extends Map {
         this.addEval(Attribute)
         this.addEval(Delete)
         this.addEval(Slice)
+        this.addEval(Import)
     }
 
     addEval(e: IEval) {

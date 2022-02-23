@@ -36,16 +36,18 @@ import code_182 from './t_182'
 // str
 import code_183 from './t_183'
 
-// del关键字, len, min, max, sleep等函数
-
+// del关键字, len, min, max等函数
+import code_190 from './t_190'
+import code_191 from './t_191'
 
 // 完善运算符，如：创建一个新的元组 tup3 = tup1 + tup2
-
+import code_230 from './t_230'
 
 // class
+import code_240 from './t_240'
 
 // import
-
+import code_280 from './t_280'
 // ...
 
 import { genAst } from '../src/lib/api'
@@ -55,8 +57,7 @@ import * as AstTree from '../src/interpreter/ast-tree'
 // const codeList = [code_001, code_002, code_003, code_004, code_005, code_050, code_051, code_052, code_053, 
 //     code_080, code_081, code_082, code_083, code_084, code_085, code_100, code_150, code_151, code_152, code_180,
 //     code_181, code_182, code_183]
-const codeList = [code_083]
-// const codeList = [code_183]
+const codeList = [code_280]
 
 const start = () => {
     // Interpreter.GlobalDeclaration.setWithSets(py_builtins)

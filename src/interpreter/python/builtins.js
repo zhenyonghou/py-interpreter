@@ -20,8 +20,8 @@ py_builtins.__exceptions__ = [
 for (var i in py_builtins.__exceptions__) {
     var errorName = py_builtins.__exceptions__[i];
 
-    py_builtins[errorName] = function() {
-        return function(message) {
+    py_builtins[errorName] = function () {
+        return function (message) {
             this.message = defined(message) ? message : "";
         };
     }();
@@ -29,11 +29,11 @@ for (var i in py_builtins.__exceptions__) {
     py_builtins[errorName].__name__ = errorName;
     py_builtins[errorName].prototype.__class__ = py_builtins[errorName];
 
-    py_builtins[errorName].prototype.__str__ = function() {
+    py_builtins[errorName].prototype.__str__ = function () {
         return str(js(this.__class__.__name__) + ": " + js(this.message));
     };
 
-    py_builtins[errorName].prototype.toString = function() {
+    py_builtins[errorName].prototype.toString = function () {
         return js(this.__str__());
     };
 }
@@ -41,7 +41,7 @@ for (var i in py_builtins.__exceptions__) {
 // 函数
 
 function defined(obj) {
-    return typeof(obj) != 'undefined';
+    return typeof (obj) != 'undefined';
 }
 
 function assert(cond, msg) {
@@ -104,7 +104,7 @@ function setattr(obj, name, value) {
 function hash(obj) {
     if (hasattr(obj, '__hash__')) {
         return obj.__hash__();
-    } else if (typeof(obj) == 'number') {
+    } else if (typeof (obj) == 'number') {
         return obj == -1 ? -2 : obj;
     } else {
         throw new py_builtins.AttributeError(obj, '__hash__');
@@ -156,7 +156,7 @@ function map() {
 
     var items = list();
 
-    iterate(seq, function(item) {
+    iterate(seq, function (item) {
         items.append(func(item));
     });
 
@@ -254,54 +254,60 @@ function eq(a, b) {
 
 function _int(value) {
     return value;
-};
+}
 
 function _float(value) {
     return value;
-};
+}
 
 function max(...theArgs) {
-    if (len(theArgs) == 0)
+    if (theArgs.length == 0)
         throw new py_builtins.ValueError("max() arg is an empty sequence");
     else {
-        var result = null;
-
-        iterate(iter(theArgs), function(item) {
-                if ((result == null) || (item > result))
-                    result = item;
-        });
-
+        var result = null
+        theArgs.forEach(item => {
+            if ((result == null) || (item > result)) {
+                result = item
+            }
+        })
         return result;
     }
-};
+}
 
 function min(...theArgs) {
-    if (len(theArgs) == 0)
+    if (theArgs.length == 0)
         throw new py_builtins.ValueError("min() arg is an empty sequence");
     else {
-        var result = null;
-
-        iterate(iter(theArgs), function(item) {
-                if ((result == null) || (item < result))
-                    result = item;
+        var result = null
+        theArgs.forEach(item => {
+            if ((result == null) || (item < result)) {
+                result = item
+            }
         })
-
         return result;
     }
-};
+}
 
 function sum(...theArgs) {
-    var result = 0;
+    var result = 0
 
-    iterate(iter(theArgs), function(item) {
-        result += item;
-    });
+    theArgs.forEach(item => {
+        result += item
+    })
 
-    return result;
-};
+    return result
+}
 
 function print(...theArgs) {
-    console.log(...theArgs)
+    const arr = []
+    theArgs.forEach(item => {
+        if (item instanceof Object && 'toString' in item) {
+            arr.push(item.toString())
+        } else {
+            arr.push(item)
+        }
+    })
+    console.log(...arr)
 }
 
 // ============ iter ============
@@ -309,7 +315,7 @@ function print(...theArgs) {
 function iter(obj) {
     if (obj instanceof Array) {
         return new _iter(obj);
-    } else if (typeof(obj) === "string") {
+    } else if (typeof (obj) === "string") {
         return iter(obj.split(""));
     } else if (obj.__class__ == _iter) {
         return obj;
@@ -423,7 +429,7 @@ class _tuple {
             this._len = 0;
         } else {
             var items = [];
-            iterate(iter(seq), function(item) {
+            iterate(iter(seq), function (item) {
                 items.push(item);
             })
             this._items = items
@@ -539,6 +545,20 @@ class _tuple {
         this._len += item.length
     }
 
+    __concat__(t) {
+        var items = []
+
+        iterate(iter(this), function (item) {
+            items.push(js(item));
+        })
+
+        iterate(iter(t), function (item) {
+            items.push(js(item));
+        })
+
+        return new this.__class__(items)
+    }
+
     count(value) {
         var count = 0;
 
@@ -615,9 +635,16 @@ class _list {
             this._items = a.concat(b);
             this._len = -1;
         }
-        else
-            throw new py_builtins.IndexError("list assignment index out of range");
+        else {
+            throw new py_builtins.IndexError("list assignment index out of range")
+        }
     }
+
+    __clear__() {
+        this._items = []
+        this._len = 0
+    }
+
     index(value, start, end) {
         if (!defined(start)) {
             start = 0;
@@ -701,9 +728,11 @@ _list.prototype.__iter__ = _tuple.prototype.__iter__;
 
 _list.prototype.__contains__ = _tuple.prototype.__contains__;
 
-_list.prototype.__getitem__ = _tuple.prototype.__getitem__;
+_list.prototype.__getitem__ = _tuple.prototype.__getitem__
 
-_list.prototype.count = _tuple.prototype.count;
+_list.prototype.count = _tuple.prototype.count
+
+_list.prototype.__concat__ = _tuple.prototype.__concat__
 
 // ============ dict ============
 
@@ -911,7 +940,7 @@ class _str {
         }
     }
     __str__() {
-        return this;
+        return this._obj;
     }
     __eq__(other) {
         if (other.__class__ == this.__class__) {
@@ -1130,5 +1159,7 @@ class _str {
 _str.__name__ = 'str';
 _str.prototype.__class__ = _str;
 
-export {assert, hasattr, getattr, setattr, hash, len, range, xrange, map, zip, isinstance, bool, abs, max, min, sum, print,
-        _slice, _list, _tuple, _dict, _str}
+export {
+    assert, hasattr, getattr, setattr, hash, len, range, xrange, map, zip, isinstance, bool, abs, max, min, sum, print, iter,
+    iterate, _slice, _list, _tuple, _dict, _str
+}

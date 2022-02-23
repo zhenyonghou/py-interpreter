@@ -6,7 +6,7 @@ import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import { AttributeRet, ConstantRet, keywordRet, KV, NameRet, StarredRet} from '../types'
 import {FunctionDefData} from './FunctionDef'
-import { _dict, _list, _tuple } from '../python/builtins'
+import { _dict, _list, _tuple, iterate, iter} from '../python/builtins'
 
 /**
  * 函数调用
@@ -142,7 +142,9 @@ const Call = {
             if (ctx.argN_ > 0) {
                 if (ctx.value_ instanceof StarredRet) {
                     const list = ScopeHelper.lookupX(state.scope, ctx.value_.name) as _list
-                    ctx.args_.push(...list._items)
+                    iterate(iter(list), (item: any) => {
+                        ctx.args_.push(item)
+                    })
                 } else {
                     const arg = ScopeHelper.lookupX(state.scope, ctx.value_)
                     ctx.args_.push(arg)

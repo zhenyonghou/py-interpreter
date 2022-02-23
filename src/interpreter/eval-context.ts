@@ -44,10 +44,11 @@ class ExprContext extends BaseEvalContext {
 class CallContext extends BaseEvalContext {
     funcStep_: number = 0
     argN_: number = 0
+    // args_: _list = new _list()
     args_: Array<any> = []
     keywordsN_: number = 0
     keywords_: Array<keywordRet> = []
-    func_: NameRet | AttributeRet
+    func_: NameRet | AttributeRet = null
     doneExec_: boolean = false
 }
 
@@ -179,6 +180,10 @@ class SliceContext extends BaseEvalContext {
     stepValue_: any = null
 }
 
+class ImportContext extends BaseEvalContext {
+    n_: number = 0
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -211,6 +216,7 @@ const ContextSets: KV = {
     Attribute: AttributeContext,
     Delete: DeleteContext,
     Slice: SliceContext,
+    Import: ImportContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -224,4 +230,5 @@ const createContext = (node: AstTree.Node) => {
 export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
     CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
     WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
-    keywordContext, ModFormatContext, SubscriptContext, AttributeContext, DeleteContext, SliceContext, createContext}
+    keywordContext, ModFormatContext, SubscriptContext, AttributeContext, DeleteContext, SliceContext, ImportContext, 
+    createContext}
