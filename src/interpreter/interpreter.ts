@@ -7,10 +7,10 @@ import {Declaration, globalDeclaration} from './declaration'
 import * as pyBuiltins from './python/builtins'
 
 class Interpreter {
-    ast: AstTree.Node
-    stateStack: StateStack
+    ast: AstTree.Node = null
+    stateStack: StateStack = []
 
-    nodeEval: NodeEval
+    nodeEval: NodeEval = null
 
     // 设置成静态变量吧
     static GlobalDeclaration: Declaration = globalDeclaration
