@@ -1,6 +1,6 @@
 import {State} from './state'
 
-const printLog = true
+const printLog = false
 
 const evalBegin = (state: State) => {
     if (printLog) {

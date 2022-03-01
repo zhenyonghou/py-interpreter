@@ -11,7 +11,7 @@ module.exports = {
     },
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dest'),
+        path: path.resolve(__dirname, 'dist'),
         clean: true,
         publicPath: '/',    // 如果不设置，输出包的路径前面就没有/符号,找vendor.js的时候会定位错误。
     },
@@ -40,7 +40,7 @@ module.exports = {
     ],
     devServer: {
         static: {
-            directory: path.join(__dirname, 'dest'),
+            directory: path.join(__dirname, 'dist'),
         },
         compress: true,
         port: PORT,
