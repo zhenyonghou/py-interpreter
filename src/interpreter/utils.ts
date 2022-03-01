@@ -1,6 +1,6 @@
 import {State} from './state'
 
-const printLog = false
+const printLog = (process.env.INTERPRETER_STACK_LOG == '1')
 
 const evalBegin = (state: State) => {
     if (printLog) {

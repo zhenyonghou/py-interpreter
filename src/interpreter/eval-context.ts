@@ -55,20 +55,20 @@ class CallContext extends BaseEvalContext {
 class BinOpContext extends BaseEvalContext {
     leftDone_: boolean = false
     rightDone_: boolean = false
-    right_: any
+    right_: any = null
 
     modeFormatting: boolean = false
 }
 
 class CompareContext extends BaseEvalContext {
     leftDone_: boolean = false
-    left_: any
+    left_: any = null
     n_: number = 0
 }
 
 class BoolOpContext extends BaseEvalContext {
     n_: number = 0
-    left_: any
+    left_: any = null
 }
 
 class UnaryOpContext extends BaseEvalContext {
