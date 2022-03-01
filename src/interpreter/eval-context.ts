@@ -68,7 +68,7 @@ class CompareContext extends BaseEvalContext {
 
 class BoolOpContext extends BaseEvalContext {
     n_: number = 0
-    left_: any = null
+    leftValue_: boolean = false
 }
 
 class UnaryOpContext extends BaseEvalContext {

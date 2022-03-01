@@ -2,9 +2,7 @@
 import Utils from './utils';
 import Auth from './auth';
 
-// const FETCH_HOST = process.env.NODE_ENV === 'development' ? 'https://g-op-api.imwatt.com': 'https://g-op-api.imwatt.com'
-// const FETCH_HOST = 'http://47.100.73.157:7475'
-const FETCH_HOST = 'http://127.0.0.1:7475'
+const FETCH_HOST = 'http://lp-pyast-api.imwatt.com'
 
 interface Kv {
   [key: string]: any
