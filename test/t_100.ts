@@ -1,4 +1,4 @@
-// 作用域
+// 作用域: global
 const pycode = `\
 g1 = 0
 g2 = 0
@@ -8,7 +8,7 @@ def func():
     g2 = 200
 
 func()
-print(g1)
-print(g2)
+assert g1 == 100
+assert g2 == 0
 `
 export default pycode

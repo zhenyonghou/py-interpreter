@@ -44,17 +44,11 @@ const BinOp = {
         let value
         switch(operator) {
             case 'Add':
-                if (leftValue instanceof Object || rightValue instanceof Object) {
-                    if (leftValue instanceof _str && rightValue instanceof _str) {
-                        let s = leftValue._obj.concat(rightValue._obj)
-                        value = new _str(s)
-                    } else if (leftValue instanceof _tuple && rightValue instanceof _tuple) {
-                        value = leftValue.__concat__(rightValue)
-                    } else if (leftValue instanceof _list && rightValue instanceof _list) {
-                        value = leftValue.__concat__(rightValue)
-                    } else {
-                        Assert(false, `未支持的类型`)
-                    }
+                if ('__concat__' in leftValue) {
+                    value = leftValue.__concat__(rightValue)
+                } else if (leftValue instanceof _str && rightValue instanceof _str) {
+                    let s = leftValue._obj.concat(rightValue._obj)
+                    value = new _str(s)
                 } else {
                     value = leftValue + rightValue
                 }
@@ -63,12 +57,7 @@ const BinOp = {
                 value = leftValue - rightValue
                 break
             case 'Mult':
-                if (leftValue instanceof _list && typeof rightValue == 'number') {
-                    value = leftValue
-                    for (let i = 0; i < rightValue; i++) {
-                        value = value.__concat__(leftValue)
-                    }
-                } else if (leftValue instanceof _tuple && typeof rightValue == 'number') {
+                if ((leftValue instanceof _list || leftValue instanceof _tuple) && typeof rightValue == 'number') {
                     value = leftValue
                     for (let i = 0; i < rightValue; i++) {
                         value = value.__concat__(leftValue)
@@ -78,7 +67,11 @@ const BinOp = {
                 }
                 break
             case 'Div':
-                value = leftValue / rightValue; break;
+                value = leftValue / rightValue
+                break
+            case 'FloorDiv':
+                value = Math.floor(leftValue / rightValue)
+                break
             case 'Mod':
                 if (typeof leftValue == 'number' && typeof rightValue == 'number') {
                     value = leftValue % rightValue

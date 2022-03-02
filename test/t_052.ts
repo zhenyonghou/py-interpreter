@@ -1,14 +1,7 @@
-// 控制 - while + if
+// 控制 - if
 const pycode = `\
-a = 0
-while a < 100:
-    a += 1
-    if a == 2:
-        continue
-    elif a == 3:
-        break
-    elif a == 4:
-        return
-print(a)
+a = 100
+b = a if a > 100 else 9
+assert b == 9
 `
 export default pycode

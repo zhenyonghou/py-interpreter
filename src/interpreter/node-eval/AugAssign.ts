@@ -28,11 +28,9 @@ const AugAssign = {
             return new State(node.target, state.scope)
         }
 
-        Assert(ctx.value_ instanceof NameRet)
-
-        let value = ScopeHelper.lookupX(state.scope, ctx.value_)
         const operator = node.op.type
         if (ctx.value_ instanceof NameRet) {
+            let value = ScopeHelper.lookupX(state.scope, ctx.value_.name)
             switch(operator) {
                 case "Add":
                     value += ctx.rightValue_
@@ -54,38 +52,39 @@ const AugAssign = {
             }
             state.scope.set(ctx.value_.name, value)
         } else if (ctx.value_ instanceof SubscriptRet) {
+            let value = ScopeHelper.lookupX(state.scope, ctx.value_)
             const {obj, slice} = ctx.value_
             switch(operator) {
                 case "Add":
-                    if (obj.hasOwnProperty('__setitem__')) {
+                    if ('__setitem__' in obj) {
                         obj.__setitem__(slice, value + ctx.rightValue_)
                     } else {
                         obj[slice] = value + ctx.rightValue_
                     }
                     break
                 case "Sub":
-                    if (obj.hasOwnProperty('__setitem__')) {
+                    if ('__setitem__' in obj) {
                         obj.__setitem__(slice, value - ctx.rightValue_)
                     } else {
                         obj[slice] = value - ctx.rightValue_
                     }
                     break
                 case "Mult":
-                    if (obj.hasOwnProperty('__setitem__')) {
+                    if ('__setitem__' in obj) {
                         obj.__setitem__(slice, value * ctx.rightValue_)
                     } else {
                         obj[slice] = value * ctx.rightValue_
                     }
                     break
                 case "Div":
-                    if (obj.hasOwnProperty('__setitem__')) {
+                    if ('__setitem__' in obj) {
                         obj.__setitem__(slice, value / ctx.rightValue_)
                     } else {
                         obj[slice] = value / ctx.rightValue_
                     }
                     break
                 case "Mod":
-                    if (obj.hasOwnProperty('__setitem__')) {
+                    if ('__setitem__' in obj) {
                         obj.__setitem__(slice, value % ctx.rightValue_)
                     } else {
                         obj[slice] = value % ctx.rightValue_

@@ -48,7 +48,11 @@ class ScopeHelper {
         } else if (x instanceof ConstantRet) {
             return x.value
         } else if (x instanceof NameRet) {
-            return ScopeHelper.lookup(scope, x.name)
+            if (x.ctxType == "Store") {
+                return x
+            } else {
+                return ScopeHelper.lookup(scope, x.name)
+            }
         } else if (x instanceof SubscriptRet) {
             if ('__getitem__' in x.obj) {
                 return x.obj.__getitem__(x.slice)
@@ -60,32 +64,6 @@ class ScopeHelper {
             throw new Error(`lookupX不支持该类型:${x}`)
         }
     }
-
-    // static lookupX(scope: Scope, x: string|IdentifierRet|MemberRet|LiteralRet|ArrayRet): any {
-    //     if (typeof x === "string") {
-    //         return ScopeHelper.lookup(scope, x)
-    //     } else if (x instanceof IdentifierRet) {
-    //         return ScopeHelper.lookup(scope, x.name)
-    //     } else if (x instanceof MemberRet) {
-    //         return ScopeHelper.lookupMember(scope, x.objName, x.prop)
-    //     } else if (x instanceof LiteralRet) {   // 严格来说这里没有职责查字面量，为了避免外部忘记处理，这里还是处理下
-    //         return x.value
-    //     } else if (x instanceof FunctionRet) {
-    //         return x.value
-    //     } else if (Array.isArray(x)) {   // 严格来说该类型不需要从scope查，为了避免外部忘记处理，这里还是处理下
-    //         let ret = []
-    //         for (let i = 0; i < x.length; i++) {
-    //             if (x[i] instanceof Object) {
-    //                 ret.push(ScopeHelper.lookupX(scope, x[i]))
-    //             }
-    //         }
-    //         return ret
-    //     } else {
-    //         // console.warn('lookupX好像不支持该类型:', x)
-    //         throw new Error(`lookupX不支持该类型:${x}`)
-    //         return x
-    //     }
-    // }
 }
 
 export default ScopeHelper

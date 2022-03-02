@@ -1,8 +1,9 @@
 // 控制 - while
 const pycode = `\
 a = 0
-while a < 100:
+while a < 10:
     a += 1
-    print(a)
+
+assert a == 10
 `
 export default pycode

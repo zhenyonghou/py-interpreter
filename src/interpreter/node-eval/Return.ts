@@ -16,6 +16,13 @@ const Return = {
 
         if (!ctx.retValueDone_) {
             ctx.retValueDone_ = true
+            if (node.value == null) {
+                ss.pop()
+                ss[ss.length - 1].ctx.control_ = ControlKey.Return
+                ss[ss.length - 1].ctx.returnData_ = ctx.value_
+                evalEnd(state)
+                return
+            }
             return new State(node.value, state.scope)
         }
 

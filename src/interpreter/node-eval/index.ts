@@ -1,6 +1,7 @@
 import Module from './Module'
 import Assign from './Assign'
 import AugAssign from './AugAssign'
+import Assert from './Assert'
 import Name from './Name'
 import Expr from './Expr'
 import Call from './Call'
@@ -15,6 +16,7 @@ import Tuple from './Tuple'
 import While from './While'
 import For from './For'
 import If from './If'
+import IfExp from './IfExp'
 import Pass from './Pass'
 import Continue from './Continue'
 import Break from './Break'
@@ -44,6 +46,7 @@ class NodeEval extends Map {
         this.addEval(Module)
         this.addEval(Assign)
         this.addEval(AugAssign)
+        this.addEval(Assert)
         this.addEval(Constant)
         this.addEval(Name)
         this.addEval(Expr)
@@ -58,6 +61,7 @@ class NodeEval extends Map {
         this.addEval(While)
         this.addEval(For)
         this.addEval(If)
+        this.addEval(IfExp)
         this.addEval(Pass)
         this.addEval(Continue)
         this.addEval(Break)

@@ -15,7 +15,7 @@ const Name = {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new NameRet(node.id)
+        ss[ss.length - 1].ctx.value_ = new NameRet(node.id, node.ctx.type)
         evalEnd(state)
     }
 }

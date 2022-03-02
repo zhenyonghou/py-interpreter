@@ -910,8 +910,8 @@ class _dict {
     }
 }
 
-_dict.__name__ = 'dict';
-_dict.prototype.__class__ = _dict;
+_dict.__name__ = 'dict'
+_dict.prototype.__class__ = _dict
 
 // ============ str ============
 
@@ -1156,8 +1156,8 @@ class _str {
     }
 }
 
-_str.__name__ = 'str';
-_str.prototype.__class__ = _str;
+_str.__name__ = 'str'
+_str.prototype.__class__ = _str // 为啥要加到原型里啊
 
 export {
     assert, hasattr, getattr, setattr, hash, len, range, xrange, map, zip, isinstance, bool, abs, max, min, sum, print, iter,

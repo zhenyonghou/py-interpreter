@@ -8,6 +8,11 @@ interface BaseNode {
     type: string
 }
 
+// Name里的结构
+interface ctx {
+    type: "Load" | "Store"
+}
+
 /**
 {
     "type": "Name",
@@ -20,7 +25,7 @@ interface BaseNode {
 interface Name extends BaseNode {
     type: "Name"
     id: string
-    ctx: object
+    ctx: ctx
 }
 
 /**
@@ -62,6 +67,12 @@ interface AugAssignOperator extends BaseNode {
     type: "Add" | "Sub" | "Mult" | "Div" | "Mod"
 }
 
+interface Assert extends BaseNode {
+    type: "Assert"
+    test: Constant | Name | Compare
+    msg: string
+}
+
 interface keyword extends BaseNode {
     type: "keyword"
     arg: string
@@ -83,7 +94,7 @@ interface BinOp extends BaseNode {
 }
 
 interface BinOpOperator extends BaseNode {
-    type: "Add" | "Sub" | "Mult" | "Div" | "Mod" | "Pow" | "BitAnd" | "BitOr" | "BitXor" | "LShift" | "RShift"
+    type: "Add" | "Sub" | "Mult" | "Div" | "FloorDiv" | "Mod" | "Pow" | "BitAnd" | "BitOr" | "BitXor" | "LShift" | "RShift"
 }
 
 interface Compare extends BaseNode {
@@ -144,6 +155,13 @@ interface If extends BaseNode {
     test: any
     body: Array<any>
     orelse: Array<any>
+}
+
+interface IfExp extends BaseNode {
+    type: "IfExp"
+    test: any
+    body: any
+    orelse: any
 }
 
 interface Pass extends BaseNode {
@@ -255,12 +273,12 @@ interface alias extends BaseNode {
     asname: any     // null
 }
 
-type Node = Name | Constant | Module| Expr | Assign | AugAssign | Call | BinOp | BinOpOperator | Compare | CompareOperator 
-    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | Continue | Break | Return 
+type Node = Name | Constant | Module| Expr | Assign | AugAssign | Assert | Call | BinOp | BinOpOperator | Compare | CompareOperator 
+    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | IfExp | Continue | Break | Return 
     | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat | Subscript | Attribute | Delete
     | Slice | Import | alias
 
 export {Node, NodeType,
-    Name, Constant, Module, Expr, Assign, AugAssign, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, Continue, Break, Return, FunctionDef, FunctionRun, Starred, 
-    keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice, Import, alias}
+    Name, Constant, Module, Expr, Assign, AugAssign, Assert, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
+    UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, IfExp, Continue, Break, Return, FunctionDef, FunctionRun, 
+    Starred, keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice, Import, alias}

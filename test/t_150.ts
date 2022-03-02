@@ -1,6 +1,6 @@
 // 作用域
 const pycode = `\
 s = "%-5sage is %d" % ("mumu", 9)
-print(s)
+assert s == "mumu age is 9"
 `
 export default pycode

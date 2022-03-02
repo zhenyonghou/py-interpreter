@@ -6,7 +6,8 @@ b = 1
 c = 1
 d = 0
 
-print(a and b and c and d)
+assert (a and b and c)
+assert (a and b and c and d) == False
 `
 export default pycode
 

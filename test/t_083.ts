@@ -1,12 +1,13 @@
 // function 缺省参数
 const pycode = `\
-def print_numbers(*args):            
+def print_numbers(*args):
+    i = 0
     for n in args:
-      print(n)
+        if i == 1:
+            print(n)
+            assert n == "w"
+        i += 1
 
 print_numbers("hello", "w", "orld")
-
-l = [1, 2, 3, 4]
-print_numbers(*l)
 `
 export default pycode

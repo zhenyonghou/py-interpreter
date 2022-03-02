@@ -3,14 +3,14 @@
 const pycode = `\
 a = 2
 b = 3
-print(2 == 3)
-print(a != b)
-a > b
-a >= b
+c = 4
+assert 1 == 1
+assert a != b
+assert a < b
+assert a <= b
+assert c > a
+assert c >= b
 
-a < b
-a <= b
-
-print(a > b < c)
+assert (a < b < c)
 `
 export default pycode

@@ -2,10 +2,10 @@
 const pycode = `\
 a = 100
 if a < 2:
-    print('a < 2')
+    assert False
 elif a < 50:
-    print('a < 50')
+    assert False
 else:
-    print('else')
+    assert True
 `
 export default pycode

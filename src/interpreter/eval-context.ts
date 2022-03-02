@@ -29,6 +29,10 @@ class AugAssignContext extends BaseEvalContext {
     rightValue_: any = null
 }
 
+class AssertContext extends BaseEvalContext {
+    testDone_: boolean = false
+}
+
 class ConstantContext extends BaseEvalContext {
 
 }
@@ -126,8 +130,14 @@ class ForContext extends BaseEvalContext {
 class IfContext extends BaseEvalContext {
     n_: number = 0
 
-    testValue_: any
+    testValue_: any = null
     bodyN_: number = 0
+}
+
+class IfExpContext extends BaseEvalContext {
+    n_: number = 0
+    testValue_: any = null
+    done_: boolean = false
 }
 
 class ReturnContext extends BaseEvalContext {
@@ -163,7 +173,6 @@ class SubscriptContext extends BaseEvalContext {
 class AttributeContext extends BaseEvalContext {
     valueDone_: boolean = false
     attributeValue_: any = null
-    // attrDone_: boolean = false
 }
 
 class DeleteContext extends BaseEvalContext {
@@ -188,6 +197,7 @@ const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
     AugAssign: AugAssignContext,
+    Assert: AssertContext,
     Constant: ConstantContext,
     Name: NameContext,
     Expr: ExprContext,
@@ -202,6 +212,7 @@ const ContextSets: KV = {
     While: WhileContext,
     For: ForContext,
     If: IfContext,
+    IfExp: IfExpContext,
     Pass: BaseEvalContext,
     Continue: BaseEvalContext,
     Break: BaseEvalContext,
@@ -227,8 +238,8 @@ const createContext = (node: AstTree.Node) => {
     }
 }
 
-export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, ConstantContext, NameContext, ExprContext, 
-    CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
-    WhileContext, ForContext, IfContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
+export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, AssertContext, ConstantContext, NameContext, 
+    ExprContext, CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
+    WhileContext, ForContext, IfContext, IfExpContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
     keywordContext, ModFormatContext, SubscriptContext, AttributeContext, DeleteContext, SliceContext, ImportContext, 
     createContext}

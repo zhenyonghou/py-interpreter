@@ -21,8 +21,10 @@ class ConstantRet {
 
 class NameRet {
     name: string
-    constructor(v: string) {
+    ctxType: "Load" | "Store"
+    constructor(v: string, ctxType: "Load" | "Store") {
         this.name = v
+        this.ctxType = ctxType
     }
 }
 
@@ -61,12 +63,5 @@ class AttributeRet {
         this.attr = attr
     }
 }
-
-// class SimpleValue {
-//     value: any
-//     constructor(v: any) {
-//         this.value = v
-//     }
-// }
 
 export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet}

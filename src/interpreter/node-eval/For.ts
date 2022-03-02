@@ -3,6 +3,7 @@ import {State, StateStack} from '../state'
 import {Assert, evalBegin, evalEnd} from '../utils'
 import {ForContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
+import { _list, _tuple } from '../python/builtins'
 
 /**
  * 遇到break时候结束程序，不需要通知上层；遇到return时需要告知上层
@@ -45,7 +46,14 @@ const For = {
         }
 
         if (ctx.iterIndex_ == 0) {
-            ctx.iterValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+            const tempValue = ScopeHelper.lookupX(state.scope, ctx.value_)
+            if (tempValue instanceof _tuple) {
+                ctx.iterValue_ = tempValue._items
+            } else if (tempValue instanceof _list) {
+                ctx.iterValue_ = tempValue._items
+            } else {
+                ctx.iterValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+            }
         }
 
         if (ctx.iterIndex_ < ctx.iterValue_.length) {

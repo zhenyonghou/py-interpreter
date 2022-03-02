@@ -10,7 +10,7 @@ del x
 # 删除列表中的项目
 l = ["hello", "xianlin", "i", "love"]
 del l[0]
-print(l)
+assert l[0] == "xianlin"
 
 # 删除具有指定键名的项目
 thisdict =	{
@@ -19,7 +19,8 @@ thisdict =	{
     "year": 1963
 }
 del thisdict["model"]
-print(thisdict)
+
+assert thisdict.get('model') == None
 `
 export default pycode
 
