@@ -1,20 +1,20 @@
 // 控制 - for
 
 const pycode = `\
-
-n = 0
+l = []
 for x in range(5, 9):
-    if n == 3:
-        assert x == 7
-    n += 1
+    l.append(x)
 
-n = 0
+print(l)
+assert len(l) == 4
+assert l[0] == 5
+
+l2 = []
 languages = ["english", "chinese"]
 for x in languages:
-    if n == 1:
-        assert x == 'chinese'
-    n += 1
+    l2.append(x)
 
+assert l2[0] == "english"
 `
 
 export default pycode

@@ -44,11 +44,13 @@ const BinOp = {
         let value
         switch(operator) {
             case 'Add':
-                if ('__concat__' in leftValue) {
-                    value = leftValue.__concat__(rightValue)
-                } else if (leftValue instanceof _str && rightValue instanceof _str) {
-                    let s = leftValue._obj.concat(rightValue._obj)
-                    value = new _str(s)
+                if (leftValue instanceof Object) {
+                    if ('__concat__' in leftValue) {
+                        value = leftValue.__concat__(rightValue)
+                    } else if (leftValue instanceof _str && rightValue instanceof _str) {
+                        let s = leftValue._obj.concat(rightValue._obj)
+                        value = new _str(s)
+                    }
                 } else {
                     value = leftValue + rightValue
                 }

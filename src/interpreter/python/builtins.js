@@ -1161,5 +1161,5 @@ _str.prototype.__class__ = _str // 为啥要加到原型里啊
 
 export {
     assert, hasattr, getattr, setattr, hash, len, range, xrange, map, zip, isinstance, bool, abs, max, min, sum, print, iter,
-    iterate, _slice, _list, _tuple, _dict, _str
+    iterate, _slice, _list, _tuple, _dict, _str, _iter
 }

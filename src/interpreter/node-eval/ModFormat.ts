@@ -2,6 +2,7 @@ import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {Assert, evalBegin, evalEnd} from '../utils'
 import {ModFormatContext} from '../eval-context'
+import ScopeHelper from '../scope-helper'
 import {ConstantRet} from '../types'
 import { _tuple, _str} from '../python/builtins'
 
@@ -168,7 +169,7 @@ const ModFormat = {
             return new State(node.right, state.scope)
         }
 
-        let rightValue = (ctx.value_ as ConstantRet).value
+        let rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)
 
         if (!(rightValue instanceof _tuple)) {
             rightValue = new _tuple([rightValue])
