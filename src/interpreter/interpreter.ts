@@ -18,6 +18,7 @@ class Interpreter {
     onDone: () => void
 
     constructor() {
+        console.log('PI VERSION:', process.env.VERSION)
         this.nodeEval = new NodeEval()
         this.nodeEval.init()
 
