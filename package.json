@@ -23,8 +23,6 @@
     "webpack-dev-server": "^4.5.0"
   },
   "dependencies": {
-    "@types/estree": "^0.0.50",
-    "acorn": "^8.7.0",
     "d3-time-format": "^4.1.0",
     "moment": "^2.29.1",
     "pako": "^2.0.4"
