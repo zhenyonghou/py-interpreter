@@ -1,4 +1,3 @@
-import moment from 'moment'
 
 export default class Utils {
   static GetTimestamp() {
@@ -11,10 +10,6 @@ export default class Utils {
       arr.push(`${k}=${obj[k]}`);
     }
     return ('?' + arr.join('&'));
-  }
-
-  static unixToTime(unix: number, format = 'YYYY-MM-DD HH:mm') {
-    return moment.unix(unix).format(format)
   }
 
   static scrollToTop() {
