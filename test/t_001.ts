@@ -4,9 +4,9 @@ const pycode = `\
 a = 21
 b = 10
 c = 0
-a = -6 # 兼测负号
+d = -6 # 兼测负号
 
-assert a == 21
+assert(a == 21, "a == 21")
 assert b == 10
 assert c == 0
 assert d == -6

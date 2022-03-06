@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = {
     // devtool: 'inline-source-map',
     entry: {
-        pi: './src/interpreter/interpreter.ts',
+        PI: './src/interpreter/interpreter.ts',
         test: './test/index.ts'
     },
     output: {
@@ -12,10 +12,10 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         clean: true,
         publicPath: '/',    // 如果不设置，输出包的路径前面就没有/符号,找vendor.js的时候会定位错误。
-        library: {
-            name: 'PI',
-            type: 'umd',
-        },
+        // library: {
+        //     name: 'PI',
+        //     type: 'umd',
+        // },
     },
     resolve: {
         extensions: ['.js', '.ts']
