@@ -27,6 +27,10 @@ class Interpreter {
     }
 
     init(ast: AstTree.Node) {
+        this.reset(ast)
+    }
+
+    reset(ast: AstTree.Node) {
         this.ast = ast
         const scope = new Scope(ScopeType.Function, null)
         this.stateStack = [new State(this.ast, scope)]

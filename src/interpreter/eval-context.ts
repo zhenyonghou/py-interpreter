@@ -10,11 +10,8 @@ class BaseEvalContext {
 }
 
 class ModuleContext extends BaseEvalContext {
-    done_: boolean
-    constructor() {
-        super()
-        this.done_ = false
-    }
+    n_: number = 0
+    done_: boolean = false
 }
 
 class AssignContext extends BaseEvalContext {

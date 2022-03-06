@@ -8,11 +8,10 @@ const Module = {
         const node = state.node as AstTree.Module
         const ctx = state.ctx as ModuleContext
 
-        let expression = node.body.shift()
-        if (expression) {
-            ctx.done_ = false
-            return new State(expression, state.scope)
+        if (ctx.n_ < node.body.length) {
+            return new State(node.body[ctx.n_++], state.scope)
         }
+
         ctx.done_ = true
     }
 }
