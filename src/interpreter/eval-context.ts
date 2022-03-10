@@ -1,6 +1,7 @@
 import * as AstTree from './ast-tree'
-import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './types'
+import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet, MetaClass} from './types'
 import {_list, _dict, _tuple} from './python/builtins'
+import {Scope, ScopeType} from './scope'
 
 class BaseEvalContext {
     begin: boolean = false
@@ -190,6 +191,20 @@ class ImportContext extends BaseEvalContext {
     n_: number = 0
 }
 
+class ClassDefContext extends BaseEvalContext {
+    bodyN_: number = 0
+    cls: MetaClass = new MetaClass()
+    scope: Scope = null
+}
+
+class CreateInstanceContext extends BaseEvalContext {
+    initDone_: boolean = false
+    
+    obj: KV = {
+    }
+
+}
+
 const ContextSets: KV = {
     Module: ModuleContext,
     Assign: AssignContext,
@@ -225,6 +240,8 @@ const ContextSets: KV = {
     Delete: DeleteContext,
     Slice: SliceContext,
     Import: ImportContext,
+    ClassDef: ClassDefContext,
+    CreateInstance: CreateInstanceContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -239,4 +256,5 @@ export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, AssertC
     ExprContext, CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
     WhileContext, ForContext, IfContext, IfExpContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
     keywordContext, ModFormatContext, SubscriptContext, AttributeContext, DeleteContext, SliceContext, ImportContext, 
+    ClassDefContext, CreateInstanceContext,
     createContext}

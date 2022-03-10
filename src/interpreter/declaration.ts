@@ -32,6 +32,15 @@ class Declaration {
             }
         }
     }
+
+    // 遍历存储的数据
+    forEach(callbackfn: (key: string, value: any) => void) {
+        Object.getOwnPropertyNames(this).forEach((key: string) => {
+            if (key.startsWith(KeyPrefix)) {
+                callbackfn(key.substring(KeyPrefix.length), this[key])
+            }
+        })
+    }
 }
 
 const globalDeclaration = new Declaration()

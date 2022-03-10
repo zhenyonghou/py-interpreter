@@ -3,8 +3,12 @@ import {State, StateStack} from '../state'
 import {AssignContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {evalBegin, evalEnd, Assert} from '../utils'
-import { NameRet, ConstantRet, SubscriptRet} from '../types'
+import { NameRet, ConstantRet, SubscriptRet, AttributeRet} from '../types'
 import {_tuple, iterate, iter} from '../python/builtins'
+
+/**
+ * targets有多个，value只有一个，先解析value
+ */
 
 const Assign = {
     type: "Assign",
@@ -22,11 +26,13 @@ const Assign = {
             return new State(node.value, state.scope)
         }
 
+        if (ctx.targetIndex_ == 0) {
+            // 解析出value，给targets赋值用
+            ctx.assignValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+        }
+
         if (ctx.targetIndex_ <= node.targets.length) {
-            if (ctx.targetIndex_ == 0) {
-                ctx.assignValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
-            } else {
-                // 处理上一次解析完的target(变量名)
+            if (ctx.targetIndex_ > 0) { // 处理上一次解析完的target(变量名)
                 if (ctx.value_ instanceof NameRet) {
                     state.scope.set(ctx.value_.name, ctx.assignValue_)
                 } else if (ctx.value_ instanceof SubscriptRet) {
@@ -50,6 +56,8 @@ const Assign = {
                     } else {
                         Assert(false, `Assign有不支持的类型2`)
                     }
+                } else if (ctx.value_ instanceof AttributeRet) {
+                    ctx.value_.obj[ctx.value_.attr] = ctx.assignValue_
                 } else {
                     Assert(false, `Assign有不支持的类型`)
                 }

@@ -1,4 +1,5 @@
 import { _str } from "./python/builtins"
+import { MetaClass } from "./types"
 
 enum NodeType {
     Module = "Module"
@@ -273,12 +274,26 @@ interface alias extends BaseNode {
     asname: any     // null
 }
 
+interface ClassDef extends BaseNode {
+    type: "ClassDef",
+    name: string,
+    bases: Array<any>,
+    keywords: Array<any>,
+    body: Array<any>,
+}
+
+// 自定义的节点，在函数执行时使用
+class CreateInstance implements BaseNode {
+    type: string = "CreateInstance"
+    metaClass: MetaClass = null
+}
+
 type Node = Name | Constant | Module| Expr | Assign | AugAssign | Assert | Call | BinOp | BinOpOperator | Compare | CompareOperator 
     | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | IfExp | Continue | Break | Return 
     | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat | Subscript | Attribute | Delete
-    | Slice | Import | alias
+    | Slice | Import | alias | ClassDef | CreateInstance
 
 export {Node, NodeType,
     Name, Constant, Module, Expr, Assign, AugAssign, Assert, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
     UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, IfExp, Continue, Break, Return, FunctionDef, FunctionRun, 
-    Starred, keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice, Import, alias}
+    Starred, keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice, Import, alias, ClassDef, CreateInstance}

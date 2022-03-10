@@ -64,4 +64,10 @@ class AttributeRet {
     }
 }
 
-export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet}
+class MetaClass {
+    classname: string = ""
+    attributes: KV = {}
+    methods: KV = {}
+}
+
+export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet, MetaClass}

@@ -32,6 +32,8 @@ import Attribute from './Attribute'
 import Delete from './Delete'
 import Slice from './Slice'
 import Import from './Import'
+import ClassDef from './ClassDef'
+import CreateInstance from './CreateInstance'
 
 import {State, StateStack} from '../state'
 
@@ -77,6 +79,8 @@ class NodeEval extends Map {
         this.addEval(Delete)
         this.addEval(Slice)
         this.addEval(Import)
+        this.addEval(ClassDef)
+        this.addEval(CreateInstance)
     }
 
     addEval(e: IEval) {
