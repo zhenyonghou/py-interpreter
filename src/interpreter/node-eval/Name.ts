@@ -20,4 +20,8 @@ const Name = {
     }
 }
 
-export default Name
+const transName = (node: AstTree.Name) => {
+    return new NameRet(node.id, node.ctx.type)
+}
+
+export {Name, transName}

@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {WhileContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -39,7 +40,8 @@ const While = {
             ctx.n_++
 
             if (node.test) {
-                return new State(node.test, state.scope)
+                const [nextState, nodeValue] = newState(node.test, state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
             }
         }
 

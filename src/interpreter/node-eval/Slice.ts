@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {SliceContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -18,20 +19,23 @@ const Slice = {
 
         if (!ctx.lowerDone_) {
             ctx.lowerDone_ = true
-            return new State(node.lower, state.scope)
+            const [nextState, nodeValue] = newState(node.lower, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (!ctx.upperDone_) {
             ctx.upperDone_ = true
             ctx.lowerValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
-            return new State(node.upper, state.scope)
+            const [nextState, nodeValue] = newState(node.upper, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (!ctx.stepDone_) {
             ctx.stepDone_ = true
             ctx.upperValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
             if (node.step != null) {
-                return new State(node.step, state.scope)
+                const [nextState, nodeValue] = newState(node.step, state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
             }
         }
 

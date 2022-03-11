@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {Assert, evalBegin, evalEnd} from '../utils'
 import {keywordContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -17,7 +18,8 @@ const keyword = {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            return new State(node.value, state.scope)
+            const [nextState, nodeValue] = newState(node.value, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         let value = ScopeHelper.lookupX(state.scope, ctx.value_)

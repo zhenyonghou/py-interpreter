@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {Assert, evalBegin, evalEnd} from '../utils'
 import {ModFormatContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -166,7 +167,8 @@ const ModFormat = {
 
         if (!ctx.rightDone_) {
             ctx.rightDone_ = true
-            return new State(node.right, state.scope)
+            const [nextState, nodeValue] = newState(node.right, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         let rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)

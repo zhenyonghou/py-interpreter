@@ -1,11 +1,12 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
-import {Assert, evalBegin, evalEnd} from '../utils'
+import {evalBegin, evalEnd} from '../utils'
+import { newState } from './node-utils/utils'
 import {BinOpContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {ConstantRet} from '../types'
 import {ModFormat} from '../ast-tree'
-import { iterate, iter, _list, _str, _tuple } from '../python/builtins'
+import {_list, _str, _tuple } from '../python/builtins'
 
 const BinOp = {
     type: "BinOp",
@@ -19,7 +20,8 @@ const BinOp = {
 
         if (!ctx.rightDone_) {
             ctx.rightDone_ = true
-            return new State(node.right, state.scope)
+            const [nextState, nodeValue] = newState(node.right, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (!ctx.leftDone_) {
@@ -27,7 +29,8 @@ const BinOp = {
             ctx.right_ = ctx.value_
 
             ctx.leftDone_ = true
-            return new State(node.left, state.scope)
+            const [nextState, nodeValue] = newState(node.left, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (ctx.modeFormatting) {

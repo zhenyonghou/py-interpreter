@@ -1,7 +1,8 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {BoolOpContext} from '../eval-context'
-import {Assert, evalBegin, evalEnd} from '../utils'
+import {evalBegin, evalEnd} from '../utils'
 import {ConstantRet} from '../types'
 import ScopeHelper from '../scope-helper'
 
@@ -16,28 +17,34 @@ const BoolOp = {
             evalBegin(state)
         }
 
-        if (ctx.n_ <= node.values.length) {
+        while (ctx.n_ <= node.values.length) {
             if (ctx.n_ == 0) {
-                return new State(node.values[ctx.n_++], state.scope)
-            } else if (ctx.n_ == 1) {
+                const [nextState, nodeValue] = newState(node.values[ctx.n_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            }
+            if (ctx.n_ == 1) {
                 ctx.leftValue_ = ScopeHelper.lookupX(state.scope, ctx.value_) ? true : false
-                return new State(node.values[ctx.n_++], state.scope)
-            } else {
-                const rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)
+                const [nextState, nodeValue] = newState(node.values[ctx.n_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            }
 
-                const operator = node.op.type
-                switch(operator) {
-                    case "And":
-                        ctx.leftValue_ = ctx.leftValue_ && rightValue
-                        break
-                    case "Or":
-                        ctx.leftValue_ = ctx.leftValue_ || rightValue
-                        break
-                }
-                
-                if (ctx.n_ < node.values.length) {
-                    return new State(node.values[ctx.n_++], state.scope)
-                }
+            const rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)
+
+            const operator = node.op.type
+            switch(operator) {
+                case "And":
+                    ctx.leftValue_ = ctx.leftValue_ && rightValue
+                    break
+                case "Or":
+                    ctx.leftValue_ = ctx.leftValue_ || rightValue
+                    break
+            }
+            
+            if (ctx.n_ < node.values.length) {
+                const [nextState, nodeValue] = newState(node.values[ctx.n_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            } else {
+                ctx.n_++
             }
         }
 

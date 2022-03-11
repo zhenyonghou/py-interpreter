@@ -3,6 +3,7 @@ import {State, StateStack} from '../state'
 import {AssignContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {evalBegin, evalEnd, Assert} from '../utils'
+import { newState } from './node-utils/utils'
 import { NameRet, ConstantRet, SubscriptRet, AttributeRet} from '../types'
 import {_tuple, iterate, iter} from '../python/builtins'
 
@@ -23,7 +24,8 @@ const Assign = {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            return new State(node.value, state.scope)
+            const [nextState, nodeValue] = newState(node.value, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (ctx.targetIndex_ == 0) {
@@ -31,7 +33,7 @@ const Assign = {
             ctx.assignValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
         }
 
-        if (ctx.targetIndex_ <= node.targets.length) {
+        while (ctx.targetIndex_ <= node.targets.length) {
             if (ctx.targetIndex_ > 0) { // 处理上一次解析完的target(变量名)
                 if (ctx.value_ instanceof NameRet) {
                     state.scope.set(ctx.value_.name, ctx.assignValue_)
@@ -64,7 +66,8 @@ const Assign = {
             }
 
             if (ctx.targetIndex_ < node.targets.length) {
-                return new State(node.targets[ctx.targetIndex_++], state.scope)
+                const [nextState, nodeValue] = newState(node.targets[ctx.targetIndex_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
             } else {
                 ctx.targetIndex_++
             }

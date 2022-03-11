@@ -77,6 +77,7 @@ const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, co
 const start = () => {
     const interpreter = new Interpreter()
 
+    const startTime = (new Date()).getTime()
     console.log("====================== test start ======================")
     codeList.forEach(async (pyCode, index) => {
         console.log("code index:", index)
@@ -87,6 +88,11 @@ const start = () => {
         interpreter.init(ast.ast as AstTree.Node)
 
         interpreter.run()
+
+        const endTime = (new Date()).getTime()
+        if (index == 31) {
+            console.log("耗时ms:", endTime - startTime)
+        }
     })
     console.log("====================== test end ======================")
 }

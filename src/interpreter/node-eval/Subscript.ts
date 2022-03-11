@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {SubscriptContext} from '../eval-context'
 import {SubscriptRet} from '../types'
@@ -19,13 +20,15 @@ const Subscript = {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            return new State(node.value, state.scope)
+            const [nextState, nodeValue] = newState(node.value, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (!ctx.sliceDone_) {
             ctx.sliceDone_ = true
             ctx.subscriptValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
-            return new State(node.slice, state.scope)
+            const [nextState, nodeValue] = newState(node.slice, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         let sliceValue: any = null

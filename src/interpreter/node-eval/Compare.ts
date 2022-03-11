@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {CompareContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -20,117 +21,118 @@ const Compare = {
 
         if (!ctx.leftDone_) {
             ctx.leftDone_ = true
-            return new State(node.left, state.scope)
+            const [nextState, nodeValue] = newState(node.left, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
-        if (ctx.n_ <= node.comparators.length) {
+        while (ctx.n_ <= node.comparators.length) {
             if (ctx.n_ == 0) {  // 解析left之后, 解析第0个comparator
                 ctx.left_ = ctx.value_
-                return new State(node.comparators[ctx.n_++], state.scope)
-            } else {
-                // 比较
-                const leftValue = ScopeHelper.lookupX(state.scope, ctx.left_)
-                const rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)
-                const operator = node.ops[ctx.n_-1].type // 直译前一个comparator operator
-                switch(operator) {
-                    case "Eq":
-                        if (leftValue instanceof _str) {    // 通过hasOwnProperty("__eq__")判断不行，__eq__是Object的属性
-                            if (!leftValue.__eq__(rightValue)) {
-                                ss.pop()
-                                ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                                evalEnd(state)
-                                return
-                            }
-                        } else {
-                            if (leftValue != rightValue) {  // 结束
-                                ss.pop()
-                                ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                                evalEnd(state)
-                                return
-                            }
-                        }
-                        break
-                    case "NotEq":
-                        if (leftValue instanceof _str) {
-                            if (leftValue.__eq__(rightValue)) {
-                                ss.pop()
-                                ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                                evalEnd(state)
-                                return
-                            }
-                        } else {
-                            if (leftValue == rightValue) {  // 结束
-                                ss.pop()
-                                ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                                evalEnd(state)
-                                return
-                            }
-                        }
-                        break
-                    case "Gt":
-                        if (leftValue <= rightValue) {  // 结束
-                            ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
-                            return
-                        }
-                        break
-                    case "GtE":
-                        if (leftValue < rightValue) {  // 结束
-                            ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
-                            return
-                        }
-                        break
-                    case "Lt":
-                        if (leftValue >= rightValue) {  // 结束
-                            ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
-                            return
-                        }
-                        break
-                    case "LtE":
-                        if (leftValue > rightValue) {  // 结束
-                            ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
-                            return
-                        }
-                        break
-                    case "In":
-                        if (!(rightValue.__contains__(leftValue))) {  // 结束
-                            ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
-                            return
-                        }
-                        break
-                    case "NotIn":
-                        if (rightValue.__contains__(leftValue)) {  // 结束
-                            ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
-                            return
-                        }
-                        break
-                    default:
-                        throw new Error(`未实现的操作符${operator}`)
-                }
+                const [nextState, nodeValue] = newState(node.comparators[ctx.n_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            }
 
-                if (ctx.n_ < node.comparators.length) {
-                    ctx.left_ = ctx.value_
-                    return new State(node.comparators[ctx.n_++], state.scope)
-                } else { // 结束
-                    ss.pop()
-                    ss[ss.length - 1].ctx.value_ = new ConstantRet(true)
-                    evalEnd(state)
-                    return
-                }
+            // 比较
+            const leftValue = ScopeHelper.lookupX(state.scope, ctx.left_)
+            const rightValue = ScopeHelper.lookupX(state.scope, ctx.value_)
+            const operator = node.ops[ctx.n_-1].type // 直译前一个comparator operator
+            switch(operator) {
+                case "Eq":
+                    if (leftValue instanceof _str) {    // 通过hasOwnProperty("__eq__")判断不行，__eq__是Object的属性
+                        if (!leftValue.__eq__(rightValue)) {
+                            ss.pop()
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            evalEnd(state)
+                            return
+                        }
+                    } else {
+                        if (leftValue != rightValue) {  // 结束
+                            ss.pop()
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            evalEnd(state)
+                            return
+                        }
+                    }
+                    break
+                case "NotEq":
+                    if (leftValue instanceof _str) {
+                        if (leftValue.__eq__(rightValue)) {
+                            ss.pop()
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            evalEnd(state)
+                            return
+                        }
+                    } else {
+                        if (leftValue == rightValue) {  // 结束
+                            ss.pop()
+                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            evalEnd(state)
+                            return
+                        }
+                    }
+                    break
+                case "Gt":
+                    if (leftValue <= rightValue) {  // 结束
+                        ss.pop()
+                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        evalEnd(state)
+                        return
+                    }
+                    break
+                case "GtE":
+                    if (leftValue < rightValue) {  // 结束
+                        ss.pop()
+                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        evalEnd(state)
+                        return
+                    }
+                    break
+                case "Lt":
+                    if (leftValue >= rightValue) {  // 结束
+                        ss.pop()
+                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        evalEnd(state)
+                        return
+                    }
+                    break
+                case "LtE":
+                    if (leftValue > rightValue) {  // 结束
+                        ss.pop()
+                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        evalEnd(state)
+                        return
+                    }
+                    break
+                case "In":
+                    if (!(rightValue.__contains__(leftValue))) {  // 结束
+                        ss.pop()
+                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        evalEnd(state)
+                        return
+                    }
+                    break
+                case "NotIn":
+                    if (rightValue.__contains__(leftValue)) {  // 结束
+                        ss.pop()
+                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        evalEnd(state)
+                        return
+                    }
+                    break
+                default:
+                    throw new Error(`未实现的操作符${operator}`)
+            }
+            if (ctx.n_ < node.comparators.length) {
+                ctx.left_ = ctx.value_
+                const [nextState, nodeValue] = newState(node.comparators[ctx.n_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            } else { // 结束
+                ss.pop()
+                ss[ss.length - 1].ctx.value_ = new ConstantRet(true)
+                evalEnd(state)
+                return
             }
         }
-
         ss.pop()
         evalEnd(state)
     }

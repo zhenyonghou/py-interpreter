@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {ListContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -15,21 +16,22 @@ const List = {
             evalBegin(state)
         }
 
-        if (ctx.n_ <= node.elts.length) {
+        while (ctx.n_ <= node.elts.length) {
             if (ctx.n_ > 0) {
                 const v = ScopeHelper.lookupX(state.scope, ctx.value_)
                 ctx.list_.append(v)
             }
 
             if (ctx.n_ < node.elts.length) {
-                return new State(node.elts[ctx.n_++], state.scope)
+                const [nextState, nodeValue] = newState(node.elts[ctx.n_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
             } else {
-                ss.pop()
-                ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.list_)
-                evalEnd(state)
-                return
+                ctx.n_++
             }
         }
+        ss.pop()
+        ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.list_)
+        evalEnd(state)
     }
 }
 

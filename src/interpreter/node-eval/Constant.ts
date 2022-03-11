@@ -29,4 +29,14 @@ const Constant = {
     }
 }
 
-export default Constant
+const transConstant = (node: AstTree.Constant) => {
+    let _ret = null
+    if (typeof node.value == 'string') {
+        _ret = new _str(node.value)
+    } else {
+        _ret = node.value
+    }
+    return new ConstantRet(_ret)
+}
+
+export {Constant, transConstant}

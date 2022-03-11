@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {DictContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
@@ -15,7 +16,7 @@ const Dict = {
             evalBegin(state)
         }
 
-        if (ctx.valueIndex_ <= node.values.length) {
+        while (ctx.valueIndex_ <= node.values.length) {
             if (ctx.valueIndex_ > 0) {
                 let key = node.keys[ctx.valueIndex_ - 1].value
                 const v = ScopeHelper.lookupX(state.scope, ctx.value_)
@@ -23,7 +24,8 @@ const Dict = {
             }
 
             if (ctx.valueIndex_ < node.values.length) {
-                return new State(node.values[ctx.valueIndex_++], state.scope)
+                const [nextState, nodeValue] = newState(node.values[ctx.valueIndex_++], state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
             } else {
                 ctx.valueIndex_++
             }

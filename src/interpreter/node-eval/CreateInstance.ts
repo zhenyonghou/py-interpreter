@@ -3,7 +3,7 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import { CreateInstanceContext } from '../eval-context'
 import { ConstantRet } from '../types'
-import { runFunction } from './utils/run-function'
+import { runFunction } from './node-utils/run-function'
 import { FunctionDefData } from './FunctionDef'
 
 const CreateInstance = {

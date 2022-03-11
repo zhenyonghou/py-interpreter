@@ -1,15 +1,15 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
-import {Scope, ScopeType} from '../scope'
-import {evalBegin, evalEnd, Assert} from '../utils'
+import { newState } from './node-utils/utils'
+import {evalBegin, evalEnd} from '../utils'
 import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import { AttributeRet, ConstantRet, keywordRet, KV, NameRet, StarredRet} from '../types'
+import { AttributeRet, ConstantRet, NameRet, StarredRet} from '../types'
 import {FunctionDefData} from './FunctionDef'
 import { MetaClass } from '../types'
 import { _dict, _list, _tuple, iterate, iter} from '../python/builtins'
-import {createInstance} from './utils/create-instance'
-import { runFunction } from './utils/run-function'
+import {createInstance} from './node-utils/create-instance'
+import { runFunction } from './node-utils/run-function'
 /**
  * 函数调用
  * 在执行func.apply时，如果是内置函数，直接返回结果；如果是自己写的函数，返回一个State，函数体在返回的State里执行
@@ -31,7 +31,8 @@ const Call = {
 
         if (ctx.funcStep_ == 0) {   // 解析func
             ctx.funcStep_ ++
-            return new State(node.func, state.scope)
+            const [nextState, nodeValue] = newState(node.func, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         if (ctx.funcStep_ == 1) {   // 解析完func
@@ -42,35 +43,41 @@ const Call = {
             ctx.argN_ = 0
         }
 
-        if (node.args && ctx.argN_ <= node.args.length) { // args not done
-            if (ctx.argN_ > 0) {
-                if (ctx.value_ instanceof StarredRet) {
-                    const list = ScopeHelper.lookupX(state.scope, ctx.value_.name) as _list
-                    iterate(iter(list), (item: any) => {
-                        ctx.args_.push(item)
-                    })
-                } else {
-                    const arg = ScopeHelper.lookupX(state.scope, ctx.value_)
-                    ctx.args_.push(arg)
+        if (node.args) {
+            while (ctx.argN_ <= node.args.length) {
+                if (ctx.argN_ > 0) {
+                    if (ctx.value_ instanceof StarredRet) {
+                        const list = ScopeHelper.lookupX(state.scope, ctx.value_.name) as _list
+                        iterate(iter(list), (item: any) => {
+                            ctx.args_.push(item)
+                        })
+                    } else {
+                        const arg = ScopeHelper.lookupX(state.scope, ctx.value_)
+                        ctx.args_.push(arg)
+                    }
                 }
-            }
 
-            if (ctx.argN_ < node.args.length) {
-                return new State(node.args[ctx.argN_++], state.scope)
-            } else {
-                ctx.argN_++
+                if (ctx.argN_ < node.args.length) {
+                    const [nextState, nodeValue] = newState(node.args[ctx.argN_++], state.scope)
+                    if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+                } else {
+                    ctx.argN_++
+                }
             }
         }
 
         // 解释keywords
-        if (node.keywords && ctx.keywordsN_ <= node.keywords.length) {
-            if (ctx.keywordsN_ > 0) {
-                ctx.keywords_.push(ctx.value_)  // item是keywordRet
-            }
-            if (ctx.keywordsN_ < node.keywords.length) {
-                return new State(node.keywords[ctx.keywordsN_++], state.scope)
-            } else {
-                ctx.keywordsN_++
+        if (node.keywords) {
+            while (ctx.keywordsN_ <= node.keywords.length) {
+                if (ctx.keywordsN_ > 0) {
+                    ctx.keywords_.push(ctx.value_)  // item是keywordRet
+                }
+                if (ctx.keywordsN_ < node.keywords.length) {
+                    const [nextState, nodeValue] = newState(node.keywords[ctx.keywordsN_++], state.scope)
+                    if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+                } else {
+                    ctx.keywordsN_++
+                }
             }
         }
 

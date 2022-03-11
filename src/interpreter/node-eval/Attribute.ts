@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
+import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {AttributeContext} from '../eval-context'
 import {AttributeRet} from '../types'
@@ -18,7 +19,8 @@ const Attribute = {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            return new State(node.value, state.scope)
+            const [nextState, nodeValue] = newState(node.value, state.scope)
+            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
         ctx.attributeValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
