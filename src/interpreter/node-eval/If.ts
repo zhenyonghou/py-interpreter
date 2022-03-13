@@ -4,6 +4,7 @@ import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {IfContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
+import { StepAttr } from '../types'
 
 const If = {
     type: "If",
@@ -57,11 +58,11 @@ const If = {
         
         if (ctx.testValue_) {
             if (ctx.bodyN_ < node.body.length) {
-                return new State(node.body[ctx.bodyN_++], state.scope)
+                return new State(node.body[ctx.bodyN_++], state.scope, StepAttr.Stay)
             }
         } else {
             if (ctx.bodyN_ < node.orelse.length) {
-                return new State(node.orelse[ctx.bodyN_++], state.scope)
+                return new State(node.orelse[ctx.bodyN_++], state.scope, StepAttr.Stay)
             }
         }
         // 结束

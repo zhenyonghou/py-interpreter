@@ -5,6 +5,7 @@ import {ModuleContext} from './eval-context'
 import NodeEval from './node-eval'
 import {Declaration, globalDeclaration} from './declaration'
 import * as pyBuiltins from './python/builtins'
+import { StepAttr } from './types'
 
 class Interpreter {
     ast: AstTree.Node = null
@@ -61,10 +62,63 @@ class Interpreter {
         return true
     }
 
+    _step() {
+        const ss = this.stateStack
+        const state = ss[ss.length - 1];
+        if (!state) {
+            return [true, null];
+        }
+
+        const nodeEval = this.nodeEval.getEval(state.node.type)
+        if (!nodeEval) {
+            throw new Error(`缺少实现:${state.node.type}`)
+        }
+        const nextState = nodeEval.eval(ss, state)
+        if (nextState) {
+            ss.push(nextState)
+        }
+
+        const done = this.checkDone(state)
+        return [done, nextState]
+    }
+
+    stepOver() {
+        while(true) {
+            const [done, nextState] = this._step()
+            if (done) {
+                this.onDone && this.onDone()
+                return false
+            }
+
+            if (nextState && nextState.step == StepAttr.Stay) {
+                return true
+            }
+        }
+    }
+
+    stepInto() {
+
+    }
+
+    stepOut() {
+
+    }
+
     run() {
         const self = this
         function nextStep() {
             if (self.step()) {
+                // window.setTimeout(nextStep, 0)   // 线上使用
+                nextStep()   // 为调试方便
+            }
+        }
+        nextStep()
+    }
+
+    runWithStepOver() {
+        const self = this
+        function nextStep() {
+            if (self.stepOver()) {
                 // window.setTimeout(nextStep, 0)   // 线上使用
                 nextStep()   // 为调试方便
             }

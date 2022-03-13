@@ -4,7 +4,7 @@ import {AssignContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import {evalBegin, evalEnd, Assert} from '../utils'
 import { newState } from './node-utils/utils'
-import { NameRet, ConstantRet, SubscriptRet, AttributeRet} from '../types'
+import { NameRet, ConstantRet, SubscriptRet, AttributeRet, StepAttr} from '../types'
 import {_tuple, iterate, iter} from '../python/builtins'
 
 /**
@@ -24,7 +24,7 @@ const Assign = {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            const [nextState, nodeValue] = newState(node.value, state.scope)
+            const [nextState, nodeValue] = newState(node.value, state.scope, StepAttr.Go)
             if (nextState) {return nextState} else {ctx.value_ = nodeValue}
         }
 
@@ -66,7 +66,7 @@ const Assign = {
             }
 
             if (ctx.targetIndex_ < node.targets.length) {
-                const [nextState, nodeValue] = newState(node.targets[ctx.targetIndex_++], state.scope)
+                const [nextState, nodeValue] = newState(node.targets[ctx.targetIndex_++], state.scope, StepAttr.Go)
                 if (nextState) {return nextState} else {ctx.value_ = nodeValue}
             } else {
                 ctx.targetIndex_++

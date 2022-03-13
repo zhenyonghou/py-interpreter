@@ -1,6 +1,7 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
 import {ModuleContext} from '../eval-context'
+import { StepAttr } from '../types'
 
 const Module = {
     type: "Module",
@@ -9,7 +10,7 @@ const Module = {
         const ctx = state.ctx as ModuleContext
 
         if (ctx.n_ < node.body.length) {
-            return new State(node.body[ctx.n_++], state.scope)
+            return new State(node.body[ctx.n_++], state.scope, StepAttr.Stay)
         }
 
         ctx.done_ = true

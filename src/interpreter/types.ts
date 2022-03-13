@@ -70,4 +70,9 @@ class MetaClass {
     methods: KV = {}
 }
 
-export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet, MetaClass}
+enum StepAttr {
+    Stay = 1,
+    Go = 2,
+}
+
+export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet, MetaClass, StepAttr}

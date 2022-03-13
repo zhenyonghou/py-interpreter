@@ -4,6 +4,7 @@ import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {WhileContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
+import { StepAttr } from '../types'
 
 /**
  * 遇到break时候结束程序，不需要通知上层；遇到return时需要告知上层
@@ -53,7 +54,7 @@ const While = {
         
         if (ctx.testValue_) {
             if (ctx.bodyN_ < node.body.length) {
-                return new State(node.body[ctx.bodyN_++], state.scope)
+                return new State(node.body[ctx.bodyN_++], state.scope, StepAttr.Stay)
             } else {
                 // 下次再去执行test
                 ctx.reset()

@@ -5,6 +5,7 @@ import {evalBegin, evalEnd, Assert as __assert} from '../utils'
 import {ClassDefContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import { FunctionDefData } from './FunctionDef'
+import { StepAttr } from '../types'
 
 /**
  * class应该有它的function级作用域
@@ -25,7 +26,7 @@ const ClassDef = {
         }
 
         if (ctx.bodyN_ < node.body.length) {
-            return new State(node.body[ctx.bodyN_++], ctx.scope)
+            return new State(node.body[ctx.bodyN_++], ctx.scope, StepAttr.Stay)
         }
 
         // 将scope里的属性、方法定义拷贝到cls

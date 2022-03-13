@@ -4,6 +4,7 @@ import {Assert, evalBegin, evalEnd} from '../utils'
 import {ForContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import { _list, _tuple, _iter} from '../python/builtins'
+import { StepAttr } from '../types'
 
 /**
  * 遇到break时候结束程序，不需要通知上层；遇到return时需要告知上层
@@ -64,7 +65,7 @@ const For = {
 
             // 处理body
             if (ctx.bodyN_ < node.body.length) {
-                return new State(node.body[ctx.bodyN_++], state.scope)
+                return new State(node.body[ctx.bodyN_++], state.scope, StepAttr.Stay)
             } else {
                 // 处理完body, 继续循环
                 ctx.continue()

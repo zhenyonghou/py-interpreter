@@ -4,6 +4,7 @@ import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {IfExpContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
+import { StepAttr } from '../types'
 
 const IfExp = {
     type: "IfExp",
@@ -30,9 +31,9 @@ const IfExp = {
             ctx.n_++
             ctx.testValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
             if (ctx.testValue_) {
-                return new State(node.body, state.scope)
+                return new State(node.body, state.scope, StepAttr.Stay)
             } else {
-                return new State(node.orelse, state.scope)
+                return new State(node.orelse, state.scope, StepAttr.Stay)
             }
         }
         
