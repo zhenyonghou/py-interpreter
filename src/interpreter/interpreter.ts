@@ -119,18 +119,23 @@ class Interpreter {
         const self = this
         function nextStep() {
             if (self.stepOver()) {
-                // window.setTimeout(nextStep, 0)   // 线上使用
-                nextStep()   // 为调试方便
+                window.setTimeout(nextStep, 0)   // 线上使用
+                // nextStep()   // 为调试方便
             }
         }
         nextStep()
+    }
+
+    // 截获Python程序print函数，print时会调用到这里
+    setOutput(fn: (...arg: any[]) => void) {
+        pyBuiltins.__output.print = fn
     }
 
     // 判断结束
     checkDone(state: State) {
         const node = state.node
         if (node.type == AstTree.NodeType.Module && (state.ctx as ModuleContext).done_) {
-            console.log("程序执行结束")
+            pyBuiltins.print("程序执行结束")
             return true
         }
         return false
