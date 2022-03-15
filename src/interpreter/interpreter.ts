@@ -93,7 +93,7 @@ class Interpreter {
 
             if (nextState && nextState.step == StepAttr.Stay) {
                 if ("lineno" in nextState.node) {
-                    console.log("nextState.node:", nextState.node)
+                    // console.log("nextState.node:", nextState.node)
                     this.onStep && this.onStep(nextState.node.lineno)
                 }
                 return true
