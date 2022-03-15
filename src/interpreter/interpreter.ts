@@ -17,6 +17,7 @@ class Interpreter {
     static GlobalDeclaration: Declaration = globalDeclaration
 
     onDone: () => void
+    onStep: (lineno: number) => void
 
     constructor() {
         console.log('PI VERSION:', process.env.VERSION)
@@ -91,6 +92,10 @@ class Interpreter {
             }
 
             if (nextState && nextState.step == StepAttr.Stay) {
+                if ("lineno" in nextState.node) {
+                    console.log("nextState.node:", nextState.node)
+                    this.onStep && this.onStep(nextState.node.lineno)
+                }
                 return true
             }
         }
@@ -119,7 +124,7 @@ class Interpreter {
         const self = this
         function nextStep() {
             if (self.stepOver()) {
-                window.setTimeout(nextStep, 0)   // 线上使用
+                window.setTimeout(nextStep, 200)   // 线上使用
                 // nextStep()   // 为调试方便
             }
         }
@@ -135,7 +140,8 @@ class Interpreter {
     checkDone(state: State) {
         const node = state.node
         if (node.type == AstTree.NodeType.Module && (state.ctx as ModuleContext).done_) {
-            pyBuiltins.print("程序执行结束")
+            // pyBuiltins.print("程序执行结束")
+            console.log("程序执行结束")
             return true
         }
         return false

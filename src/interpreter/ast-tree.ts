@@ -7,6 +7,10 @@ enum NodeType {
 
 interface BaseNode {
     type: string
+    lineno ?: number
+    end_lineno ?: number
+    col_offset ?: number
+    end_col_offset ?: number
 }
 
 // Name里的结构

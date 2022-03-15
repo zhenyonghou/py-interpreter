@@ -301,7 +301,11 @@ function sum(...theArgs) {
 const __output = {
     print: (...arg) => {
         console.log(...arg)
-    }
+    },
+
+    // printOk: (...arg) => {
+    //     console.log(...arg)
+    // }
 }
 
 function print(...theArgs) {
