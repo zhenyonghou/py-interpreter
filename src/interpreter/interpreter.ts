@@ -91,9 +91,9 @@ class Interpreter {
     run() {
         const self = this
         function nextStep() {
-            const [state, nextState] = this._step()
-            if ((state && this.checkDone(state)) || state == null) {
-                this.onDone && this.onDone()
+            const [state, nextState] = self._step()
+            if ((state && self.checkDone(state)) || state == null) {
+                self.onDone && self.onDone()
                 return false
             }
 
