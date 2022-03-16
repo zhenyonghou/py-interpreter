@@ -13,6 +13,7 @@ class Interpreter {
 
     nodeEval: NodeEval = null
 
+    stepDelay: number = 0 // ms
     // 设置成静态变量吧
     static GlobalDeclaration: Declaration = globalDeclaration
 
@@ -124,7 +125,7 @@ class Interpreter {
         const self = this
         function nextStep() {
             if (self.stepOver()) {
-                window.setTimeout(nextStep, 200)   // 线上使用
+                window.setTimeout(nextStep, self.stepDelay)   // 线上使用
                 // nextStep()   // 为调试方便
             }
         }
