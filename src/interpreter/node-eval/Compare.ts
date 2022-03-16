@@ -16,7 +16,7 @@ const Compare = {
         const ctx = state.ctx as CompareContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.leftDone_) {
@@ -42,14 +42,14 @@ const Compare = {
                         if (!leftValue.__eq__(rightValue)) {
                             ss.pop()
                             ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
+                            evalEnd(ss.length, state)
                             return
                         }
                     } else {
                         if (leftValue != rightValue) {  // 结束
                             ss.pop()
                             ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
+                            evalEnd(ss.length, state)
                             return
                         }
                     }
@@ -59,14 +59,14 @@ const Compare = {
                         if (leftValue.__eq__(rightValue)) {
                             ss.pop()
                             ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
+                            evalEnd(ss.length, state)
                             return
                         }
                     } else {
                         if (leftValue == rightValue) {  // 结束
                             ss.pop()
                             ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                            evalEnd(state)
+                            evalEnd(ss.length, state)
                             return
                         }
                     }
@@ -75,7 +75,7 @@ const Compare = {
                     if (leftValue <= rightValue) {  // 结束
                         ss.pop()
                         ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                        evalEnd(state)
+                        evalEnd(ss.length, state)
                         return
                     }
                     break
@@ -83,7 +83,7 @@ const Compare = {
                     if (leftValue < rightValue) {  // 结束
                         ss.pop()
                         ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                        evalEnd(state)
+                        evalEnd(ss.length, state)
                         return
                     }
                     break
@@ -91,7 +91,7 @@ const Compare = {
                     if (leftValue >= rightValue) {  // 结束
                         ss.pop()
                         ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                        evalEnd(state)
+                        evalEnd(ss.length, state)
                         return
                     }
                     break
@@ -99,7 +99,7 @@ const Compare = {
                     if (leftValue > rightValue) {  // 结束
                         ss.pop()
                         ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                        evalEnd(state)
+                        evalEnd(ss.length, state)
                         return
                     }
                     break
@@ -107,7 +107,7 @@ const Compare = {
                     if (!(rightValue.__contains__(leftValue))) {  // 结束
                         ss.pop()
                         ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                        evalEnd(state)
+                        evalEnd(ss.length, state)
                         return
                     }
                     break
@@ -115,7 +115,7 @@ const Compare = {
                     if (rightValue.__contains__(leftValue)) {  // 结束
                         ss.pop()
                         ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
-                        evalEnd(state)
+                        evalEnd(ss.length, state)
                         return
                     }
                     break
@@ -129,12 +129,12 @@ const Compare = {
             } else { // 结束
                 ss.pop()
                 ss[ss.length - 1].ctx.value_ = new ConstantRet(true)
-                evalEnd(state)
+                evalEnd(ss.length, state)
                 return
             }
         }
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

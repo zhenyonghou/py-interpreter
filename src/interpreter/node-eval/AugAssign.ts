@@ -14,7 +14,7 @@ const AugAssign = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.valueDone_) {
@@ -99,7 +99,7 @@ const AugAssign = {
         }
         
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

@@ -13,14 +13,14 @@ const Starred = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         // const v = ScopeHelper.lookupX(state.scope, node.value.id)
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new StarredRet(node.value.id)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

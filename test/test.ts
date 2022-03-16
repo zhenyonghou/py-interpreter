@@ -20,6 +20,7 @@ import code_082 from './t_082'
 import code_083 from './t_083'
 import code_084 from './t_084'
 import code_085 from './t_085'
+import code_086 from './t_086'
 
 // 作用域
 import code_100 from './t_100'
@@ -70,7 +71,7 @@ Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
 Interpreter.GlobalDeclaration.set("car_reach_light", () => false)
 
 const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, code_050, code_051, code_052, code_053, code_054,
-    code_080, code_081, code_082, code_083, code_084, code_085, code_100, code_150, code_151, code_152, code_180, 
+    code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
     code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401]
 // const codeList = [code_401]
 

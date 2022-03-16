@@ -1,10 +1,10 @@
 import * as AstTree from '../ast-tree'
+import { MetaFunction } from '../ast-tree/virtual-node'
 import {State, StateStack} from '../state'
 import {Scope, ScopeType} from '../scope'
 import {evalBegin, evalEnd, Assert as __assert} from '../utils'
 import {ClassDefContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
-import { FunctionDefData } from './FunctionDef'
 import { StepAttr } from '../types'
 
 /**
@@ -19,7 +19,7 @@ const ClassDef = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
 
             ctx.cls.classname = node.name
             ctx.scope = new Scope(ScopeType.Function, state.scope)    // 新建作用域, 用于存储类的成员
@@ -31,7 +31,7 @@ const ClassDef = {
 
         // 将scope里的属性、方法定义拷贝到cls
         ctx.scope.declaration.forEach((key: string, value: any) => {
-            if (value instanceof FunctionDefData) {
+            if (value instanceof MetaFunction) {
                 ctx.cls.methods[key] = value
             } else {
                 ctx.cls.attributes[key] = value
@@ -41,7 +41,7 @@ const ClassDef = {
         state.scope.set(node.name, ctx.cls)
 
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

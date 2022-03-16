@@ -14,7 +14,7 @@ const Attribute = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.valueDone_) {
@@ -27,7 +27,7 @@ const Attribute = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new AttributeRet(ctx.attributeValue_, node.attr)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

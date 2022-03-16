@@ -15,7 +15,7 @@ const Subscript = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.valueDone_) {
@@ -41,7 +41,7 @@ const Subscript = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new SubscriptRet(ctx.subscriptValue_, sliceValue)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

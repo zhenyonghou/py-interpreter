@@ -1,4 +1,6 @@
 import { _dict, _list, _str, _tuple } from './python/builtins'
+import * as AstTree from './ast-tree'
+import {Scope} from './scope'
 
 interface KV {  // 这么做是为了解决ts(7053)问题
     [index: string]: any
@@ -64,15 +66,9 @@ class AttributeRet {
     }
 }
 
-class MetaClass {
-    classname: string = ""
-    attributes: KV = {}
-    methods: KV = {}
-}
-
 enum StepAttr {
     Stay = 1,
     Go = 2,
 }
 
-export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet, MetaClass, StepAttr}
+export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet, StepAttr}

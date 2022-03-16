@@ -13,7 +13,7 @@ const Dict = {
         const ctx = state.ctx as DictContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         while (ctx.valueIndex_ <= node.values.length) {
@@ -33,7 +33,7 @@ const Dict = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.dict_)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

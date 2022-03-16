@@ -14,7 +14,7 @@ const Slice = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.lowerDone_) {
@@ -45,7 +45,7 @@ const Slice = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new _slice(ctx.lowerValue_, ctx.upperValue_, ctx.stepValue_)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

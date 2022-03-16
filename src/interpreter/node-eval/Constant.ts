@@ -13,7 +13,7 @@ const Constant = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         let _ret = null
@@ -25,7 +25,7 @@ const Constant = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(_ret)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

@@ -14,7 +14,7 @@ const BoolOp = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         while (ctx.n_ <= node.values.length) {
@@ -50,7 +50,7 @@ const BoolOp = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(!!ctx.leftValue_)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

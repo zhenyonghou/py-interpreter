@@ -12,16 +12,17 @@ const Return = {
         const ctx = state.ctx as ReturnContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.retValueDone_) {
             ctx.retValueDone_ = true
             if (node.value == null) {
                 ss.pop()
-                ss[ss.length - 1].ctx.control_ = ControlKey.Return
-                ss[ss.length - 1].ctx.returnData_ = ctx.value_
-                evalEnd(state)
+                const parentCtx = ss[ss.length - 1].ctx
+                parentCtx.control_ = ControlKey.Return
+                parentCtx.returnData_ = ctx.value_
+                evalEnd(ss.length, state)
                 return
             }
             const [nextState, nodeValue] = newState(node.value, state.scope)
@@ -29,9 +30,10 @@ const Return = {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.control_ = ControlKey.Return
-        ss[ss.length - 1].ctx.returnData_ = ctx.value_
-        evalEnd(state)
+        const parentCtx = ss[ss.length - 1].ctx
+        parentCtx.control_ = ControlKey.Return
+        parentCtx.returnData_ = ctx.value_
+        evalEnd(ss.length, state)
     }
 }
 

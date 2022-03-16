@@ -122,7 +122,7 @@ class Interpreter {
     // 判断结束
     checkDone(state: State) {
         const node = state.node
-        if (node.type == AstTree.NodeType.Module && (state.ctx as ModuleContext).done_) {
+        if (node.type == "Module" && (state.ctx as ModuleContext).done_) {
             // pyBuiltins.print("程序执行结束")
             console.log("程序执行结束")
             return true

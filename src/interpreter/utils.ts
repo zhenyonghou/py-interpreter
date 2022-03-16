@@ -2,15 +2,37 @@ import {State} from './state'
 
 const printLog = (process.env.INTERPRETER_STACK_LOG == '1')
 
-const evalBegin = (state: State) => {
+// const evalBegin = (state: State) => {
+//     if (printLog) {
+//         console.log('->', state.node.type, state)
+//     }
+// }
+
+// const evalEnd = (state: State) => {
+//     if (printLog) {
+//         console.log('<-', state.node.type, state.ctx)
+//     }
+// }
+
+const evalBegin = (level: number, state: State) => {
     if (printLog) {
-        console.log('->', state.node.type, state)
+        let s = ''
+        for (let i = 0; i < level; i++) {
+            s += '  '
+        }
+        s += '->'
+        console.log(s, state.node.type, state)
     }
 }
 
-const evalEnd = (state: State) => {
+const evalEnd = (level: number, state: State) => {
     if (printLog) {
-        console.log('<-', state.node.type, state.ctx)
+        let s = ''
+        for (let i = 0; i <= level; i++) {
+            s += '  '
+        }
+        s += '<-'
+        console.log(s, state.node.type, state.ctx)
     }
 }
 

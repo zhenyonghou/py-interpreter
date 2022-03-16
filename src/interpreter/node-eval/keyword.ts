@@ -13,7 +13,7 @@ const keyword = {
         const ctx = state.ctx as keywordContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.valueDone_) {
@@ -27,7 +27,7 @@ const keyword = {
         // 结束
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new keywordRet(node.arg, value)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

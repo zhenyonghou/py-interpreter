@@ -25,7 +25,7 @@ const Import = {
         const ctx = state.ctx as ImportContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         for (let i = 0; i < node.names.length; i++) {
@@ -37,7 +37,7 @@ const Import = {
 
         // 结束
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

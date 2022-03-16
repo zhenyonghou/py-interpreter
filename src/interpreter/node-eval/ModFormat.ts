@@ -162,7 +162,7 @@ const ModFormat = {
         const ctx = state.ctx as ModFormatContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.rightDone_) {
@@ -181,7 +181,7 @@ const ModFormat = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(new _str(s))
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

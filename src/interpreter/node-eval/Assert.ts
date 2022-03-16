@@ -13,7 +13,7 @@ const Assert = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.testDone_) {
@@ -26,7 +26,7 @@ const Assert = {
         __assert(value, node.msg == null ? "Assert警告" : node.msg)
 
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

@@ -1,9 +1,4 @@
-import { _str } from "./python/builtins"
-import { MetaClass } from "./types"
-
-enum NodeType {
-    Module = "Module"
-}
+import { _str } from "../python/builtins"
 
 interface BaseNode {
     type: string
@@ -18,28 +13,12 @@ interface ctx {
     type: "Load" | "Store"
 }
 
-/**
-{
-    "type": "Name",
-    "id": "a",
-    "ctx": {
-        "type": "Store"
-    }
-}
-*/
 interface Name extends BaseNode {
     type: "Name"
     id: string
     ctx: ctx
 }
 
-/**
-{
-    "type": "Constant",
-    "value": 101,
-    "kind": null
-}
-*/
 interface Constant extends BaseNode {
     type: "Constant"
     value: any
@@ -225,22 +204,9 @@ interface FunctionDef extends BaseNode {
     returns: any
 }
 
-// 自定义的节点，在函数执行时使用
-class FunctionRun implements BaseNode {
-    type: string = "FunctionRun"
-    body: Array<any> = []
-}
-
 interface Global extends BaseNode {
     type: "Global"
     names: Array<string>
-}
-
-// 自定义的节点，字符串格式化时使用
-class ModFormat implements BaseNode {
-    type:string = "ModFormat"
-    left: _str
-    right: any
 }
 
 interface Subscript extends BaseNode {
@@ -286,18 +252,6 @@ interface ClassDef extends BaseNode {
     body: Array<any>,
 }
 
-// 自定义的节点，在函数执行时使用
-class CreateInstance implements BaseNode {
-    type: string = "CreateInstance"
-    metaClass: MetaClass = null
-}
-
-type Node = Name | Constant | Module| Expr | Assign | AugAssign | Assert | Call | BinOp | BinOpOperator | Compare | CompareOperator 
-    | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | While | For | Pass | If | IfExp | Continue | Break | Return 
-    | FunctionDef | FunctionRun | Starred | keyword | Dict | Tuple | Global | ModFormat | Subscript | Attribute | Delete
-    | Slice | Import | alias | ClassDef | CreateInstance
-
-export {Node, NodeType,
-    Name, Constant, Module, Expr, Assign, AugAssign, Assert, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
-    UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, IfExp, Continue, Break, Return, FunctionDef, FunctionRun, 
-    Starred, keyword, Global, ModFormat, Subscript, Attribute, Delete, Slice, Import, alias, ClassDef, CreateInstance}
+export {BaseNode, Name, Constant, Module, Expr, Assign, AugAssign, Assert, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
+    UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, IfExp, Continue, Break, Return, FunctionDef, Starred, keyword, Global, Subscript, 
+    Attribute, Delete, Slice, Import, alias, ClassDef} 

@@ -13,7 +13,7 @@ const List = {
         const ctx = state.ctx as ListContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         while (ctx.n_ <= node.elts.length) {
@@ -31,7 +31,7 @@ const List = {
         }
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.list_)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

@@ -1,15 +1,14 @@
 import * as AstTree from '../ast-tree'
+import { MetaClass, MetaFunction } from '../ast-tree/virtual-node'
 import {State, StateStack} from '../state'
 import { newState } from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {CallContext} from '../eval-context'
 import ScopeHelper from '../scope-helper'
 import { AttributeRet, ConstantRet, NameRet, StarredRet} from '../types'
-import {FunctionDefData} from './FunctionDef'
-import { MetaClass } from '../types'
 import { _dict, _list, _tuple, iterate, iter} from '../python/builtins'
 import {createInstance} from './node-utils/create-instance'
-import { runFunction } from './node-utils/run-function'
+import functionRunHelper from './node-utils/function-run-helper'
 /**
  * 函数调用
  * 在执行func.apply时，如果是内置函数，直接返回结果；如果是自己写的函数，返回一个State，函数体在返回的State里执行
@@ -26,7 +25,7 @@ const Call = {
         const ctx = state.ctx as CallContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (ctx.funcStep_ == 0) {   // 解析func
@@ -67,7 +66,7 @@ const Call = {
         }
 
         // 解释keywords
-        if (node.keywords) {
+        if (node.keywords && node.keywords.length > 0) {
             while (ctx.keywordsN_ <= node.keywords.length) {
                 if (ctx.keywordsN_ > 0) {
                     ctx.keywords_.push(ctx.value_)  // item是keywordRet
@@ -88,18 +87,18 @@ const Call = {
                 const {obj, attr} = ctx.func_
                 const func = obj[attr]
                 // 这里的func可能是FunctionDefData类型，参见code_400:x.f()
-                if (func instanceof FunctionDefData) {
+                if (func instanceof MetaFunction) {
                     // 解释自定义函数: 绑定参数, 将body包装成state返回
-                    return runFunction(ctx.args_, ctx.keywords_, func)
+                    return functionRunHelper(ctx.args_, ctx.keywords_, func)
                 } else {
                     const ret = func.apply(obj, ctx.args_)
                     ctx.returnData_ = new ConstantRet(ret)
                 }
             } else if (ctx.func_ instanceof NameRet) {
                 const func = ScopeHelper.lookupX(state.scope, ctx.func_)
-                if (func instanceof FunctionDefData) {
+                if (func instanceof MetaFunction) {
                     // 解释自定义函数: 绑定参数, 将body包装成state返回
-                    return runFunction(ctx.args_, ctx.keywords_, func)
+                    return functionRunHelper(ctx.args_, ctx.keywords_, func)
                 } else if (func instanceof MetaClass) { // x = MyClass()
                     // 初始化类的对象，包装成state返回
                     return createInstance(ctx.args_, func)
@@ -112,7 +111,7 @@ const Call = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = ctx.returnData_
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

@@ -14,7 +14,7 @@ const Delete = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         while (ctx.n_ <= node.targets.length) {
@@ -40,7 +40,7 @@ const Delete = {
             }
         }
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

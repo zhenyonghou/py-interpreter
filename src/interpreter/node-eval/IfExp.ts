@@ -13,7 +13,7 @@ const IfExp = {
         const ctx = state.ctx as IfExpContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         // 执行test
@@ -40,7 +40,7 @@ const IfExp = {
         // 结束
         ss.pop()
         ss[ss.length - 1].ctx.value_ = ctx.value_
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

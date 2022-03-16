@@ -1,5 +1,6 @@
 import * as AstTree from './ast-tree'
-import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet, MetaClass} from './types'
+import {MetaClass} from './ast-tree/virtual-node'
+import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './types'
 import {_list, _dict, _tuple} from './python/builtins'
 import {Scope, ScopeType} from './scope'
 
@@ -147,6 +148,7 @@ class FunctionDefContext extends BaseEvalContext {
 }
 
 class FunctionRunContext extends BaseEvalContext {
+    scope: Scope = null
     bodyN_: number = 0
 }
 
@@ -199,7 +201,7 @@ class ClassDefContext extends BaseEvalContext {
 
 class CreateInstanceContext extends BaseEvalContext {
     initDone_: boolean = false
-    
+
     obj: KV = {
     }
 

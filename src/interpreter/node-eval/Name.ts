@@ -11,12 +11,12 @@ const Name = {
         const ctx = state.ctx as NameContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new NameRet(node.id, node.ctx.type)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

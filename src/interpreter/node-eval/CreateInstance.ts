@@ -1,10 +1,10 @@
 import * as AstTree from '../ast-tree'
+import {MetaFunction} from '../ast-tree/virtual-node'
 import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import { CreateInstanceContext } from '../eval-context'
-import { ConstantRet } from '../types'
-import { runFunction } from './node-utils/run-function'
-import { FunctionDefData } from './FunctionDef'
+import { ConstantRet} from '../types'
+import functionRunHelper from './node-utils/function-run-helper'
 
 const CreateInstance = {
     type: "CreateInstance",
@@ -13,7 +13,7 @@ const CreateInstance = {
         const ctx = state.ctx as CreateInstanceContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
 
             // 拷贝属性
             Object.assign(ctx.obj, node.metaClass.attributes)
@@ -25,14 +25,14 @@ const CreateInstance = {
         if (!ctx.initDone_ && "__init__" in ctx.obj) {
             ctx.initDone_ = true
             const args = [ctx.obj].concat(state.scope.get("args"))
-            const initMethod = ctx.obj["__init__"] as FunctionDefData
+            const initMethod = ctx.obj["__init__"] as MetaFunction
             // initMethod.parentScope.set("self", ctx.obj)
-            return runFunction(args, null, initMethod)
+            return functionRunHelper(args, null, initMethod)
         }
 
         ss.pop()
         ss[ss.length - 1].ctx.returnData_ = new ConstantRet(ctx.obj)    // 在call上执行的，而call是从returnData_里取值的
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

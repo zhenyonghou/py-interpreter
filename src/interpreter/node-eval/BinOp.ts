@@ -15,7 +15,7 @@ const BinOp = {
         const ctx = state.ctx as BinOpContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.rightDone_) {
@@ -36,7 +36,7 @@ const BinOp = {
         if (ctx.modeFormatting) {
             ss.pop()
             ss[ss.length - 1].ctx.value_ = ctx.value_
-            evalEnd(state)
+            evalEnd(ss.length, state)
             return
         }
 
@@ -82,10 +82,10 @@ const BinOp = {
                     value = leftValue % rightValue
                 } else if (leftValue instanceof _str) {
                     ctx.modeFormatting = true
-                    let fakeNode = new ModFormat()
-                    fakeNode.left = leftValue
-                    fakeNode.right = node.right
-                    return new State(fakeNode, state.scope)
+                    let virtualNode = new ModFormat()
+                    virtualNode.left = leftValue
+                    virtualNode.right = node.right
+                    return new State(virtualNode, state.scope)
                 }
                 break;
             case 'Pow':
@@ -112,7 +112,7 @@ const BinOp = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(value)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

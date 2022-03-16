@@ -13,7 +13,7 @@ const Tuple = {
         const ctx = state.ctx as TupleContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         while(ctx.n_ <= node.elts.length) {
@@ -32,7 +32,7 @@ const Tuple = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.list_)
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

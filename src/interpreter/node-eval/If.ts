@@ -13,7 +13,7 @@ const If = {
         const ctx = state.ctx as IfContext
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (ctx.control_ == "continue") {
@@ -21,14 +21,14 @@ const If = {
             const parentCtx = ss[ss.length - 1].ctx
             parentCtx.control_ = ctx.control_
 
-            evalEnd(state)
+            evalEnd(ss.length, state)
             return
         } else if (ctx.control_ == "break") {
             ss.pop()
             const parentCtx = ss[ss.length - 1].ctx
             parentCtx.control_ = ctx.control_
 
-            evalEnd(state)
+            evalEnd(ss.length, state)
             return
         } else if (ctx.control_ == "return") {
             ss.pop()
@@ -36,7 +36,7 @@ const If = {
             parentCtx.control_ = ctx.control_
             parentCtx.returnData_ = ctx.returnData_
 
-            evalEnd(state)
+            evalEnd(ss.length, state)
             return
         }
 
@@ -67,7 +67,7 @@ const If = {
         }
         // 结束
         ss.pop()
-        evalEnd(state)
+        evalEnd(ss.length, state)
     }
 }
 

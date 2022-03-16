@@ -14,7 +14,7 @@ const UnaryOp = {
 
         if (!ctx.begin) {
             ctx.begin = true
-            evalBegin(state)
+            evalBegin(ss.length, state)
         }
 
         if (!ctx.operandDone_) {
@@ -50,7 +50,7 @@ const UnaryOp = {
 
         ss.pop()
         ss[ss.length - 1].ctx.value_ = retValue
-        evalEnd(state)
+        evalEnd(ss.length, state)
         return
     }
 }
