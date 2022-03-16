@@ -18,7 +18,7 @@ class Interpreter {
     static GlobalDeclaration: Declaration = globalDeclaration
 
     onDone: () => void
-    onStep: (lineno: number) => void
+    onStayLine: (lineno: number) => void
 
     constructor() {
         console.log('PI VERSION:', process.env.VERSION)
@@ -39,36 +39,11 @@ class Interpreter {
         this.stateStack = [new State(this.ast, scope)]
     }
 
-    step() {
-        const ss = this.stateStack
-        const state = ss[ss.length - 1];
-        if (!state) {
-            return false;
-        }
-
-        // console.log('state:', state)
-        const nodeEval = this.nodeEval.getEval(state.node.type)
-        if (!nodeEval) {
-            throw new Error(`缺少实现:${state.node.type}`)
-        }
-        const nextState = nodeEval.eval(ss, state)
-        if (nextState) {
-            ss.push(nextState)
-        }
-
-        if (this.checkDone(state)) {
-            this.onDone && this.onDone()
-            return false
-        }
-
-        return true
-    }
-
     _step() {
         const ss = this.stateStack
-        const state = ss[ss.length - 1];
+        const state = ss[ss.length - 1]
         if (!state) {
-            return [true, null];
+            return [null, null]
         }
 
         const nodeEval = this.nodeEval.getEval(state.node.type)
@@ -80,26 +55,29 @@ class Interpreter {
             ss.push(nextState)
         }
 
-        const done = this.checkDone(state)
-        return [done, nextState]
+        return [state, nextState]
     }
 
-    stepOver() {
-        while(true) {
-            const [done, nextState] = this._step()
-            if (done) {
-                this.onDone && this.onDone()
-                return false
+    stepOver(cb: (hasNext: boolean) => void) {
+        const self = this
+        function nextStep() {
+            const [state, nextState] = self._step()
+            if ((state && self.checkDone(state)) || state == null) {
+                self.onDone && self.onDone()
+                return cb(false)
             }
 
             if (nextState && nextState.step == StepAttr.Stay) {
                 if ("lineno" in nextState.node) {
                     // console.log("nextState.node:", nextState.node)
-                    this.onStep && this.onStep(nextState.node.lineno)
+                    self.onStayLine && self.onStayLine(nextState.node.lineno)
                 }
-                return true
+                return cb(true)
             }
+
+            window.setTimeout(nextStep, 0)
         }
+        nextStep()
     }
 
     stepInto() {
@@ -113,10 +91,13 @@ class Interpreter {
     run() {
         const self = this
         function nextStep() {
-            if (self.step()) {
-                // window.setTimeout(nextStep, 0)   // 线上使用
-                nextStep()   // 为调试方便
+            const [state, nextState] = this._step()
+            if ((state && this.checkDone(state)) || state == null) {
+                this.onDone && this.onDone()
+                return false
             }
+
+            window.setTimeout(nextStep, self.stepDelay)
         }
         nextStep()
     }
@@ -124,10 +105,11 @@ class Interpreter {
     runWithStepOver() {
         const self = this
         function nextStep() {
-            if (self.stepOver()) {
-                window.setTimeout(nextStep, self.stepDelay)   // 线上使用
-                // nextStep()   // 为调试方便
-            }
+            self.stepOver((hasNext: boolean) => {
+                if (hasNext) {
+                    window.setTimeout(nextStep, self.stepDelay)
+                }
+            })
         }
         nextStep()
     }

@@ -41,8 +41,7 @@ const While = {
             ctx.n_++
 
             if (node.test) {
-                const [nextState, nodeValue] = newState(node.test, state.scope)
-                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+                return new State(node.test, state.scope, StepAttr.Stay) // 单步运行时需要在这里停留
             }
         }
 
