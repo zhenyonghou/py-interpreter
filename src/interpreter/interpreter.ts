@@ -13,7 +13,7 @@ class Interpreter {
 
     nodeEval: NodeEval = null
 
-    stepDelay: number = 0 // ms
+    stepSleep: number = 0 // ms
     // 设置成静态变量吧
     static GlobalDeclaration: Declaration = globalDeclaration
 
@@ -97,7 +97,7 @@ class Interpreter {
                 return false
             }
 
-            window.setTimeout(nextStep, self.stepDelay)
+            window.setTimeout(nextStep, self.stepSleep)
         }
         nextStep()
     }
@@ -107,7 +107,7 @@ class Interpreter {
         function nextStep() {
             self.stepOver((hasNext: boolean) => {
                 if (hasNext) {
-                    window.setTimeout(nextStep, self.stepDelay)
+                    window.setTimeout(nextStep, self.stepSleep)
                 }
             })
         }
