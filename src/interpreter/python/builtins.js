@@ -1170,7 +1170,9 @@ class _str {
 _str.__name__ = 'str'
 _str.prototype.__class__ = _str // 为啥要加到原型里啊
 
+const __name__ = '__main__'
+
 export {
     assert, hasattr, getattr, setattr, hash, len, range, xrange, map, zip, isinstance, bool, abs, max, min, sum, print, iter,
-    iterate, _slice, _list, _tuple, _dict, _str, _iter, __output
+    iterate, _slice, _list, _tuple, _dict, _str, _iter, __output, __name__
 }

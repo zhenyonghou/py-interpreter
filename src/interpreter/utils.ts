@@ -1,18 +1,6 @@
 import {State} from './state'
 
-const printLog = (process.env.INTERPRETER_STACK_LOG == '1')
-
-// const evalBegin = (state: State) => {
-//     if (printLog) {
-//         console.log('->', state.node.type, state)
-//     }
-// }
-
-// const evalEnd = (state: State) => {
-//     if (printLog) {
-//         console.log('<-', state.node.type, state.ctx)
-//     }
-// }
+const printLog = (process.env.NODE_ENV == 'development') // (process.env.INTERPRETER_STACK_LOG == '1')
 
 const evalBegin = (level: number, state: State) => {
     if (printLog) {
