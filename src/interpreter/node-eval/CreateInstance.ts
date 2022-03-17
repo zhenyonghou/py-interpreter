@@ -4,7 +4,7 @@ import {State, StateStack} from '../state'
 import {evalBegin, evalEnd} from '../utils'
 import { CreateInstanceContext } from '../eval-context'
 import { ConstantRet} from '../types'
-import functionRunHelper from './node-utils/function-run-helper'
+import {buildMethodRunner} from './node-utils/function-run-helper'
 
 const CreateInstance = {
     type: "CreateInstance",
@@ -24,10 +24,9 @@ const CreateInstance = {
         // 调用构造函数
         if (!ctx.initDone_ && "__init__" in ctx.obj) {
             ctx.initDone_ = true
-            const args = [ctx.obj].concat(state.scope.get("args"))
-            const initMethod = ctx.obj["__init__"] as MetaFunction
+            const args = state.scope.get("args")
             // initMethod.parentScope.set("self", ctx.obj)
-            return functionRunHelper(args, null, initMethod)
+            return buildMethodRunner(args, null, ctx.obj, "__init__")
         }
 
         ss.pop()

@@ -317,7 +317,6 @@ function print(...theArgs) {
             arr.push(item)
         }
     })
-    console.log(...arr)
     __output.print(...arr)
 }
 

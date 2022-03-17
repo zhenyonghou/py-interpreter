@@ -38,6 +38,7 @@ const Compare = {
             const operator = node.ops[ctx.n_-1].type // 直译前一个comparator operator
             switch(operator) {
                 case "Eq":
+                case "Is":
                     if (leftValue instanceof _str) {    // 通过hasOwnProperty("__eq__")判断不行，__eq__是Object的属性
                         if (!leftValue.__eq__(rightValue)) {
                             ss.pop()
@@ -55,6 +56,7 @@ const Compare = {
                     }
                     break
                 case "NotEq":
+                case "IsNot":
                     if (leftValue instanceof _str) {
                         if (leftValue.__eq__(rightValue)) {
                             ss.pop()

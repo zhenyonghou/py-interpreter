@@ -4,6 +4,7 @@ import code_002 from './t_002'
 import code_003 from './t_003'
 import code_004 from './t_004'
 import code_005 from './t_005'
+import code_006 from './t_006'
 import code_007 from './t_007'
 
 // 测试用例: 循环&控制
@@ -70,10 +71,10 @@ import * as AstTree from '../src/interpreter/ast-tree'
 Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
 Interpreter.GlobalDeclaration.set("car_reach_light", () => false)
 
-// const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, code_050, code_051, code_052, code_053, code_054,
+// const codeList = [code_001, code_002, code_003, code_004, code_005, code_006, code_007, code_050, code_051, code_052, code_053, code_054,
 //     code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
 //     code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401]
-const codeList = [code_401]
+const codeList = [code_1000]
 
 const start = () => {
     const interpreter = new Interpreter()
@@ -85,7 +86,7 @@ const start = () => {
         console.log(pyCode)
 
         const ast = await codeParse(pyCode)
-        console.log(JSON.stringify(ast.ast, null, 4))
+        // console.log(JSON.stringify(ast.ast, null, 4))
         interpreter.init(ast.ast as AstTree.Node)
 
         interpreter.run()

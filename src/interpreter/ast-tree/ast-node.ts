@@ -89,7 +89,7 @@ interface Compare extends BaseNode {
 }
 
 interface CompareOperator extends BaseNode {
-    type: "Eq" | "NotEq" | "Gt" | "GtE" | "Lt" | "LtE" | "In" | "NotIn"
+    type: "Eq" | "NotEq" | "Gt" | "GtE" | "Lt" | "LtE" | "In" | "NotIn" | "Is" | "IsNot"
 }
 
 interface BoolOp extends BaseNode {
@@ -252,6 +252,6 @@ interface ClassDef extends BaseNode {
     body: Array<any>,
 }
 
-export {BaseNode, Name, Constant, Module, Expr, Assign, AugAssign, Assert, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
+export {BaseNode, Name, Constant, Module, Expr, Assign, AugAssign, Assert, arguments, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
     UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, IfExp, Continue, Break, Return, FunctionDef, Starred, keyword, Global, Subscript, 
     Attribute, Delete, Slice, Import, alias, ClassDef} 

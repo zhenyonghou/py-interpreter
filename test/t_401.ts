@@ -13,6 +13,8 @@ class MyClass:
  
 # 实例化类
 x = MyClass(100)
-print(x.get_i())
+assert x.get_i() == 100
+x.set_i(200)
+assert x.get_i() == 200
 `
 export default pycode

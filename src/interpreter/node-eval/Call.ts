@@ -8,7 +8,7 @@ import ScopeHelper from '../scope-helper'
 import { AttributeRet, ConstantRet, NameRet, StarredRet} from '../types'
 import { _dict, _list, _tuple, iterate, iter} from '../python/builtins'
 import {createInstance} from './node-utils/create-instance'
-import functionRunHelper from './node-utils/function-run-helper'
+import {buildFunctionRunner, buildMethodRunner} from './node-utils/function-run-helper'
 /**
  * 函数调用
  * 在执行func.apply时，如果是内置函数，直接返回结果；如果是自己写的函数，返回一个State，函数体在返回的State里执行
@@ -88,8 +88,7 @@ const Call = {
                 const func = obj[attr]
                 // 这里的func可能是FunctionDefData类型，参见code_400:x.f()
                 if (func instanceof MetaFunction) {
-                    // 解释自定义函数: 绑定参数, 将body包装成state返回
-                    return functionRunHelper(ctx.args_, ctx.keywords_, func)
+                    return buildMethodRunner(ctx.args_, ctx.keywords_, obj, attr)
                 } else {
                     const ret = func.apply(obj, ctx.args_)
                     ctx.returnData_ = new ConstantRet(ret)
@@ -97,8 +96,7 @@ const Call = {
             } else if (ctx.func_ instanceof NameRet) {
                 const func = ScopeHelper.lookupX(state.scope, ctx.func_)
                 if (func instanceof MetaFunction) {
-                    // 解释自定义函数: 绑定参数, 将body包装成state返回
-                    return functionRunHelper(ctx.args_, ctx.keywords_, func)
+                    return buildFunctionRunner(ctx.args_, ctx.keywords_, func)
                 } else if (func instanceof MetaClass) { // x = MyClass()
                     // 初始化类的对象，包装成state返回
                     return createInstance(ctx.args_, func)

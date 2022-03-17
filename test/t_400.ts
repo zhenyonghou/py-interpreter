@@ -8,6 +8,8 @@ class MyClass:
  
 # 实例化类
 x = MyClass()
+
+print(x.f())
  
 # 访问类的属性和方法
 assert x.i == 12345
