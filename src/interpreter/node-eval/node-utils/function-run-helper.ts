@@ -37,8 +37,10 @@ const buildArgsMap = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRe
             for (let i = formalArgs.args.length - 1; i >= actualIndex; i--) {
                 const arg = formalArgs.args[i]
                 if (arg.type == "arg") {
-                    const defaultItem = formalArgs.defaults[defaultIndex--]
-                    argsMap.set(arg.arg, defaultItem.value)
+                    if (!argsMap.has(arg.arg) || argsMap.get(arg.arg) == undefined) {
+                        const defaultItem = formalArgs.defaults[defaultIndex--]
+                        argsMap.set(arg.arg, defaultItem.value)
+                    }
                 } else {
                     throw new Error(`在缺省参数里, arg.type必须为"arg"`)
                 }
