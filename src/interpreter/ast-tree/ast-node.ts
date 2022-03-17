@@ -125,6 +125,7 @@ interface Dict extends BaseNode {
 interface Tuple extends BaseNode {
     type: "Tuple"
     elts: Array<any>
+    ctx: ctx
 }
 
 interface While extends BaseNode {
@@ -213,6 +214,7 @@ interface Subscript extends BaseNode {
     type: "Subscript"
     value: any
     slice: Name | Constant
+    ctx: ctx
 }
 
 interface Attribute extends BaseNode {

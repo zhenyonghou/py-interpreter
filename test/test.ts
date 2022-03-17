@@ -86,7 +86,7 @@ const start = () => {
         console.log(pyCode)
 
         const ast = await codeParse(pyCode)
-        // console.log(JSON.stringify(ast.ast, null, 4))
+        console.log(JSON.stringify(ast.ast, null, 4))
         interpreter.init(ast.ast as AstTree.Node)
 
         interpreter.run()

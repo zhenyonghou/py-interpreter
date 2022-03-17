@@ -18,8 +18,12 @@ const Tuple = {
 
         while(ctx.n_ <= node.elts.length) {
             if (ctx.n_ > 0) {
-                const v = ScopeHelper.lookupX(state.scope, ctx.value_)
-                ctx.list_.__push__(v)
+                if (node.ctx.type == "Load") {
+                    const v = ScopeHelper.lookupX(state.scope, ctx.value_)
+                    ctx.list_.__push__(v)
+                } else if (node.ctx.type == "Store") {  // 如果是Store类型，不能查找结果
+                    ctx.list_.__push__(ctx.value_)
+                }
             }
 
             if (ctx.n_ < node.elts.length) {

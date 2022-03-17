@@ -1,9 +1,9 @@
 import * as AstTree from '../ast-tree'
 import {State, StateStack} from '../state'
-import { newState } from './node-utils/utils'
+import { newState, getSubscripe} from './node-utils/utils'
 import {evalBegin, evalEnd} from '../utils'
 import {SubscriptContext} from '../eval-context'
-import {SubscriptRet} from '../types'
+import {ConstantRet, SubscriptRet} from '../types'
 import ScopeHelper from '../scope-helper'
 import { _slice, _list } from '../python/builtins'
 
@@ -40,7 +40,11 @@ const Subscript = {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new SubscriptRet(ctx.subscriptValue_, sliceValue)
+        if (node.ctx.type == "Load") {
+            ss[ss.length - 1].ctx.value_ = new ConstantRet(getSubscripe(ctx.subscriptValue_, sliceValue))
+        } else {
+            ss[ss.length - 1].ctx.value_ = new SubscriptRet(ctx.subscriptValue_, sliceValue)
+        }
         evalEnd(ss.length, state)
     }
 }

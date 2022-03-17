@@ -5,9 +5,8 @@ const PORT = 8200;
 
 module.exports = {
     mode: 'development',
-    // devtool: 'inline-source-map',
     entry: {
-        pi: './src/interpreter/interpreter.ts',
+        PI: './src/interpreter/interpreter.ts',
         test: './test/index.ts'
     },
     output: {

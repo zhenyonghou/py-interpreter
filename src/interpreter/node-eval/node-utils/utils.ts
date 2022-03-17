@@ -17,4 +17,20 @@ const newState = (node: AstTree.Node, scope: Scope, step: StepAttr = StepAttr.St
     return [new State(node, scope), null]
 }
 
-export {newState}
+const getSubscripe = (obj: any, slice: any) => {
+    if ('__getitem__' in obj) {
+        return obj.__getitem__(slice)
+    } else {
+        return obj[slice]
+    }
+}
+
+const setSubscripe = (obj: any, slice: any, value: any) => {
+    if ('__setitem__' in obj) {
+        obj.__setitem__(slice.toString(), value)
+    } else {
+        obj[slice.toString()] = value
+    }
+}
+
+export {newState, getSubscripe, setSubscripe}

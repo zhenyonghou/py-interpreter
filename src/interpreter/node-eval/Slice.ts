@@ -19,20 +19,35 @@ const Slice = {
 
         if (!ctx.lowerDone_) {
             ctx.lowerDone_ = true
-            const [nextState, nodeValue] = newState(node.lower, state.scope)
-            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+
+            if (node.lower != null) {
+                const [nextState, nodeValue] = newState(node.lower, state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            }
+        }
+
+        if (node.lower != null) {
+            ctx.lowerValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+        } else {
+            ctx.lowerValue_ = 0
         }
 
         if (!ctx.upperDone_) {
             ctx.upperDone_ = true
-            ctx.lowerValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
-            const [nextState, nodeValue] = newState(node.upper, state.scope)
-            if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            if (node.upper != null) {
+                const [nextState, nodeValue] = newState(node.upper, state.scope)
+                if (nextState) {return nextState} else {ctx.value_ = nodeValue}
+            }
+        }
+
+        if (node.upper != null) {
+            ctx.upperValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+        } else {
+            ctx.upperValue_ = null
         }
 
         if (!ctx.stepDone_) {
             ctx.stepDone_ = true
-            ctx.upperValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
             if (node.step != null) {
                 const [nextState, nodeValue] = newState(node.step, state.scope)
                 if (nextState) {return nextState} else {ctx.value_ = nodeValue}
@@ -41,6 +56,8 @@ const Slice = {
 
         if (node.step != null) {
             ctx.stepValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+        } else {
+            ctx.stepValue_ = 1
         }
 
         ss.pop()
