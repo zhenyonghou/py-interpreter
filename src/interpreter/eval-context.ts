@@ -202,9 +202,33 @@ class ClassDefContext extends BaseEvalContext {
 class CreateInstanceContext extends BaseEvalContext {
     initDone_: boolean = false
 
-    obj: KV = {
-    }
+    obj: KV = {}
+}
 
+class comprehensionContext extends BaseEvalContext {
+    targetDone_: boolean = false
+    target_: NameRet = null
+
+    iterDone_: boolean = false
+
+    slice_: _list = null
+    iterIndex_: number = 0
+
+    ifsN_: number = 0
+    ifsResult_: number = -1 // -1 没结果, 1: 结果为true, 0: 结果为false
+
+    onTargetValueUpdate: (key: any, v: any) => void
+
+    items_: Array<any> = []
+}
+
+class ListCompContext extends BaseEvalContext {
+    eltDone_: boolean = false
+    eltValue_: any = null
+
+    generatorsN_: number = 0
+
+    items_: _list = new _list()
 }
 
 const ContextSets: KV = {
@@ -244,6 +268,8 @@ const ContextSets: KV = {
     Import: ImportContext,
     ClassDef: ClassDefContext,
     CreateInstance: CreateInstanceContext,
+    ListComp: ListCompContext,
+    comprehension: comprehensionContext,
 }
 
 const createContext = (node: AstTree.Node) => {
@@ -258,5 +284,5 @@ export {BaseEvalContext, ModuleContext, AssignContext, AugAssignContext, AssertC
     ExprContext, CallContext, BinOpContext, CompareContext, BoolOpContext, UnaryOpContext, ListContext, DictContext, TupleContext,
     WhileContext, ForContext, IfContext, IfExpContext, ReturnContext, FunctionDefContext, FunctionRunContext, StarredContext, 
     keywordContext, ModFormatContext, SubscriptContext, AttributeContext, DeleteContext, SliceContext, ImportContext, 
-    ClassDefContext, CreateInstanceContext,
+    ClassDefContext, CreateInstanceContext, ListCompContext, comprehensionContext,
     createContext}

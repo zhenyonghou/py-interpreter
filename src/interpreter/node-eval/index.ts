@@ -34,7 +34,8 @@ import Slice from './Slice'
 import Import from './Import'
 import ClassDef from './ClassDef'
 import CreateInstance from './CreateInstance'
-
+import comprehension from './comprehension'
+import ListComp from './ListComp'
 import {State, StateStack} from '../state'
 
 interface IEval {
@@ -81,6 +82,8 @@ class NodeEval extends Map {
         this.addEval(Import)
         this.addEval(ClassDef)
         this.addEval(CreateInstance)
+        this.addEval(comprehension)
+        this.addEval(ListComp)
     }
 
     addEval(e: IEval) {

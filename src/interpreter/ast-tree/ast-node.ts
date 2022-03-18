@@ -254,6 +254,19 @@ interface ClassDef extends BaseNode {
     body: Array<any>,
 }
 
+interface comprehension extends BaseNode {
+    type: "comprehension",
+    target: any,
+    iter: any,
+    ifs: Array<any>,
+}
+
+interface ListComp extends BaseNode {
+    type: "ListComp",
+    elt: Name,
+    generators: Array<comprehension>
+}
+
 export {BaseNode, Name, Constant, Module, Expr, Assign, AugAssign, Assert, arguments, Call, BinOp, BinOpOperator, Compare, CompareOperator, BoolOp, BoolOpOperator, 
     UnaryOp, UnaryOpOperator, List, Dict, Tuple, While, For, Pass, If, IfExp, Continue, Break, Return, FunctionDef, Starred, keyword, Global, Subscript, 
-    Attribute, Delete, Slice, Import, alias, ClassDef} 
+    Attribute, Delete, Slice, Import, alias, ClassDef, ListComp, comprehension} 

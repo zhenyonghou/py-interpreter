@@ -47,6 +47,8 @@ import code_183 from './t_183'
 import code_190 from './t_190'
 import code_191 from './t_191'
 import code_192 from './t_192'
+// ListComp
+import code_193 from './t_193'
 
 // 完善运算符，如：创建一个新的元组 tup3 = tup1 + tup2
 import code_230 from './t_230'

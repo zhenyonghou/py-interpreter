@@ -1,29 +1,40 @@
 const pycode = `\
-class BubbleSort(object):
-    # 初始化
-    def __init__(self, arr=None):
-        self.arr = arr
+
+class QuickSort(object):
+    def __init__(self):
+        pass
 
     # 升序
-    def sort_asc(self):
-        if self.arr is None:
-            return False
-        # 统计长度
-        cnt = len(self.arr)
-        for i in range(cnt - 1):
-            flag = True
-            for j in range(cnt - 1 - i):
-                if self.arr[j] > self.arr[j+1]:
-                    flag = False
-                    self.arr[j], self.arr[j+1] = self.arr[j+1], self.arr[j]
-            if flag:
-                break
-        print(self.arr)
+    def sort_asc(self, arr=None):
+        if len(arr) <= 1:
+            return arr
+        key = arr[0]
+
+        min_list, max_list = [], []
+        for i in arr[1:]:
+            if i < key:
+                min_list.append(i)
+            else:
+                max_list.append(i)
+        res = self.sort_asc(min_list) + [key] + self.sort_asc(max_list)
+        return res
+
+    # 降序
+    def sort_desc(self, arr=None):
+        if len(arr) <= 1:
+            return arr
+        key = arr[0]
+
+        # python的魅力所在
+        min_list = [i for i in arr[1:] if i < key]
+        max_list = [i for i in arr[1:] if i >= key]
+        return self.sort_desc(max_list) + [key] + self.sort_desc(min_list)
 
 
 if __name__ == '__main__':
-    arr_list = [7, 8, 6, 5, 4, 3, 1, 2]
-    num_list = BubbleSort(arr_list)
-    num_list.sort_asc()
+    arr_list = [1, 3, 8, 2, 7, 6, 5, 4]
+    num_list = QuickSort()
+    print(num_list.sort_asc(arr_list))
+    print(num_list.sort_desc(arr_list))
 `
 export default pycode

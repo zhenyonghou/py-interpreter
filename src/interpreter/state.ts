@@ -10,11 +10,11 @@ class State {
     step: StepAttr = StepAttr.Go
     ctx: BaseEvalContext = null    // 记录当前node运行时数据
 
-    constructor(node: AstTree.Node, scope: Scope, step: StepAttr = StepAttr.Go) {
+    constructor(node: AstTree.Node, scope: Scope, step: StepAttr = StepAttr.Go, ctx: BaseEvalContext = null) {
         this.node = node
         this.scope = scope
         this.step = step
-        this.ctx = createContext(node)
+        this.ctx = ctx ? ctx : createContext(node)
     }
 }
 
