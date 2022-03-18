@@ -66,7 +66,7 @@ import code_403 from './t_403'
 import code_1000 from './t_1000'
 
 import { codeParse } from '../src/lib/api'
-import Interpreter from '../src/interpreter/interpreter'
+import {Interpreter} from '../src/interpreter'
 import * as AstTree from '../src/interpreter/ast-tree'
 
 // for 003

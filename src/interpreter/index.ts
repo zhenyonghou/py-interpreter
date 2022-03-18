@@ -6,6 +6,7 @@ import NodeEval from './node-eval'
 import {Declaration, globalDeclaration} from './declaration'
 import * as pyBuiltins from './python/builtins'
 import { StepAttr } from './types'
+import {Timer, TimerStatus} from './timer'
 
 class Interpreter {
     ast: AstTree.Node = null
@@ -13,12 +14,15 @@ class Interpreter {
 
     nodeEval: NodeEval = null
 
-    stepSleep: number = 0 // ms
+    _timer: Timer = null
+
+    interval: number = 0 // ms
     // 设置成静态变量吧
     static GlobalDeclaration: Declaration = globalDeclaration
 
     onDone: () => void
-    onStayLine: (lineno: number) => void
+    onStay: (lineno: number) => void
+    onError: (err: Error) => void
 
     constructor() {
         console.log('PI VERSION:', process.env.VERSION)
@@ -45,11 +49,12 @@ class Interpreter {
         if (!state) {
             return [null, null]
         }
-
+        
         const nodeEval = this.nodeEval.getEval(state.node.type)
         if (!nodeEval) {
             throw new Error(`缺少实现:${state.node.type}`)
         }
+
         const nextState = nodeEval.eval(ss, state)
         if (nextState) {
             ss.push(nextState)
@@ -58,21 +63,28 @@ class Interpreter {
         return [state, nextState]
     }
 
-    stepOver(cb: (hasNext: boolean) => void) {
+    stepOver(cb: (hasNext: boolean, lineno: number) => void) {
         const self = this
         function nextStep() {
-            const [state, nextState] = self._step()
+            let state, nextState
+            try {
+                [state, nextState] = self._step()
+            } catch(err) {
+                self.onError && self.onError(err)
+            }
+
             if ((state && self.checkDone(state)) || state == null) {
                 self.onDone && self.onDone()
-                return cb(false)
+                return cb(false, -1)
             }
 
             if (nextState && nextState.step == StepAttr.Stay) {
+                let lineno = -1
                 if ("lineno" in nextState.node) {
-                    // console.log("nextState.node:", nextState.node)
-                    self.onStayLine && self.onStayLine(nextState.node.lineno)
+                    lineno = nextState.node.lineno
                 }
-                return cb(true)
+
+                return cb(true, lineno)
             }
 
             window.setTimeout(nextStep, 0)
@@ -81,37 +93,44 @@ class Interpreter {
     }
 
     stepInto() {
-
+        // todo
     }
 
     stepOut() {
-
+        // todo
     }
 
     run() {
-        const self = this
-        function nextStep() {
-            const [state, nextState] = self._step()
-            if ((state && self.checkDone(state)) || state == null) {
-                self.onDone && self.onDone()
-                return false
+        this._timer = new Timer(this.interval)
+        this._timer.do = () => {
+            let state, _
+            try {
+                [state, _] = this._step()
+            } catch(err) {
+                this.onError && this.onError(err)
             }
+            if ((state && this.checkDone(state)) || state == null) {
+                this.onDone && this.onDone()
 
-            window.setTimeout(nextStep, self.stepSleep)
+                this._timer.stop()
+            }
         }
-        nextStep()
+
+        this._timer.start()
     }
 
-    runWithStepOver() {
-        const self = this
-        function nextStep() {
-            self.stepOver((hasNext: boolean) => {
+    runWithOver() {
+        this._timer = new Timer(this.interval)
+        this._timer.do = () => {
+            this.stepOver((hasNext: boolean, lineno: number) => {
                 if (hasNext) {
-                    window.setTimeout(nextStep, self.stepSleep)
+                    this.onStay && this.onStay(lineno)
+                } else {
+                    this._timer.stop()
                 }
             })
         }
-        nextStep()
+        this._timer.start()
     }
 
     // 截获Python程序print函数，print时会调用到这里
@@ -131,4 +150,4 @@ class Interpreter {
     }
 }
 
-export default Interpreter
+export {Interpreter, Timer, TimerStatus}
