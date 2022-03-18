@@ -9,7 +9,8 @@ import {ConstantRet} from '../types'
 import {_list, _str, _tuple } from '../python/builtins'
 
 /**
- * ListComp与comprehension共同使用同一个scope，comprehension里Store的i,在ListComp里Load, 所以考虑之后将它俩写在了一起.
+ * 注意：
+ * ListComp里生成comprehensionContext，设置回调函数，目的是将变量设到ListComp级作用域，供ListComp访问.
  */
 
 const ListComp = {
