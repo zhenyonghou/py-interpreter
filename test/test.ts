@@ -73,32 +73,32 @@ import * as AstTree from '../src/interpreter/ast-tree'
 Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
 Interpreter.GlobalDeclaration.set("car_reach_light", () => false)
 
-// const codeList = [code_001, code_002, code_003, code_004, code_005, code_006, code_007, code_050, code_051, code_052, code_053, code_054,
-//     code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
-//     code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401]
-const codeList = [code_1000]
+const codeList = [code_001, code_002, code_003, code_004, code_005, code_006, code_007, code_050, code_051, code_052, code_053, code_054,
+    code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
+    code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401]
+// const codeList = [code_1000]
 
-const start = () => {
+const start = async () => {
+    let i = 0
     const interpreter = new Interpreter()
-
-    const startTime = (new Date()).getTime()
-    console.log("====================== test start ======================")
-    codeList.forEach(async (pyCode, index) => {
-        console.log("code index:", index)
-        console.log(pyCode)
-
-        const ast = await codeParse(pyCode)
-        console.log(JSON.stringify(ast.ast, null, 4))
-        interpreter.init(ast.ast as AstTree.Node)
-
-        interpreter.run()
-
-        const endTime = (new Date()).getTime()
-        if (index == 31) {
-            console.log("耗时ms:", endTime - startTime)
+    interpreter.onDone = async () => {
+        console.info('case_done:', i)
+        i++
+        if (i >= codeList.length) {
+            console.info('all case_done')
+            return
         }
-    })
-    console.log("====================== test end ======================")
+
+        const ast = await codeParse(codeList[i])
+        // console.log(JSON.stringify(ast.ast, null, 4))
+        interpreter.reset(ast.ast as AstTree.Node)
+        interpreter.run()
+    }
+
+    const ast = await codeParse(codeList[i])
+    // console.log(JSON.stringify(ast.ast, null, 4))
+    interpreter.reset(ast.ast as AstTree.Node)
+    interpreter.run()
 }
 
 export {start}
