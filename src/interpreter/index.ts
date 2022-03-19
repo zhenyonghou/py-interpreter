@@ -22,7 +22,7 @@ class Interpreter {
 
     onDone: () => void
     onStay: (lineno: number) => void
-    onError: (err: Error) => void
+    onError: (errMsg: string) => void
 
     constructor() {
         console.log('PI VERSION:', process.env.VERSION)
@@ -63,18 +63,24 @@ class Interpreter {
         return [state, nextState]
     }
 
-    stepOver(cb: (hasNext: boolean, lineno: number) => void) {
+    stepOver(cb: (hasNext: boolean, lineno: number) => void, error: (msg: string, lineno: number) => void) {
         const self = this
         function nextStep() {
             let state, nextState
             try {
                 [state, nextState] = self._step()
             } catch(err) {
-                self.onError && self.onError(err)
+                let lineno = -1
+                if (nextState) {
+                    if ("lineno" in nextState.node) {
+                        lineno = nextState.node.lineno
+                    }
+                }
+                console.error(err.toString())
+                return error(err.toString(), lineno)
             }
 
             if ((state && self.checkDone(state)) || state == null) {
-                self.onDone && self.onDone()
                 return cb(false, -1)
             }
 
@@ -103,11 +109,16 @@ class Interpreter {
     run() {
         this._timer = new Timer(this.interval)
         this._timer.do = () => {
-            let state, _
+            let state, nextState
             try {
-                [state, _] = this._step()
+                [state, nextState] = this._step()
             } catch(err) {
-                this.onError && this.onError(err)
+                // let lineno = -1
+                // if ("lineno" in nextState.node) {
+                //     lineno = nextState.node.lineno
+                // }
+                console.error(err.toString())
+                this.onError && this.onError(err.toString())
             }
             if ((state && this.checkDone(state)) || state == null) {
                 this.onDone && this.onDone()
@@ -126,8 +137,12 @@ class Interpreter {
                 if (hasNext) {
                     this.onStay && this.onStay(lineno)
                 } else {
+                    this.onDone && this.onDone()
                     this._timer.stop()
                 }
+            }, (errMsg: string, lineno: number) => {
+                this.onError && this.onError(errMsg)
+                this._timer.stop()
             })
         }
         this._timer.start()
