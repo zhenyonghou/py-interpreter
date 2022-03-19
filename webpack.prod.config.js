@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = {
     // devtool: 'inline-source-map',
     entry: {
-        PI: './src/interpreter/interpreter.ts',
+        PI: './src/interpreter/index.ts',
         test: './test/index.ts'
     },
     output: {
