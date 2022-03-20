@@ -14,9 +14,16 @@ class Interpreter {
 
     nodeEval: NodeEval = null
 
+    /**
+     * 在调用run或runWithOver时候才会使用
+     */
     _timer: Timer = null
 
+    /**
+     * 时间间隔，在调用run或runWithOver时配合_timer使用, 单位ms, 默认0
+     */
     interval: number = 0 // ms
+
     // 设置成静态变量吧
     static GlobalDeclaration: Declaration = globalDeclaration
 
@@ -162,6 +169,27 @@ class Interpreter {
             return true
         }
         return false
+    }
+
+    getCurrentVariables() {
+        const ret = new Map()
+        if (this.stateStack.length == 0) {
+            return ret
+        }
+
+        let scope = this.stateStack[this.stateStack.length - 1].scope
+
+        while(true) {
+            scope.declaration.forEach((key: string, v: any) => {
+                ret.set(key, v)
+            })
+
+            if (scope.type == ScopeType.Function) {
+                break
+            }
+            scope = scope.parent
+        }
+        return ret
     }
 }
 
