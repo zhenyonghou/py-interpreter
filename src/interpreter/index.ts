@@ -5,8 +5,9 @@ import {ModuleContext} from './eval-context'
 import NodeEval from './node-eval'
 import {Declaration, globalDeclaration} from './declaration'
 import * as pyBuiltins from './python/builtins'
-import { StepAttr } from './types'
+import { KV, StepAttr } from './types'
 import {Timer, TimerStatus} from './timer'
+import { MetaClass, MetaFunction } from './ast-tree/virtual-node'
 
 class Interpreter {
     ast: AstTree.Node = null
@@ -171,13 +172,14 @@ class Interpreter {
         return false
     }
 
-    getCurrentVariables() {
+    currentVariables() {
         const ret = new Map()
         if (this.stateStack.length == 0) {
             return ret
         }
 
-        let scope = this.stateStack[this.stateStack.length - 1].scope
+        const state = this.stateStack[this.stateStack.length - 1]
+        let scope = state.scope
 
         while(true) {
             scope.declaration.forEach((key: string, v: any) => {
@@ -190,6 +192,36 @@ class Interpreter {
             scope = scope.parent
         }
         return ret
+    }
+
+    formatCurrentVariables() {
+        const variablesMap = this.currentVariables()
+        let arr = []
+        for (let [key, value] of variablesMap) {
+            if (key == "self") {
+                continue
+            }
+
+            const kv: KV = {
+                key: key,
+            }
+
+            if (value instanceof pyBuiltins._list 
+                || value instanceof pyBuiltins._dict 
+                || value instanceof pyBuiltins._tuple
+                || value instanceof pyBuiltins._str) {
+                kv.value = value.toString()
+            } else if (value instanceof MetaClass || value instanceof MetaFunction) {
+                continue
+            } else if (value instanceof Object) {
+                continue
+            } else {
+                kv.value = value
+            }
+
+            arr.push(kv)
+        }
+        return arr
     }
 }
 
