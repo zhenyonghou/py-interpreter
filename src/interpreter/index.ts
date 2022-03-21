@@ -33,7 +33,7 @@ class Interpreter {
     onError: (errMsg: string) => void
 
     constructor() {
-        console.log('PI VERSION:', process.env.VERSION)
+        // console.log('PI VERSION:', process.env.VERSION)
         this.nodeEval = new NodeEval()
         this.nodeEval.init()
 

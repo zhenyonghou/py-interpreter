@@ -27,8 +27,6 @@ class MMFetch {
       if (respData.err_code > 0) {
         return respData
       } else {
-        // console.log(respData.msg)
-
         if (respData.err_code == -1004) { // token过期
           MMFetch.onTokenExpired()
         } else {
