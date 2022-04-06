@@ -1,9 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
+var JavaScriptObfuscator = require('webpack-obfuscator')
 
 module.exports = {
+    mode: 'production',
     entry: {
-        PI: './src/interpreter/index.ts'
+        PI: './src/index.ts'
     },
     output: {
         filename: '[name].js',
@@ -27,16 +29,18 @@ module.exports = {
             },
             {
                 test: /\.ts?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/
+                exclude: /node_modules/,
+                use: 'ts-loader'
             }
         ]
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': '"production"',
             'process.env.INTERPRETER_STACK_LOG': '0',
             'process.env.VERSION': '' + new Date().getTime(),
-        })
+        }),
+        new JavaScriptObfuscator({
+            rotateStringArray: true
+        }, [])
     ]
 };

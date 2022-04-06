@@ -62,9 +62,9 @@ import code_403 from './t_403'
 // 随机抽取的算法，用于验证解释器
 import code_1000 from './t_1000'
 
-import { codeParse } from '../src/lib/api'
-import {Interpreter} from '../src/interpreter'
-import * as AstTree from '../src/interpreter/ast-tree'
+import { codeParse } from '../lib/api'
+import {Interpreter} from '../src/index'
+
 
 // for 003
 Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
@@ -86,7 +86,7 @@ const start = () => {
 
         const ast = await codeParse(pyCode)
         // console.log(JSON.stringify(ast.ast, null, 4))
-        interpreter.init(ast.ast as AstTree.Node)
+        interpreter.init(ast.ast)
 
         interpreter.runWithOver()
 

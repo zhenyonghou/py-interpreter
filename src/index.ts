@@ -6,7 +6,7 @@ import NodeEval from './node-eval'
 import {Declaration, globalDeclaration} from './declaration'
 import * as pyBuiltins from './python/builtins'
 import { KV, StepAttr } from './types'
-import {Timer, TimerStatus} from './timer'
+import {ITimer, Timer, TimerStatus} from './timer'
 import { MetaClass, MetaFunction } from './ast-tree/virtual-node'
 
 class Interpreter {
@@ -18,12 +18,12 @@ class Interpreter {
     /**
      * 在调用run或runWithOver时候才会使用
      */
-    _timer: Timer = null
+    _timer: ITimer = null
 
     /**
      * 时间间隔，在调用run或runWithOver时配合_timer使用, 单位ms, 默认0
      */
-    interval: number = 0 // ms
+    // interval: number = 0 // ms
 
     // 设置成静态变量吧
     static GlobalDeclaration: Declaration = globalDeclaration
@@ -42,13 +42,21 @@ class Interpreter {
     }
 
     init(ast: AstTree.Node) {
-        this.reset(ast)
+        this.resetWithAst(ast)
     }
 
-    reset(ast: AstTree.Node) {
+    resetWithAst(ast: AstTree.Node) {
         this.ast = ast
+        this.reset()
+    }
+
+    reset() {
         const scope = new Scope(ScopeType.Function, null)
         this.stateStack = [new State(this.ast, scope)]
+    }
+
+    setTimer(timer: ITimer) {
+        this._timer = timer
     }
 
     _step() {
@@ -115,7 +123,11 @@ class Interpreter {
     }
 
     run() {
-        this._timer = new Timer(this.interval)
+        // 如果没有设置_timer, 就用默认的timer
+        if (this._timer == null) {
+            this._timer = new Timer(0)
+        }
+        
         this._timer.do = () => {
             let state, nextState
             try {
@@ -127,6 +139,7 @@ class Interpreter {
                 // }
                 console.error(err.toString())
                 this.onError && this.onError(err.toString())
+                this._timer.stop()
             }
             if ((state && this.checkDone(state)) || state == null) {
                 this.onDone && this.onDone()
@@ -139,7 +152,11 @@ class Interpreter {
     }
 
     runWithOver() {
-        this._timer = new Timer(this.interval)
+        // 如果没有设置_timer, 就用默认的timer
+        if (this._timer == null) {
+            this._timer = new Timer(0)
+        }
+        
         this._timer.do = () => {
             this.stepOver((hasNext: boolean, lineno: number) => {
                 if (hasNext) {

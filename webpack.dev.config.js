@@ -6,7 +6,7 @@ const PORT = 8200;
 module.exports = {
     mode: 'development',
     entry: {
-        PI: './src/interpreter/index.ts',
+        PI: './src/index.ts',
         test: './test/index.ts'
     },
     output: {

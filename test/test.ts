@@ -65,9 +65,12 @@ import code_403 from './t_403'
 // 随机抽取的算法，用于验证解释器
 import code_1000 from './t_1000'
 
-import { codeParse } from '../src/lib/api'
-import {Interpreter} from '../src/interpreter'
-import * as AstTree from '../src/interpreter/ast-tree'
+import { codeParse } from '../lib/api'
+
+// import {Interpreter} from '../src/index'
+// import {Interpreter} from '../dist/PI.js'
+const {Interpreter} = require('../dist/PI.js')
+console.log(Interpreter)
 
 // for 003
 Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
@@ -79,6 +82,7 @@ const codeList = [code_001, code_002, code_003, code_004, code_005, code_006, co
 // const codeList = [code_1000]
 
 const start = async () => {
+    
     let i = 0
     const interpreter = new Interpreter()
     interpreter.onDone = async () => {
@@ -91,13 +95,13 @@ const start = async () => {
 
         const ast = await codeParse(codeList[i])
         // console.log(JSON.stringify(ast.ast, null, 4))
-        interpreter.reset(ast.ast as AstTree.Node)
+        interpreter.resetWithAst(ast.ast)
         interpreter.run()
     }
 
     const ast = await codeParse(codeList[i])
     // console.log(JSON.stringify(ast.ast, null, 4))
-    interpreter.reset(ast.ast as AstTree.Node)
+    interpreter.resetWithAst(ast.ast)
     interpreter.run()
 }
 

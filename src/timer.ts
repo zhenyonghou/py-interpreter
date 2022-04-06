@@ -1,11 +1,17 @@
-import { Assert } from "./utils"
 
 enum TimerStatus {
     Running = 1,
     Stop = 2,
 }
 
-class Timer {
+interface ITimer {
+    do: () => void
+    start: () => void
+    stop: () => void
+    updateInterval: (interval: number) => void
+}
+
+class Timer implements ITimer {
     status: TimerStatus = TimerStatus.Stop
     interval: number = 0    // 单位: ms
     do: () => void
@@ -48,4 +54,4 @@ class Timer {
     }
 }
 
-export {Timer, TimerStatus}
+export {ITimer, Timer, TimerStatus}
