@@ -6,11 +6,16 @@ interface KV {
     [key: string]: any
 }
 
-const codeParse = async (pyCode: string) => {
-    const data = {
+const codeParse = async (pyCode: string, options: KV = {}) => {
+    const data : KV = {
         "lan": "python",
         "code": encodeURIComponent(pyCode),
     }
+
+    if ("lineno" in options) {
+        data["lineno"] = options["lineno"]
+    }
+
     let binaryString = pako.gzip(JSON.stringify(data), { to: 'string' });
     const blob = await MMFetch.postRaw('/api/v1/code_parse', binaryString).then(resp => resp.blob())
     const buf: any = await readBlob(blob)
@@ -31,7 +36,9 @@ const codeParse = async (pyCode: string) => {
         if (obj.data) {
             ret.ast = JSON.parse(decodeURIComponent(obj.data))
             // 打印出ast
-            // console.log(JSON.stringify(ret.ast, null, 4))
+            if (process.env.NODE_ENV == "development") {
+                console.log(JSON.stringify(ret.ast, null, 4))
+            }
         }
 
         if (obj.msg) {

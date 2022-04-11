@@ -86,7 +86,7 @@ const start = () => {
 
         const ast = await codeParse(pyCode)
         // console.log(JSON.stringify(ast.ast, null, 4))
-        interpreter.init(ast.ast)
+        interpreter.resetWithAst(ast.ast)
 
         interpreter.runWithOver()
 

@@ -9,28 +9,18 @@ import { KV, StepAttr } from './types'
 import {ITimer, Timer, TimerStatus} from './timer'
 import { MetaClass, MetaFunction } from './ast-tree/virtual-node'
 
-class Interpreter {
-    ast: AstTree.Node = null
-    stateStack: StateStack = []
+class StepInterpreter {
+    protected ast: AstTree.Node = null
+    protected stateStack: StateStack = []
+    protected nodeEval: NodeEval = null
 
-    nodeEval: NodeEval = null
+    private stepIdle: boolean = true
 
-    /**
-     * 在调用run或runWithOver时候才会使用
-     */
-    _timer: ITimer = null
-
-    /**
-     * 时间间隔，在调用run或runWithOver时配合_timer使用, 单位ms, 默认0
-     */
-    // interval: number = 0 // ms
+    public onStep: (hasNext: boolean, lineno: number) => void
+    public onError: (msg: string, lineno: number) => void
 
     // 设置成静态变量吧
-    static GlobalDeclaration: Declaration = globalDeclaration
-
-    onDone: () => void
-    onStay: (lineno: number) => void
-    onError: (errMsg: string) => void
+    public static GlobalDeclaration: Declaration = globalDeclaration
 
     constructor() {
         // console.log('PI VERSION:', process.env.VERSION)
@@ -41,25 +31,17 @@ class Interpreter {
         Interpreter.GlobalDeclaration.setWithSets(pyBuiltins)
     }
 
-    init(ast: AstTree.Node) {
-        this.resetWithAst(ast)
-    }
-
-    resetWithAst(ast: AstTree.Node) {
+    public resetWithAst(ast: AstTree.Node) {
         this.ast = ast
         this.reset()
     }
 
-    reset() {
+    public reset() {
         const scope = new Scope(ScopeType.Function, null)
         this.stateStack = [new State(this.ast, scope)]
     }
 
-    setTimer(timer: ITimer) {
-        this._timer = timer
-    }
-
-    _step() {
+    protected _step() {
         const ss = this.stateStack
         const state = ss[ss.length - 1]
         if (!state) {
@@ -79,7 +61,16 @@ class Interpreter {
         return [state, nextState]
     }
 
-    stepOver(cb: (hasNext: boolean, lineno: number) => void, error: (msg: string, lineno: number) => void) {
+    /**
+     * 为了避免堵塞，stepOver里使用了setTimeout，但又会和外面的Timer冲突，导致代码执行顺序不可控。所以加了状态stepIdle, 防重入.
+     * 外面执行Timer.do里在调用stepOver前需要判断解释器是否执行完。
+     */
+    public stepOver() {
+        if (!this.stepIdle) {
+            return
+        }
+
+        this.stepIdle = false
         const self = this
         function nextStep() {
             let state, nextState
@@ -92,12 +83,15 @@ class Interpreter {
                         lineno = nextState.node.lineno
                     }
                 }
-                console.error(err.toString())
-                return error(err.toString(), lineno)
+                self.onError(err.toString(), lineno)
+                self.stepIdle = true
+                return
             }
 
             if ((state && self.checkDone(state)) || state == null) {
-                return cb(false, -1)
+                self.onStep(false, -1)
+                self.stepIdle = true
+                return
             }
 
             if (nextState && nextState.step == StepAttr.Stay) {
@@ -106,80 +100,24 @@ class Interpreter {
                     lineno = nextState.node.lineno
                 }
 
-                return cb(true, lineno)
+                self.onStep(true, lineno)
+                self.stepIdle = true
+                return
             }
 
             window.setTimeout(nextStep, 0)
+            // nextStep()
         }
         nextStep()
     }
 
-    stepInto() {
-        // todo
-    }
-
-    stepOut() {
-        // todo
-    }
-
-    run() {
-        // 如果没有设置_timer, 就用默认的timer
-        if (this._timer == null) {
-            this._timer = new Timer(0)
-        }
-        
-        this._timer.do = () => {
-            let state, nextState
-            try {
-                [state, nextState] = this._step()
-            } catch(err) {
-                // let lineno = -1
-                // if ("lineno" in nextState.node) {
-                //     lineno = nextState.node.lineno
-                // }
-                console.error(err.toString())
-                this.onError && this.onError(err.toString())
-                this._timer.stop()
-            }
-            if ((state && this.checkDone(state)) || state == null) {
-                this.onDone && this.onDone()
-
-                this._timer.stop()
-            }
-        }
-
-        this._timer.start()
-    }
-
-    runWithOver() {
-        // 如果没有设置_timer, 就用默认的timer
-        if (this._timer == null) {
-            this._timer = new Timer(0)
-        }
-        
-        this._timer.do = () => {
-            this.stepOver((hasNext: boolean, lineno: number) => {
-                if (hasNext) {
-                    this.onStay && this.onStay(lineno)
-                } else {
-                    this.onDone && this.onDone()
-                    this._timer.stop()
-                }
-            }, (errMsg: string, lineno: number) => {
-                this.onError && this.onError(errMsg)
-                this._timer.stop()
-            })
-        }
-        this._timer.start()
-    }
-
     // 截获Python程序print函数，print时会调用到这里
-    setOutput(fn: (...arg: any[]) => void) {
+    public setOutput(fn: (...arg: any[]) => void) {
         pyBuiltins.__output.print = fn
     }
 
     // 判断结束
-    checkDone(state: State) {
+    protected checkDone(state: State) {
         const node = state.node
         if (node.type == "Module" && (state.ctx as ModuleContext).done_) {
             // pyBuiltins.print("程序执行结束")
@@ -189,7 +127,11 @@ class Interpreter {
         return false
     }
 
-    currentVariables() {
+    /**
+     * 
+     * TODO: 设置收集层级
+     */
+    protected collectVariablesWithMap() {
         const ret = new Map()
         if (this.stateStack.length == 0) {
             return ret
@@ -211,8 +153,8 @@ class Interpreter {
         return ret
     }
 
-    formatCurrentVariables() {
-        const variablesMap = this.currentVariables()
+    public collectVariables() {
+        const variablesMap = this.collectVariablesWithMap()
         let arr = []
         for (let [key, value] of variablesMap) {
             if (key == "self") {
@@ -242,4 +184,81 @@ class Interpreter {
     }
 }
 
-export {Interpreter, Timer, TimerStatus}
+class Interpreter extends StepInterpreter {
+    /**
+     * 在调用run或runWithOver时候才会使用
+     */
+    public timer: ITimer = null
+
+    /**
+     * 在Interpreter里请使用以下几个callback，而不要使用StepInterpreter里的callback
+     */
+    onDone: () => void
+    onStay: (lineno: number) => void
+    onFail: (errMsg: string) => void
+
+    constructor() {
+        super()
+
+        this.onStep = (hasNext: boolean, lineno: number) => {
+            if (hasNext) {
+                this.onStay && this.onStay(lineno)
+            } else {
+                this.onDone && this.onDone()
+                this.timer.stop()
+            }
+        }
+
+        this.onError = (errMsg: string, lineno: number) => {
+            this.onFail && this.onFail(errMsg)
+            this.timer.stop()
+        }
+    }
+
+    setTimer(timer: ITimer) {
+        this.timer = timer
+    }
+
+    run() {
+        // 如果没有设置_timer, 就用默认的timer
+        if (this.timer == null) {
+            this.timer = new Timer(0)
+        }
+        
+        this.timer.do = () => {
+            let state, nextState
+            try {
+                [state, nextState] = this._step()
+            } catch(err) {
+                // let lineno = -1
+                // if ("lineno" in nextState.node) {
+                //     lineno = nextState.node.lineno
+                // }
+                console.error(err.toString())
+                this.onFail && this.onFail(err.toString())
+                this.timer.stop()
+            }
+            if ((state && this.checkDone(state)) || state == null) {
+                this.onDone && this.onDone()
+
+                this.timer.stop()
+            }
+        }
+
+        this.timer.start()
+    }
+
+    runWithOver() {
+        // 如果没有设置_timer, 就用默认的timer
+        if (this.timer == null) {
+            this.timer = new Timer(0)
+        }
+        
+        this.timer.do = () => {
+            this.stepOver()
+        }
+        this.timer.start()
+    }
+}
+
+export {StepInterpreter, Interpreter, Timer, TimerStatus}
