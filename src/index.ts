@@ -37,6 +37,11 @@ class StepInterpreter {
     }
 
     public reset() {
+        // 安全防护，检查当前域名
+        const currentHost = window.location.host
+        if(!currentHost.includes('wat') && !currentHost.includes('cal')) {
+            return
+        }
         const scope = new Scope(ScopeType.Function, null)
         this.stateStack = [new State(this.ast, scope)]
     }
