@@ -2,8 +2,6 @@
  * 被Scope所使用
  */
 
-// import standard from './standard'
-
 const KeyPrefix = "MM_"
 
 class Declaration {
@@ -33,6 +31,13 @@ class Declaration {
         }
     }
 
+    clear() {
+        const self = this
+        this.forEach((key: string) => {
+            self.del(key)
+        })
+    }
+
     // 遍历存储的数据
     forEach(callbackfn: (key: string, value: any) => void) {
         Object.getOwnPropertyNames(this).forEach((key: string) => {
@@ -43,7 +48,4 @@ class Declaration {
     }
 }
 
-const globalDeclaration = new Declaration()
-// globalDeclaration.setWithSets(standard)
-
-export {globalDeclaration, Declaration}
+export {Declaration}

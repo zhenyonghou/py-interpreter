@@ -3,7 +3,7 @@ import {State, StateStack} from './state'
 import {Scope, ScopeType} from './scope'
 import {ModuleContext} from './eval-context'
 import NodeEval from './node-eval'
-import {Declaration, globalDeclaration} from './declaration'
+import {Declaration} from './declaration'
 import * as pyBuiltins from './python/builtins'
 import { KV, StepAttr } from './types'
 import {ITimer, Timer, TimerStatus} from './timer'
@@ -11,6 +11,7 @@ import { MetaClass, MetaFunction } from './ast-tree/virtual-node'
 
 class StepInterpreter {
     protected ast: AstTree.Node = null
+    protected rootScope: Scope = null
     protected stateStack: StateStack = []
     protected nodeEval: NodeEval = null
 
@@ -19,8 +20,10 @@ class StepInterpreter {
     public onStep: (hasNext: boolean, lineno: number) => void
     public onError: (msg: string, lineno: number) => void
 
-    // 设置成静态变量吧
-    public static GlobalDeclaration: Declaration = globalDeclaration
+    // 想设置成静态变量，但是在异步加载该库时，静态变量不如成员变量方便操作.
+    // public static GlobalDeclaration: Declaration = globalDeclaration
+    protected builtinsDeclare: Declaration = new Declaration()
+    protected externalDeclare: Declaration = new Declaration()
 
     constructor() {
         // console.log('PI VERSION:', process.env.VERSION)
@@ -28,7 +31,7 @@ class StepInterpreter {
         this.nodeEval.init()
 
         // load builtins
-        Interpreter.GlobalDeclaration.setWithSets(pyBuiltins)
+        this.builtinsDeclare.setWithSets(pyBuiltins)
     }
 
     public resetWithAst(ast: AstTree.Node) {
@@ -39,11 +42,21 @@ class StepInterpreter {
     public reset() {
         // 安全防护，检查当前域名
         const currentHost = window.location.host
-        if(!currentHost.includes('wat') && !currentHost.includes('cal')) {
+        if(!currentHost.includes('wat') && !currentHost.includes('cal')) {  // imwatt or localhost
             return
         }
         const scope = new Scope(ScopeType.Function, null)
+        scope.addExternal(this.builtinsDeclare, this.externalDeclare)
         this.stateStack = [new State(this.ast, scope)]
+        this.rootScope = scope
+    }
+
+    public registerDeclare(name: string, fn: any) {
+        this.externalDeclare.set(name, fn)
+    }
+
+    public clearRegistered() {
+        this.externalDeclare.clear()
     }
 
     protected _step() {

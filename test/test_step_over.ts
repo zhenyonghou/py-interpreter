@@ -66,9 +66,9 @@ import { codeParse } from '../lib/api'
 import {Interpreter} from '../src/index'
 
 
-// for 003
-Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
-Interpreter.GlobalDeclaration.set("car_reach_light", () => false)
+// // for 003
+// Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
+// Interpreter.GlobalDeclaration.set("car_reach_light", () => false)
 
 const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, code_050, code_051, code_052, code_053, code_054,
     code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
@@ -77,7 +77,8 @@ const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, co
 
 const start = () => {
     const interpreter = new Interpreter()
-
+    interpreter.registerDeclare("traffic_light_color", () => "red")
+    interpreter.registerDeclare("car_reach_light", () => false)
     const startTime = (new Date()).getTime()
     console.log("====================== test start ======================")
     codeList.forEach(async (pyCode, index) => {

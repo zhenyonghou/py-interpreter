@@ -8,7 +8,7 @@
  * python的变量不区分声明与赋值，声明与赋值逻辑在assign函数中处理
  */
 
-import { globalDeclaration, Declaration } from './declaration'
+import { Declaration } from './declaration'
 import { Assert } from './utils'
 
 /**
@@ -22,16 +22,27 @@ enum ScopeType {
 class Scope {
     type: ScopeType
 
-    parent: Scope
+    public parent: Scope
+    public declaration: Declaration
+    public globals = new Set()
 
-    declaration: Declaration
-
-    globals = new Set()
+    // 从外部设置进来的Declaration，比如python内置，scene定义的
+    private externalList: Array<Declaration> = []
 
     constructor(type: ScopeType, parentScope: Scope) {
         this.type = type
         this.parent = parentScope
         this.declaration = new Declaration() // 每次都新建一个全新的作用域
+    }
+
+    addExternal(...args: Declaration[]) {
+        args.forEach(d => {
+            this.externalList.push(d)
+        })
+    }
+
+    clearExternal() {
+        this.externalList = []
     }
 
     /**
@@ -61,8 +72,11 @@ class Scope {
             return this.parent.get(name)
         }
 
-        if (globalDeclaration.get(name)) {
-            return globalDeclaration.get(name)
+        for (let i = 0; i < this.externalList.length; i++) {
+            const d = this.externalList[i]
+            if (d.get(name)) {
+                return d.get(name)
+            }
         }
 
         throw new ReferenceError(`${name}尚未定义`)
@@ -80,9 +94,12 @@ class Scope {
             return
         }
 
-        if (globalDeclaration.has(name)) {
-            globalDeclaration.set(name, value)
-            return
+        for (let i = 0; i < this.externalList.length; i++) {
+            const d = this.externalList[i]
+            if (d.has(name)) {
+                d.set(name, value)
+                return
+            }
         }
 
         throw new ReferenceError(`${name}尚未定义`)
