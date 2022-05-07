@@ -1,42 +1,36 @@
 import { codeParse } from '../lib/api'
-import {StepInterpreter, Timer} from '../src/index'
+import Interpreter from '../src/index'
 
 const code = `
-class QuickSort(object):
-    def __init__(self):
-        pass
+class MyClass:
+    """一个简单的类实例"""
+    i = 12345
+    def f(self):
+        return 'hello world'
+ 
+# 实例化类
+x = MyClass()
 
-    # 降序
-    def sort_desc(self, arr=None):
-        if len(arr) <= 1:
-            return arr
-        key = arr[0]
-
-        # python的魅力所在
-        min_list = [i for i in arr[1:] if i < key]
-        max_list = [i for i in arr[1:] if i >= key]
-        return self.sort_desc(max_list) + [key] + self.sort_desc(min_list)
-
-
-if __name__ == '__main__':
-    arr_list = [1, 3, 8, 2, 7, 6, 5, 4]
-    num_list = QuickSort()
-    print(num_list.sort_desc(arr_list))
+print(x.f())
+ 
+# 访问类的属性和方法
+assert x.i == 12345
+assert(x.f() == 'hello world')
 `
 
-const timer = new Timer(0)
-const interpreter = new StepInterpreter()
+const timer = new Interpreter.External.Timer(0)
+const interpreter = new Interpreter.Interpreter()
 
-interpreter.onStep = (hasNext: boolean, lineno: number) => {
-    if (hasNext) {
-        // console.log('onStep lineno:', lineno)
-    } else {
-        timer.stop()
-        console.log('执行结束')
-    }
+interpreter.whenStep = (lineno: number, ty: string) => {
+    console.log('onStep lineno:', lineno, ty)
 }
 
-interpreter.onError = (msg: string, lineno: number) => {
+interpreter.whenDone = () => {
+    timer.stop()
+    console.log('执行结束')
+}
+
+interpreter.whenError = (msg: string, lineno: number) => {
     console.error(msg)
 }
 
@@ -48,12 +42,11 @@ const start = () => {
     const buildCode = async (pyCode: string) => {
         const ast = await codeParse(pyCode, { "lineno": 1 })
         interpreter.resetWithAst(ast.ast)
-
-        timer.start()
     }
 
     buildCode(code).then(() => {
         console.log('build done.')
+        timer.start()
     })
 }
 

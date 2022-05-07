@@ -63,7 +63,7 @@ import code_403 from './t_403'
 import code_1000 from './t_1000'
 
 import { codeParse } from '../lib/api'
-import {Interpreter} from '../src/index'
+import Interpreter from '../src/index'
 
 
 // // for 003
@@ -76,26 +76,45 @@ const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, co
 // const codeList = [code_086]
 
 const start = () => {
-    const interpreter = new Interpreter()
+    const interpreter = new Interpreter.InterpreterWithTimer()
     interpreter.registerDeclare("traffic_light_color", () => "red")
     interpreter.registerDeclare("car_reach_light", () => false)
     const startTime = (new Date()).getTime()
     console.log("====================== test start ======================")
-    codeList.forEach(async (pyCode, index) => {
+
+    const func = async (index: number) => {
+        if (index >= codeList.length) {
+            return
+        }
         console.log("code index:", index)
+        const pyCode = codeList[index]
+
         console.log(pyCode)
 
         const ast = await codeParse(pyCode)
         // console.log(JSON.stringify(ast.ast, null, 4))
+
+        interpreter.onError = (msg: string, lineno: number) => {
+            console.log(msg)
+        }
+
+        interpreter.onDone = () => {
+            index ++
+            func(index)
+        }
+
         interpreter.resetWithAst(ast.ast)
 
-        interpreter.runWithOver()
+        interpreter.run()
 
-        const endTime = (new Date()).getTime()
-        if (index == 31) {
-            console.log("耗时ms:", endTime - startTime)
-        }
-    })
+        // const endTime = (new Date()).getTime()
+        // if (index == 31) {
+        //     console.log("耗时ms:", endTime - startTime)
+        // }
+    }
+
+    func(0)
+
     console.log("====================== test end ======================")
 }
 

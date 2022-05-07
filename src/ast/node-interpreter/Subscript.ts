@@ -1,0 +1,52 @@
+import * as AstTree from '../ast-node'
+import {State, StateStack} from '../../state'
+import {getSubscripe} from './node-eval-utils/utils'
+import {SubscriptContext} from '../interpret-context'
+import {ConstantRet, SubscriptRet} from './node-eval-utils/types'
+import ScopeHelper from '../../scope/scope-helper'
+import { _slice, _list } from '../../python/builtins'
+import { BaseInterpreter } from './__base'
+
+class Subscript extends BaseInterpreter {
+    type = AstTree.NodeType.Subscript
+    interpret (ss: StateStack, state: State) {
+        const node = state.node as AstTree.Subscript
+        const ctx = state.ctx as SubscriptContext
+
+        if (!this.askWhenBegin(state)) {
+            return
+        }
+
+        if (!ctx.valueDone_) {
+            ctx.valueDone_ = true
+            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+                return
+            }
+        }
+
+        if (!ctx.sliceDone_) {
+            ctx.sliceDone_ = true
+            ctx.subscriptValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
+            if (this.prepareInterpret(node.slice, state.scope, ss, ctx)) {
+                return
+            }
+        }
+
+        let sliceValue: any = null
+        // slice类型的话，直接取值
+        if (ctx.value_ instanceof _slice) {
+            sliceValue = ctx.value_
+        } else {
+            sliceValue = ScopeHelper.lookupX(state.scope, ctx.value_)
+        }
+
+        ss.pop()
+        if (node.ctx.type == "Load") {
+            ss[ss.length - 1].ctx.value_ = new ConstantRet(getSubscripe(ctx.subscriptValue_, sliceValue))
+        } else {
+            ss[ss.length - 1].ctx.value_ = new SubscriptRet(ctx.subscriptValue_, sliceValue)
+        }
+    }
+}
+
+export default Subscript
