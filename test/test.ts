@@ -7,6 +7,9 @@ import code_005 from './t_005'
 import code_006 from './t_006'
 import code_007 from './t_007'
 
+// callback
+import code_017 from './t_017'
+
 // 测试用例: 循环&控制
 import code_050 from './t_050'
 import code_051 from './t_051'
