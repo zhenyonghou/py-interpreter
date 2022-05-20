@@ -6,6 +6,7 @@ import { Declaration } from '../scope/declaration'
 import * as pyBuiltins from '../python/builtins'
 import VariablesCollecter from '../external/variables-collecter'
 import { Debugger, DebuggerCommand } from '../external/debugger'
+import {buildFunctionRunner} from '../ast/node-interpreter/node-eval-utils/function-run-helper'
 
 class Interpreter {
     protected ast: AstTree.Node = null
@@ -26,7 +27,7 @@ class Interpreter {
     // Module begin时触发
     public whenBegin: () => void
 
-    // step时回调, debugger里判断何时应当stay
+    // step时回调, 何时应当step是在debugger里判断的
     public whenStep: (lineno: number, ty: AstTree.NodeType) => void
 
     // 程序执行结束时回调
@@ -90,6 +91,17 @@ class Interpreter {
         this.externalDeclare.clear()
     }
 
+    /**
+     * 
+     * 调用场景:
+     * js调用python回调函数时
+     */
+    public executeCallbackFunction(func: AstTree.MetaFunction, ...args: any[]) {
+        const state = buildFunctionRunner(args, null, func)
+        this.stateStack.push(state)
+        this.done = false
+    }
+
     protected stepOne() {
         this.nodeInterpreterSets.interpret(
             this.stateStack,
@@ -116,6 +128,7 @@ class Interpreter {
 
         const self = this
         function nextStep() {
+            // self.stepOne()
             try {
                 self.stepOne()
             } catch (err) {

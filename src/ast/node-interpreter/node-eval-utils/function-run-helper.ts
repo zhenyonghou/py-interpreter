@@ -107,7 +107,7 @@ const buildArgsMap = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRe
  * 2. 构建FunctionRun并返回state
  * 3. scope在FunctionRun内部生成吧
  */
- const buildFunctionRunner = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet>, metaFunc: AstTree.MetaFunction) :State => {
+const buildFunctionRunner = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet>, metaFunc: AstTree.MetaFunction): State => {
     const formalArgs = metaFunc.node.args // 形参
     const argsMap = buildArgsMap(actualArgs, actualKeywordArgs, formalArgs)
 
@@ -118,7 +118,7 @@ const buildArgsMap = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRe
     return new State(virtualNode, metaFunc.parentScope) // 传入的scope是函数定义时的scope，
 }
 
-const buildMethodRunner = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet>, obj: any, attr: string) :State => {
+const buildMethodRunner = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRet>, obj: any, attr: string): State => {
     const metaFunc = obj[attr] as AstTree.MetaFunction
 
     if (!metaFunc) {
@@ -140,4 +140,4 @@ const buildMethodRunner = (actualArgs: Array<any>, actualKeywordArgs: Array<keyw
     return new State(virtualNode, metaFunc.parentScope) // 传入的scope是函数定义时的scope，
 }
 
-export {buildFunctionRunner, buildMethodRunner}
+export { buildFunctionRunner, buildMethodRunner }

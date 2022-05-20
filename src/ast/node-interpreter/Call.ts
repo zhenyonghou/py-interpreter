@@ -87,6 +87,11 @@ class Call extends BaseInterpreter {
             if (ctx.func_ instanceof AttributeRet) {
                 const {obj, attr} = ctx.func_
                 const func = obj[attr]
+
+                if (func == undefined) {
+                    throw new Error(`${obj.constructor.name}类型不包含${attr}属性或方法`)
+                }
+
                 // 这里的func可能是FunctionDefData类型，参见code_400:x.f()
                 if (func instanceof AstTree.MetaFunction) {
                     ss.push(buildMethodRunner(ctx.args_, ctx.keywords_, obj, attr))

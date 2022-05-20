@@ -1,4 +1,5 @@
 import * as AstTree from './ast-node'
+import {INodeInterpreter} from './node-interpreter/__base'
 import Module from './node-interpreter/Module'
 import Assign from './node-interpreter/Assign'
 import AugAssign from './node-interpreter/AugAssign'
@@ -38,17 +39,6 @@ import CreateInstance from './node-interpreter/CreateInstance'
 import comprehension from './node-interpreter/comprehension'
 import ListComp from './node-interpreter/ListComp'
 import { State, StateStack } from '../state'
-
-interface INodeInterpreter {
-    type: string
-
-    beginStep: (ty: string, node: AstTree.Node) => boolean
-    keyStep: (ty: string, node: AstTree.Node) => void
-    end: (ty: string, node: AstTree.Node) => void
-
-    // 返回下一个State
-    interpret: (ss: StateStack, state: State) => void
-}
 
 class NodeInterpreterSets extends Map {
     init() {
@@ -103,9 +93,9 @@ class NodeInterpreterSets extends Map {
 
     interpret(
         ss: StateStack,
-        onBegin: (ty: string, state: AstTree.Node) => boolean,
-        onStep: (ty: string, state: AstTree.Node) => void,
-        onEnd: (ty: string, state: AstTree.Node) => void) {
+        onBegin: (ty: AstTree.NodeType, state: AstTree.Node) => boolean,
+        onStep: (ty: AstTree.NodeType, state: AstTree.Node) => void,
+        onEnd: (ty: AstTree.NodeType, state: AstTree.Node) => void) {
 
         const state = ss[ss.length - 1]
         const ty = state.node.type
@@ -123,4 +113,4 @@ class NodeInterpreterSets extends Map {
     }
 }
 
-export { NodeInterpreterSets, INodeInterpreter }
+export { NodeInterpreterSets }
