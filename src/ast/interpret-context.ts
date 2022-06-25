@@ -1,5 +1,6 @@
+import {KV} from '../common/typescript'
 import * as AstTree from './ast-node'
-import {KV, ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './node-interpreter/node-eval-utils/types'
+import {ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './node-interpreter/node-eval-utils/types'
 import {_list, _dict, _tuple} from '../python/builtins'
 import {Scope, ScopeType} from '../scope/scope'
 
@@ -97,7 +98,9 @@ export class WhileContext extends BaseEvalContext {
     testValue_: any = null
     bodyN_: number = 0
 
-    reset() {
+    counter_: number = 0 // 循环次数
+
+    again() {
         this.n_ = 0
         this.testValue_ = null
         this.bodyN_ = 0
@@ -105,6 +108,8 @@ export class WhileContext extends BaseEvalContext {
         this.control_ = ControlKey.Null
         this.returnData_ = null
         this.value_ = null
+
+        this.counter_ ++
     }
 }
 
@@ -201,7 +206,7 @@ export class ClassDefContext extends BaseEvalContext {
 export class CreateInstanceContext extends BaseEvalContext {
     initDone_: boolean = false
 
-    obj: KV = {}
+    obj: KV<any> = {}
 }
 
 export class comprehensionContext extends BaseEvalContext {
@@ -230,7 +235,7 @@ export class ListCompContext extends BaseEvalContext {
     items_: _list = new _list()
 }
 
-export const ContextSets: KV = {
+export const ContextSets: KV<any> = {
     Module: ModuleContext,
     Assign: AssignContext,
     AugAssign: AugAssignContext,

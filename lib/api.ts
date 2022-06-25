@@ -1,13 +1,13 @@
 import pako from 'pako'
 import MMFetch from './mm-fetch'
-// var CryptoJS = require("crypto-js")
 
-interface KV {
-    [key: string]: any
+// var CryptoJS = require("crypto-js")
+interface KV<T> {  // 这么做是为了解决ts(7053)问题
+    [index: string]: T
 }
 
-const codeParse = async (pyCode: string, options: KV = {}) => {
-    const data : KV = {
+const codeParse = async (pyCode: string, options: KV<any> = {}) => {
+    const data : KV<any> = {
         "lan": "python",
         "code": encodeURIComponent(pyCode),
     }
@@ -27,7 +27,7 @@ const codeParse = async (pyCode: string, options: KV = {}) => {
         // data = decrypt_eas_cbc(data)
         let obj = JSON.parse(data)
 
-        let ret: KV = {
+        let ret: KV<any> = {
             'err_code': obj.err_code,
             'msg': '',
             'ast': null

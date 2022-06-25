@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {SliceContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { _slice } from '../../python/builtins'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class Slice extends BaseInterpreter {
@@ -19,7 +20,7 @@ class Slice extends BaseInterpreter {
             ctx.lowerDone_ = true
 
             if (node.lower != null) {
-                if (this.prepareInterpret(node.lower, state.scope, ss, ctx)) {
+                if (quickInterpret(node.lower, state.scope, ss, ctx)) {
                     return
                 }
             }
@@ -34,7 +35,7 @@ class Slice extends BaseInterpreter {
         if (!ctx.upperDone_) {
             ctx.upperDone_ = true
             if (node.upper != null) {
-                if (this.prepareInterpret(node.upper, state.scope, ss, ctx)) {
+                if (quickInterpret(node.upper, state.scope, ss, ctx)) {
                     return
                 }
             }
@@ -49,7 +50,7 @@ class Slice extends BaseInterpreter {
         if (!ctx.stepDone_) {
             ctx.stepDone_ = true
             if (node.step != null) {
-                if (this.prepareInterpret(node.step, state.scope, ss, ctx)) {
+                if (quickInterpret(node.step, state.scope, ss, ctx)) {
                     return
                 }
             }

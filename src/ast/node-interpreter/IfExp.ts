@@ -2,6 +2,7 @@ import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
 import {IfExpContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class IfExp extends BaseInterpreter {
@@ -18,7 +19,7 @@ class IfExp extends BaseInterpreter {
             ctx.n_++
 
             if (node.test) {
-                if (this.prepareInterpret(node.test, state.scope, ss, ctx)) {
+                if (quickInterpret(node.test, state.scope, ss, ctx)) {
                     return
                 }
             }

@@ -3,7 +3,7 @@ import { State, StateStack } from '../../state'
 import { Scope } from '../../scope/scope'
 import { AssignContext } from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
-import { setSubscripe } from './node-eval-utils/utils'
+import { setSubscripe, quickInterpret } from './node-eval-utils/utils'
 import { Assert } from '../../utils'
 import { NameRet, ConstantRet, SubscriptRet, AttributeRet } from './node-eval-utils/types'
 import { _tuple, iterate, iter } from '../../python/builtins'
@@ -51,7 +51,7 @@ class Assign extends BaseInterpreter {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+            if (quickInterpret(node.value, state.scope, ss, ctx)) {
                 return
             }
         }
@@ -67,7 +67,7 @@ class Assign extends BaseInterpreter {
             }
 
             if (ctx.targetIndex_ < node.targets.length) {
-                if (this.prepareInterpret(node.targets[ctx.targetIndex_++], state.scope, ss, ctx)) {
+                if (quickInterpret(node.targets[ctx.targetIndex_++], state.scope, ss, ctx)) {
                     return
                 }
             } else {

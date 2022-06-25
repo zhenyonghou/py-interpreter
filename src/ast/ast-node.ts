@@ -1,3 +1,4 @@
+import { KV } from "../common/typescript"
 import { _str } from "../python/builtins"
 import {Scope} from '../scope/scope'
 
@@ -317,11 +318,6 @@ export interface ListComp extends BaseNode {
 
 //////////////////// 自定义节点 ////////////////////////
 
-
-interface KV {  // 这么做是为了解决ts(7053)问题
-    [index: string]: any
-}
-
 export class MetaFunction {
     node: FunctionDef = null
     parentScope: Scope = null
@@ -334,8 +330,8 @@ export class MetaFunction {
 
 export class MetaClass {
     classname: string = ""
-    attributes: KV = {}
-    methods: KV = {}
+    attributes: KV<any> = {}
+    methods: KV<any> = {}
 }
 
 // 自定义的节点，字符串格式化时使用

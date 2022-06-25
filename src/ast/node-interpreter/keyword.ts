@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {keywordContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {keywordRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class keyword extends BaseInterpreter {
@@ -16,7 +17,7 @@ class keyword extends BaseInterpreter {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+            if (quickInterpret(node.value, state.scope, ss, ctx)) {
                 return
             }
         }

@@ -2,6 +2,7 @@ import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
 import {ReturnContext} from '../interpret-context'
 import { ControlKey, ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class Return extends BaseInterpreter {
@@ -22,7 +23,7 @@ class Return extends BaseInterpreter {
                 parentCtx.returnData_ = ctx.value_
                 return
             }
-            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+            if (quickInterpret(node.value, state.scope, ss, ctx)) {
                 return
             }
         }

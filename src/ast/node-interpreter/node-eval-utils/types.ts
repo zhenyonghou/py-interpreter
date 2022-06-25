@@ -1,9 +1,5 @@
 import { _dict, _list, _str, _tuple } from '../../../python/builtins'
 
-interface KV {  // 这么做是为了解决ts(7053)问题
-    [index: string]: any
-}
-
 enum ControlKey {
     Null     = "",
     Pass     = "pass",
@@ -64,4 +60,4 @@ class AttributeRet {
     }
 }
 
-export {KV, ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet}
+export {ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet}

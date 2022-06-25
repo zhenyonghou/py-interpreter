@@ -4,9 +4,9 @@ import calendar from './calendar'
 import json from './json'
 import * as random from './random'
 import * as math from './math'
-import {KV} from '../../ast/node-interpreter/node-eval-utils/types'
+import { KV } from '../../common/typescript'
 
-const libModules: KV = {
+const libModules: KV<any> = {
     time,
     datetime,
     calendar,

@@ -2,6 +2,7 @@ import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
 import {AttributeContext} from '../interpret-context'
 import {AttributeRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import ScopeHelper from '../../scope/scope-helper'
 import { BaseInterpreter } from './__base'
 
@@ -18,7 +19,7 @@ class Attribute extends BaseInterpreter {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+            if (quickInterpret(node.value, state.scope, ss, ctx)) {
                 return
             }
         }

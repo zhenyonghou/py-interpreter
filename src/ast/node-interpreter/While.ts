@@ -4,6 +4,7 @@ import {WhileContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { BaseInterpreter } from './__base'
 import { ControlKey } from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 
 /**
  * 遇到break时候结束程序，不需要通知上层；遇到return时需要告知上层
@@ -11,15 +12,14 @@ import { ControlKey } from './node-eval-utils/types'
 class While extends BaseInterpreter {
     type = AstTree.NodeType.While
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.While
-        const ctx = state.ctx as WhileContext
         if (!this.askWhenBegin(state)) {
             return
         }
+        const node = state.node as AstTree.While
+        const ctx = state.ctx as WhileContext
 
         if (ctx.control_ == ControlKey.Continue) {
-            ctx.reset()
-            // return
+            ctx.again()
         } else if (ctx.control_ == ControlKey.Break) {
             ss.pop()
             this.end(this.type, state.node)
@@ -38,7 +38,10 @@ class While extends BaseInterpreter {
             ctx.n_++
 
             if (node.test) {
-                ss.push(new State(node.test, state.scope)) // 单步运行时需要在这里停留
+                if (ctx.counter_ > 0) {
+                    this.keyStep(this.type, state.node) // 强制stay
+                }
+                quickInterpret(node.test, state.scope, ss, ctx)
                 return
             }
         }
@@ -52,12 +55,10 @@ class While extends BaseInterpreter {
         if (ctx.testValue_) {
             if (ctx.bodyN_ < node.body.length) {
                 ss.push(new State(node.body[ctx.bodyN_++], state.scope))
-                return
             } else {
-                // 下次再去执行test
-                ctx.reset()
-                return
+                ctx.again() // 下次再去执行test
             }
+            return
         }
         // 结束
         ss.pop()

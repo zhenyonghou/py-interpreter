@@ -5,6 +5,7 @@ import ScopeHelper from '../../scope/scope-helper'
 import { AttributeRet, ConstantRet, NameRet, StarredRet} from './node-eval-utils/types'
 import { _dict, _list, _tuple, iterate, iter} from '../../python/builtins'
 import {createInstance} from './node-eval-utils/create-instance'
+import {quickInterpret} from './node-eval-utils/utils'
 import {buildFunctionRunner, buildMethodRunner} from './node-eval-utils/function-run-helper'
 import { BaseInterpreter } from './__base'
 /**
@@ -28,7 +29,7 @@ class Call extends BaseInterpreter {
 
         if (ctx.funcStep_ == 0) {   // 解析func
             ctx.funcStep_ ++
-            if (this.prepareInterpret(node.func, state.scope, ss, ctx)) {
+            if (quickInterpret(node.func, state.scope, ss, ctx)) {
                 return
             }
         }
@@ -56,7 +57,7 @@ class Call extends BaseInterpreter {
                 }
 
                 if (ctx.argN_ < node.args.length) {
-                    if (this.prepareInterpret(node.args[ctx.argN_++], state.scope, ss, ctx)) {
+                    if (quickInterpret(node.args[ctx.argN_++], state.scope, ss, ctx)) {
                         return
                     }
                 } else {
@@ -72,7 +73,7 @@ class Call extends BaseInterpreter {
                     ctx.keywords_.push(ctx.value_)  // item是keywordRet
                 }
                 if (ctx.keywordsN_ < node.keywords.length) {
-                    if (this.prepareInterpret(node.keywords[ctx.keywordsN_++], state.scope, ss, ctx)) {
+                    if (quickInterpret(node.keywords[ctx.keywordsN_++], state.scope, ss, ctx)) {
                         return
                     }
                 } else {

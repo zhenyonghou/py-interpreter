@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {comprehensionContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { _str } from '../../python/builtins'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class comprehension extends BaseInterpreter {
@@ -18,7 +19,7 @@ class comprehension extends BaseInterpreter {
 
         if (!ctx.targetDone_) {    // Store
             ctx.targetDone_ = true
-            if (this.prepareInterpret(node.target, scope, ss, ctx)) {
+            if (quickInterpret(node.target, scope, ss, ctx)) {
                 return
             }
         }
@@ -28,7 +29,7 @@ class comprehension extends BaseInterpreter {
 
             ctx.target_ = ctx.value_
 
-            if (this.prepareInterpret(node.iter, scope, ss, ctx)) {
+            if (quickInterpret(node.iter, scope, ss, ctx)) {
                 return
             }
         }
@@ -54,7 +55,7 @@ class comprehension extends BaseInterpreter {
                 }
 
                 if (ctx.ifsN_ < node.ifs.length) {
-                    if (this.prepareInterpret(node.ifs[ctx.ifsN_++], scope, ss, ctx)) {
+                    if (quickInterpret(node.ifs[ctx.ifsN_++], scope, ss, ctx)) {
                         return
                     }
                 } else {

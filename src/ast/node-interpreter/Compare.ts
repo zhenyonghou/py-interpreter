@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {CompareContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { _str } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
@@ -19,7 +20,7 @@ class Compare extends BaseInterpreter {
 
         if (!ctx.leftDone_) {
             ctx.leftDone_ = true
-            if (this.prepareInterpret(node.left, state.scope, ss, ctx)) {
+            if (quickInterpret(node.left, state.scope, ss, ctx)) {
                 return
             }
         }
@@ -27,7 +28,7 @@ class Compare extends BaseInterpreter {
         while (ctx.n_ <= node.comparators.length) {
             if (ctx.n_ == 0) {  // 解析left之后, 解析第0个comparator
                 ctx.left_ = ctx.value_
-                if (this.prepareInterpret(node.comparators[ctx.n_++], state.scope, ss, ctx)) {
+                if (quickInterpret(node.comparators[ctx.n_++], state.scope, ss, ctx)) {
                     return
                 }
             }
@@ -116,7 +117,7 @@ class Compare extends BaseInterpreter {
             }
             if (ctx.n_ < node.comparators.length) {
                 ctx.left_ = ctx.value_
-                if (this.prepareInterpret(node.comparators[ctx.n_++], state.scope, ss, ctx)) {
+                if (quickInterpret(node.comparators[ctx.n_++], state.scope, ss, ctx)) {
                     return
                 }
             } else { // 结束

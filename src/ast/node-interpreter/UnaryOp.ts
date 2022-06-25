@@ -2,6 +2,7 @@ import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
 import {UnaryOpContext} from '../interpret-context'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import ScopeHelper from '../../scope/scope-helper'
 import { BaseInterpreter } from './__base'
 
@@ -17,7 +18,7 @@ class UnaryOp extends BaseInterpreter {
 
         if (!ctx.operandDone_) {
             ctx.operandDone_ = true
-            if (this.prepareInterpret(node.operand, state.scope, ss, ctx)) {
+            if (quickInterpret(node.operand, state.scope, ss, ctx)) {
                 return
             }
         }

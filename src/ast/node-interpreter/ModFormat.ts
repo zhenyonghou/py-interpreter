@@ -4,6 +4,7 @@ import {Assert} from '../../utils'
 import {ModFormatContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { _tuple, _str} from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
@@ -166,7 +167,7 @@ class ModFormat extends BaseInterpreter {
 
         if (!ctx.rightDone_) {
             ctx.rightDone_ = true
-            if (this.prepareInterpret(node.right, state.scope, ss, ctx)) {
+            if (quickInterpret(node.right, state.scope, ss, ctx)) {
                 return
             }
         }

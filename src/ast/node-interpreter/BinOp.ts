@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {BinOpContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import {_list, _str, _tuple } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
@@ -17,7 +18,7 @@ class BinOp extends BaseInterpreter {
 
         if (!ctx.rightDone_) {
             ctx.rightDone_ = true
-            if (this.prepareInterpret(node.right, state.scope, ss, ctx)) {
+            if (quickInterpret(node.right, state.scope, ss, ctx)) {
                 return
             }
         }
@@ -27,7 +28,7 @@ class BinOp extends BaseInterpreter {
             ctx.right_ = ctx.value_
 
             ctx.leftDone_ = true
-            if (this.prepareInterpret(node.left, state.scope, ss, ctx)) {
+            if (quickInterpret(node.left, state.scope, ss, ctx)) {
                 return
             }
         }

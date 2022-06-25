@@ -4,7 +4,7 @@ import {Assert} from '../../utils'
 import {ForContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { ControlKey } from './node-eval-utils/types'
-import { _list, _tuple, _iter} from '../../python/builtins'
+import { _list, _tuple, _iter, _str} from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
 /**
@@ -52,6 +52,8 @@ class For extends BaseInterpreter {
                 ctx.iterValue_ = tempValue._items
             } else if (tempValue instanceof _iter) {
                 ctx.iterValue_ = tempValue._seq
+            } else if (tempValue instanceof _str) {
+                ctx.iterValue_ = tempValue._obj
             } else {
                 ctx.iterValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
             }
@@ -65,13 +67,12 @@ class For extends BaseInterpreter {
             // 处理body
             if (ctx.bodyN_ < node.body.length) {
                 ss.push(new State(node.body[ctx.bodyN_++], state.scope))
-                return
             } else {
                 // 处理完body, 继续循环
                 ctx.continue()
-                this.keyStep(this.type, state.node)
-                return
+                this.keyStep(this.type, state.node) // 强制stay
             }
+            return
         }
 
         // 结束

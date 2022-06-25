@@ -1,9 +1,9 @@
 // 参考自: https://github.com/tstriker/py-datetime
-import { KV } from "../../ast/node-interpreter/node-eval-utils/types";
+import {KV} from '../../common/typescript'
 import * as d3TimeFormat from 'd3-time-format'
 
 
-let toMillis : KV = {
+let toMillis : KV<number> = {
     milliseconds: 1,
     seconds: 1000,
     minutes: 1000 * 60,
@@ -19,7 +19,7 @@ class time {
     millisecond: number = 0
 
     constructor(hour: number, minute: number, second: number, millisecond: number) {
-        let args: KV = {hour, minute, second, millisecond};
+        let args: KV<number> = {hour, minute, second, millisecond};
         if (hour != null && typeof hour != "number") {
             // we have a dict
             args = hour;
@@ -113,7 +113,7 @@ class datetime {
 
     constructor(year: number|Date|datetime|date, month?: number, day?: number, 
                 hour: number = 0, minute: number = 0, second: number = 0, millisecond: number = 0, utc: boolean = false) {
-        let args:KV = {}
+        let args:KV<any> = {}
         // this.utc = utc
 
         if (typeof year == "number" && !month && !day) {
@@ -275,7 +275,7 @@ class timedelta {
     weeks: number = 0
 
     constructor(days: number, seconds: number, milliseconds: number, minutes: number, hours: number, weeks: number) {
-        let args: KV = {weeks, days, hours, minutes, seconds, milliseconds}
+        let args: KV<number> = {weeks, days, hours, minutes, seconds, milliseconds}
         if (typeof days != "number") {
             // we have a dict
             args = days;

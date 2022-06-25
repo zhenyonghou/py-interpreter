@@ -16,6 +16,7 @@ import code_051 from './t_051'
 import code_052 from './t_052'
 import code_053 from './t_053'
 import code_054 from './t_054'
+import code_055 from './t_055'
 
 // 函数&参数
 import code_080 from './t_080'
@@ -70,20 +71,21 @@ import code_1000 from './t_1000'
 
 import { codeParse } from '../lib/api'
 
-// import {Interpreter} from '../src/index'
-// import {Interpreter} from '../dist/PI.js'
-const {Interpreter} = require('../dist/PI.js')
-console.log(Interpreter)
+import PI from '../src/index'
+// import PI from '../dist/PI.js'
+// const {Interpreter} = require('../dist/PI.js')
+console.log(PI)
 
-const codeList = [code_001, code_002, code_003, code_004, code_005, code_006, code_007, code_050, code_051, code_052, code_053, code_054,
-    code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
-    code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401]
+const codeList = [code_001, code_002, code_003, code_004, code_005, code_006, code_007, code_050, code_051, code_052, 
+    code_053, code_054, code_055, code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, 
+    code_150, code_151, code_152, code_180, code_181, code_182, code_183, code_190, code_191, code_192, code_230, 
+    code_280, code_400, code_401]
 // const codeList = [code_1000]
 
 const start = async () => {
     
     let i = 0
-    const interpreter = new Interpreter()
+    const interpreter = new PI.InterpreterWithTimer()
     // for 003
     interpreter.registerDeclare("traffic_light_color", () => "red")
     interpreter.registerDeclare("car_reach_light", () => false)

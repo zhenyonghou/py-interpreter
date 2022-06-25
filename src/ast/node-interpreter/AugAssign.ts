@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {AugAssignContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { NameRet, SubscriptRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class AugAssign extends BaseInterpreter {
@@ -17,14 +18,14 @@ class AugAssign extends BaseInterpreter {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+            if (quickInterpret(node.value, state.scope, ss, ctx)) {
                 return
             }
         }
 
         if (!ctx.targetDone_) {
             ctx.rightValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
-            if (this.prepareInterpret(node.target, state.scope, ss, ctx)) {
+            if (quickInterpret(node.target, state.scope, ss, ctx)) {
                 return
             }
         }

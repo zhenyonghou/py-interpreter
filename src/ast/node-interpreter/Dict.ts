@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {DictContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class Dict extends BaseInterpreter {
@@ -22,7 +23,7 @@ class Dict extends BaseInterpreter {
             }
 
             if (ctx.valueIndex_ < node.values.length) {
-                if (this.prepareInterpret(node.values[ctx.valueIndex_++], state.scope, ss, ctx)) {
+                if (quickInterpret(node.values[ctx.valueIndex_++], state.scope, ss, ctx)) {
                     return
                 }
             } else {

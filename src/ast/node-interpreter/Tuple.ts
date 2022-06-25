@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {TupleContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class Tuple extends BaseInterpreter {
@@ -25,7 +26,7 @@ class Tuple extends BaseInterpreter {
             }
 
             if (ctx.n_ < node.elts.length) {
-                if (this.prepareInterpret(node.elts[ctx.n_++], state.scope, ss, ctx)) {
+                if (quickInterpret(node.elts[ctx.n_++], state.scope, ss, ctx)) {
                     return
                 }
             } else {

@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {getSubscripe} from './node-eval-utils/utils'
 import {SubscriptContext} from '../interpret-context'
 import {ConstantRet, SubscriptRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import ScopeHelper from '../../scope/scope-helper'
 import { _slice, _list } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
@@ -19,7 +20,7 @@ class Subscript extends BaseInterpreter {
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
-            if (this.prepareInterpret(node.value, state.scope, ss, ctx)) {
+            if (quickInterpret(node.value, state.scope, ss, ctx)) {
                 return
             }
         }
@@ -27,7 +28,7 @@ class Subscript extends BaseInterpreter {
         if (!ctx.sliceDone_) {
             ctx.sliceDone_ = true
             ctx.subscriptValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
-            if (this.prepareInterpret(node.slice, state.scope, ss, ctx)) {
+            if (quickInterpret(node.slice, state.scope, ss, ctx)) {
                 return
             }
         }

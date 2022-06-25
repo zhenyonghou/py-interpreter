@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import { comprehensionContext, ListCompContext } from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import {_list, _str, _tuple } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
@@ -22,7 +23,7 @@ class ListComp extends BaseInterpreter {
 
         if (!ctx.eltDone_) {
             ctx.eltDone_ = true
-            if (this.prepareInterpret(node.elt, state.scope, ss, ctx)) {
+            if (quickInterpret(node.elt, state.scope, ss, ctx)) {
                 return
             }
         }

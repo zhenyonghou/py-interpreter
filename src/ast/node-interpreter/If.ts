@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {IfContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { ControlKey } from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
 class If extends BaseInterpreter {
@@ -37,7 +38,7 @@ class If extends BaseInterpreter {
             ctx.n_++
 
             if (node.test) {
-                if (this.prepareInterpret(node.test, state.scope, ss, ctx)) {
+                if (quickInterpret(node.test, state.scope, ss, ctx)) {
                     return
                 }
             }

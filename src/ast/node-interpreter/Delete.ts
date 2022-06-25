@@ -3,6 +3,7 @@ import {State, StateStack} from '../../state'
 import {Assert} from '../../utils'
 import {DeleteContext} from '../interpret-context'
 import { NameRet, SubscriptRet } from './node-eval-utils/types'
+import {quickInterpret} from './node-eval-utils/utils'
 import { _dict, _list, _tuple } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
@@ -32,7 +33,7 @@ class Delete extends BaseInterpreter {
                 }
             }
             if (ctx.n_ < node.targets.length) {
-                if (this.prepareInterpret(node.targets[ctx.n_++], state.scope, ss, ctx)) {
+                if (quickInterpret(node.targets[ctx.n_++], state.scope, ss, ctx)) {
                     return
                 }
             } else {

@@ -1,6 +1,6 @@
 import { codeParse } from '../lib/api'
 import Interpreter from '../src/index'
-import code from './t_017'
+import code from './t_055'
 
 // const code = `
 // class MyClass:
@@ -33,6 +33,7 @@ interpreter.whenDone = () => {
 
 interpreter.whenError = (msg: string, lineno: number) => {
     console.error(msg)
+    timer.stop()
 }
 
 timer.do = () => {
