@@ -32,7 +32,7 @@ class Debugger {
     // NT.List, NT.Call, NT.Attribute, NT.BoolOp, NT.BoolOpOperator, NT.UnaryOp, NT.UnaryOpOperator, NT.Dict, NT.Tuple, 
     // NT.arguments
     private stayTypes = [NT.Expr, NT.Assign, NT.AugAssign, NT.Assert, NT.While, NT.For, NT.Pass, NT.If, NT.IfExp, 
-        NT.Continue, NT.Break, NT.Return, NT.FunctionDef, NT.Global, NT.Delete, NT.Import, NT.ClassDef, NT.FunctionRun]
+        NT.Continue, NT.Break, NT.Return, NT.Global, NT.Delete, NT.Import, NT.FunctionDef, NT.ClassDef, NT.FunctionRun]
 
     constructor() {
         this.reset()

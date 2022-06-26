@@ -1,23 +1,6 @@
 import { codeParse } from '../lib/api'
 import Interpreter from '../src/index'
-import code from './t_055'
-
-// const code = `
-// class MyClass:
-//     """一个简单的类实例"""
-//     i = 12345
-//     def f(self):
-//         return 'hello world'
- 
-// # 实例化类
-// x = MyClass()
-
-// print(x.f())
- 
-// # 访问类的属性和方法
-// assert x.i == 12345
-// assert(x.f() == 'hello world')
-// `
+import code from './t_1000'
 
 const timer = new Interpreter.External.Timer(0)
 const interpreter = new Interpreter.Interpreter()

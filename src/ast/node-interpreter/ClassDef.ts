@@ -24,7 +24,7 @@ class ClassDef extends BaseInterpreter {
         }
 
         if (ctx.bodyN_ < node.body.length) {
-            ss.push(new State(node.body[ctx.bodyN_++], ctx.scope))
+            ss.push(new State(node.body[ctx.bodyN_++], ctx.scope))  // 如果将这个改成直接解释，去掉new State && push，这样就优化了class的解释。
             return
         }
 
