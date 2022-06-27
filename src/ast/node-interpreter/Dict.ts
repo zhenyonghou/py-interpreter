@@ -32,7 +32,7 @@ class Dict extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.dict_)
+        ss.setTopCtxValue(new ConstantRet(ctx.dict_))
     }
 }
 

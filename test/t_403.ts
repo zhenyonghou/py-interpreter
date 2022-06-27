@@ -1,6 +1,6 @@
 // 继承 https://www.runoob.com/python3/python3-class.html
 const pycode = `\
-#类定义
+# 类定义
 class people:
     #定义基本属性
     name = ''
@@ -15,12 +15,12 @@ class people:
     def speak(self):
         print("%s 说: 我 %d 岁。" %(self.name,self.age))
  
-#单继承示例
+# 单继承示例
 class student(people):
     grade = ''
     def __init__(self,n,a,w,g):
         #调用父类的构函
-        people.__init__(self,n,a,w)
+        super().__init__(self,n,a,w)
         self.grade = g
     #覆写父类的方法
     def speak(self):

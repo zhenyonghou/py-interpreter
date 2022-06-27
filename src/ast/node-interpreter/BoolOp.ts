@@ -51,7 +51,7 @@ class BoolOp extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(!!ctx.leftValue_)
+        ss.setTopCtxValue(new ConstantRet(!!ctx.leftValue_))
     }
 }
 

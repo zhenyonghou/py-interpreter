@@ -4,7 +4,7 @@ import { Scope } from '../../scope/scope'
 import { AssignContext } from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { setSubscripe, quickInterpret } from './node-eval-utils/utils'
-import { Assert } from '../../utils'
+import { _assert } from '../../common/functions'
 import { NameRet, ConstantRet, SubscriptRet, AttributeRet } from './node-eval-utils/types'
 import { _tuple, iterate, iter } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
@@ -28,14 +28,14 @@ const doAssign = (left: any, right: any, scope: Scope) => {
                 doAssign(item, right.__getitem__(i++), scope)
             })
         } else {
-            Assert(false, `Assign有不支持的类型2`)
+            _assert(false, `Assign有不支持的类型2`)
         }
     }
     else if (left instanceof AttributeRet) {
         left.obj[left.attr] = right
     }
     else {
-        Assert(false, `Assign有不支持的类型`)
+        _assert(false, `Assign有不支持的类型`)
     }
 }
 

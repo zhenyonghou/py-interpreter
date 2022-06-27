@@ -22,14 +22,14 @@ class While extends BaseInterpreter {
             ctx.again()
         } else if (ctx.control_ == ControlKey.Break) {
             ss.pop()
-            this.end(this.type, state.node)
+            this.exit(state.node)
             return
         } else if (ctx.control_ == ControlKey.Return) {
             ss.pop()
-            const parentCtx = ss[ss.length - 1].ctx
-            parentCtx.control_ = ctx.control_
-            parentCtx.returnData_ = ctx.returnData_
-            this.end(this.type, state.node)
+            const top = ss.top()
+            top.ctx.control_ = ctx.control_
+            top.ctx.returnData_ = ctx.returnData_
+            this.exit(state.node)
             return
         }
 
@@ -62,7 +62,7 @@ class While extends BaseInterpreter {
         }
         // 结束
         ss.pop()
-        this.end(this.type, state.node)
+        this.exit(state.node)
     }
 }
 

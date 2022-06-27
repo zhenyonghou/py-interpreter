@@ -9,7 +9,7 @@ class Name extends BaseInterpreter {
         const node = state.node as AstTree.Name
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new NameRet(node.id, node.ctx.type)
+        ss.setTopCtxValue(new NameRet(node.id, node.ctx.type))
     }
 }
 

@@ -38,9 +38,9 @@ import ClassDef from './node-interpreter/ClassDef'
 import CreateInstance from './node-interpreter/CreateInstance'
 import comprehension from './node-interpreter/comprehension'
 import ListComp from './node-interpreter/ListComp'
-import { State, StateStack } from '../state'
+import { StateStack } from '../state'
 
-class NodeInterpreterSets extends Map {
+export class NodeInterpreterSets extends Map {
     init() {
         // 装载所有handler
         this.addInterpreter(new Module())
@@ -87,30 +87,25 @@ class NodeInterpreterSets extends Map {
         this.set(e.type, e)
     }
 
-    getInterpreter(nodeName: string): INodeInterpreter {
-        return this.get(nodeName)
+    getInterpreter(node: AstTree.Node): INodeInterpreter {
+        return this.get(node.type)
     }
 
     interpret(
         ss: StateStack,
-        onBegin: (ty: AstTree.NodeType, state: AstTree.Node) => boolean,
-        onStep: (ty: AstTree.NodeType, state: AstTree.Node) => void,
-        onEnd: (ty: AstTree.NodeType, state: AstTree.Node) => void) {
-
-        const state = ss[ss.length - 1]
-        const ty = state.node.type
-
-        const i = this.getInterpreter(ty)
+        onEnter: (node: AstTree.Node) => boolean,
+        onStep: (ty: AstTree.NodeType, node: AstTree.Node) => void,
+        onExit: (node: AstTree.Node) => void) {
+        const state = ss.top()
+        const i = this.getInterpreter(state.node)
         if (!i) {
-            throw new Error(`缺少实现:${ty}`)
+            throw new Error(`缺少实现:${state.node.type}`)
         }
 
-        i.beginStep = onBegin
+        i.enter = onEnter
         i.keyStep = onStep
-        i.end = onEnd
+        i.exit = onExit
 
         i.interpret(ss, state)
     }
 }
-
-export { NodeInterpreterSets }

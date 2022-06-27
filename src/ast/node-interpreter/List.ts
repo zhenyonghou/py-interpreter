@@ -9,11 +9,12 @@ import { BaseInterpreter } from './__base'
 class List extends BaseInterpreter {
     type = AstTree.NodeType.List
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.List
-        const ctx = state.ctx as ListContext
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.List
+        const ctx = state.ctx as ListContext
 
         while (ctx.n_ <= node.elts.length) {
             if (ctx.n_ > 0) {
@@ -30,7 +31,7 @@ class List extends BaseInterpreter {
             }
         }
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.list_)
+        ss.setTopCtxValue(new ConstantRet(ctx.list_))
     }
 }
 

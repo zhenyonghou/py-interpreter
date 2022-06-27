@@ -1,5 +1,4 @@
 import * as AstTree from '../ast-node'
-import {FunctionDefContext} from '../interpret-context'
 import {State, StateStack} from '../../state'
 import { BaseInterpreter } from './__base'
 
@@ -7,7 +6,6 @@ class FunctionDef extends BaseInterpreter {
     type = AstTree.NodeType.FunctionDef
     interpret (ss: StateStack, state: State) {
         const node = state.node as AstTree.FunctionDef
-        const ctx = state.ctx as FunctionDefContext
         if (!this.askWhenBegin(state)) {
             return
         }

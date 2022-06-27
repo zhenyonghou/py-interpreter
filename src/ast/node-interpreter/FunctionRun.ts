@@ -26,19 +26,18 @@ class FunctionRun extends BaseInterpreter {
             })
             ctx.scope = funcScope
 
-            if (!this.beginStep(this.type, state.node)) {
+            if (!this.enter(state.node)) {
                 return
             }
         }
 
         if (ctx.control_ == ControlKey.Return) {
             ss.pop()
-            const parentCtx = ss[ss.length - 1].ctx
-            parentCtx.control_ = ctx.control_
-            const retValue = ScopeHelper.lookupX(ctx.scope, ctx.returnData_)
-            parentCtx.returnData_ = new ConstantRet(retValue) // 因为要出作用域，所以这里必须取值
+            const top = ss.top()
+            top.ctx.control_ = ctx.control_
+            top.ctx.returnData_ = new ConstantRet(ScopeHelper.lookupX(ctx.scope, ctx.returnData_)) // 因为要出作用域，所以这里必须取值
 
-            this.end(this.type, state.node)
+            this.exit(state.node)
             return
         }
 
@@ -49,7 +48,7 @@ class FunctionRun extends BaseInterpreter {
         }
         // 结束
         ss.pop()
-        this.end(this.type, state.node)
+        this.exit(state.node)
     }
 }
 

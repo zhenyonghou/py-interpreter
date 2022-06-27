@@ -15,11 +15,12 @@ import { BaseInterpreter } from './__base'
 class ListComp extends BaseInterpreter {
     type = AstTree.NodeType.ListComp
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.ListComp
-        const ctx = state.ctx as ListCompContext
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.ListComp
+        const ctx = state.ctx as ListCompContext
 
         if (!ctx.eltDone_) {
             ctx.eltDone_ = true
@@ -44,7 +45,7 @@ class ListComp extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.items_)
+        ss.setTopCtxValue(new ConstantRet(ctx.items_))
     }
 }
 

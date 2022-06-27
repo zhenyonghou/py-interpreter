@@ -9,12 +9,12 @@ import { BaseInterpreter } from './__base'
 class UnaryOp extends BaseInterpreter {
     type = AstTree.NodeType.UnaryOp
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.UnaryOp
-        const ctx = state.ctx as UnaryOpContext
-
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.UnaryOp
+        const ctx = state.ctx as UnaryOpContext
 
         if (!ctx.operandDone_) {
             ctx.operandDone_ = true
@@ -49,7 +49,7 @@ class UnaryOp extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = retValue
+        ss.setTopCtxValue(retValue)
     }
 }
 

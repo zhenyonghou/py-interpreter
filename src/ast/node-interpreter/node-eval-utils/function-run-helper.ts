@@ -1,6 +1,6 @@
 import * as AstTree from '../../ast-node'
 import { State } from '../../../state'
-import { Assert } from '../../../utils'
+import { _assert } from '../../../common/functions'
 import { keywordRet, AttributeRet } from './types'
 import { _dict, _list, _tuple } from '../../../python/builtins'
 
@@ -16,7 +16,7 @@ const buildArgsMap = (actualArgs: Array<any>, actualKeywordArgs: Array<keywordRe
         if (formalArgs.args.length > 0) {
             for (let formalIndex = 0; formalIndex < formalArgs.args.length; formalIndex++) {
                 const arg = formalArgs.args[formalIndex]
-                Assert(arg.type == "arg", `不支持的类型:${arg.type}`)
+                _assert(arg.type == "arg", `不支持的类型:${arg.type}`)
                 if (actualIndex < actualArgs.length) {
                     if (formalIndex == 0 && arg.arg == 'self') {
                         // 由于没有传进来对象, 这里不做self处理，只是设key，value是在外层设置
@@ -122,7 +122,7 @@ const buildMethodRunner = (actualArgs: Array<any>, actualKeywordArgs: Array<keyw
     const metaFunc = obj[attr] as AstTree.MetaFunction
 
     if (!metaFunc) {
-        Assert(false, `方法不存在：${attr}`)
+        _assert(false, `方法不存在：${attr}`)
         return
     }
 

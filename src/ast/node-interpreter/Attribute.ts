@@ -27,7 +27,7 @@ class Attribute extends BaseInterpreter {
         ctx.attributeValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new AttributeRet(ctx.attributeValue_, node.attr)
+        ss.setTopCtxValue(new AttributeRet(ctx.attributeValue_, node.attr))
     }
 }
 

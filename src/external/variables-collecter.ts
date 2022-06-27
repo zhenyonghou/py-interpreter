@@ -36,11 +36,11 @@ class VariablesCollecter {
     private collectVariables(ss: StateStack) : Array<VariablesKV> {
         const ret :Array<VariablesKV> = []
 
-        if (ss.length == 0) {
+        if (ss.isEmpty()) {
             return ret
         }
 
-        const state = ss[ss.length - 1]
+        const state = ss.top()
         let scope = state.scope
 
         for (let level = 0; level < this.levels; level++) {

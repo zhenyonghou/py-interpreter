@@ -118,8 +118,8 @@ class Call extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = ctx.returnData_
-        this.end(this.type, state.node)
+        ss.setTopCtxValue(ctx.returnData_)
+        this.exit(state.node)
     }
 }
 

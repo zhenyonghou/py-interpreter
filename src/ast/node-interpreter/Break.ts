@@ -11,7 +11,7 @@ class Break extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.control_ = ControlKey.Break
+        ss.setTopCtxControl(ControlKey.Break)
     }
 }
 

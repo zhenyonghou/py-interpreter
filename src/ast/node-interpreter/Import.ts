@@ -1,7 +1,6 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
-import {Assert} from '../../utils'
-import {ImportContext} from '../interpret-context'
+import {_assert} from '../../common/functions'
 import libModules from '../../python/libs/index'
 import { Scope } from '../../scope/scope'
 import { BaseInterpreter } from './__base'
@@ -11,20 +10,21 @@ const importModule = (scope: Scope, moduleName: string, path: string = '') => {
         if (libModules.hasOwnProperty(moduleName)) {
             scope.set(moduleName, libModules[moduleName])
         } else {
-            Assert(false, `找不到模块${moduleName}`)
+            _assert(false, `找不到模块${moduleName}`)
         }
     } else {
-        Assert(false, `找不到模块${moduleName}`)
+        _assert(false, `找不到模块${moduleName}`)
     }
 }
 
 class Import extends BaseInterpreter {
     type = AstTree.NodeType.Import
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.Import
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.Import
 
         for (let i = 0; i < node.names.length; i++) {
             let item = node.names[i]

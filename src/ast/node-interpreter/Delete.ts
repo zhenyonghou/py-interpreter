@@ -1,6 +1,6 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
-import {Assert} from '../../utils'
+import {_assert} from '../../common/functions'
 import {DeleteContext} from '../interpret-context'
 import { NameRet, SubscriptRet } from './node-eval-utils/types'
 import {quickInterpret} from './node-eval-utils/utils'
@@ -10,12 +10,12 @@ import { BaseInterpreter } from './__base'
 class Delete extends BaseInterpreter {
     type = AstTree.NodeType.Delete
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.Delete
-        const ctx = state.ctx as DeleteContext
-
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.Delete
+        const ctx = state.ctx as DeleteContext
 
         while (ctx.n_ <= node.targets.length) {
             if (ctx.n_ > 0) {
@@ -26,10 +26,10 @@ class Delete extends BaseInterpreter {
                     if (obj instanceof _dict || obj instanceof _list || obj instanceof _tuple) {
                         obj.__delitem__(slice)
                     } else {
-                        Assert(false, `未处理到的情况`)
+                        _assert(false, `未处理到的情况`)
                     }
                 } else {
-                    Assert(false, `未处理到的情况`)
+                    _assert(false, `未处理到的情况`)
                 }
             }
             if (ctx.n_ < node.targets.length) {

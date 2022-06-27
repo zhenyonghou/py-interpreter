@@ -1,6 +1,6 @@
 import { codeParse } from '../lib/api'
 import Interpreter from '../src/index'
-import code from './t_1000'
+import code from './t_403'
 
 const timer = new Interpreter.External.Timer(0)
 const interpreter = new Interpreter.Interpreter()

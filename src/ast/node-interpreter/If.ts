@@ -9,27 +9,26 @@ import { BaseInterpreter } from './__base'
 class If extends BaseInterpreter {
     type = AstTree.NodeType.If
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.If
-        const ctx = state.ctx as IfContext
         if (!this.askWhenBegin(state)) {
             return
         }
 
+        const node = state.node as AstTree.If
+        const ctx = state.ctx as IfContext
+
         if (ctx.control_ == ControlKey.Continue) {
             ss.pop()
-            const parentCtx = ss[ss.length - 1].ctx
-            parentCtx.control_ = ctx.control_
+            ss.setTopCtxControl(ctx.control_)
             return
         } else if (ctx.control_ == ControlKey.Break) {
             ss.pop()
-            const parentCtx = ss[ss.length - 1].ctx
-            parentCtx.control_ = ctx.control_
+            ss.setTopCtxControl(ctx.control_)
             return
         } else if (ctx.control_ == ControlKey.Return) {
             ss.pop()
-            const parentCtx = ss[ss.length - 1].ctx
-            parentCtx.control_ = ctx.control_
-            parentCtx.returnData_ = ctx.returnData_
+            const top = ss.top()
+            top.ctx.control_ = ctx.control_
+            top.ctx.returnData_ = ctx.returnData_
             return
         }
 

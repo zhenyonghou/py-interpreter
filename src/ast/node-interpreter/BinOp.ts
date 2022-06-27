@@ -35,7 +35,7 @@ class BinOp extends BaseInterpreter {
 
         if (ctx.modeFormatting) {
             ss.pop()
-            ss[ss.length - 1].ctx.value_ = ctx.value_
+            ss.setTopCtxValue(ctx.value_)
             return
         }
 
@@ -111,7 +111,7 @@ class BinOp extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(value)
+        ss.setTopCtxValue(new ConstantRet(value))
     }
 }
 

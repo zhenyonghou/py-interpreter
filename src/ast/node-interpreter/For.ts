@@ -1,6 +1,6 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
-import {Assert} from '../../utils'
+import {_assert} from '../../common/functions'
 import {ForContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { ControlKey } from './node-eval-utils/types'
@@ -27,16 +27,16 @@ class For extends BaseInterpreter {
             return
         } else if (ctx.control_ == ControlKey.Return) {
             ss.pop()
-            const parentCtx = ss[ss.length - 1].ctx
-            parentCtx.control_ = ctx.control_
-            parentCtx.returnData_ = ctx.returnData_
+            const top = ss.top()
+            top.ctx.control_ = ctx.control_
+            top.ctx.returnData_ = ctx.returnData_
             return
         }
 
         if (!ctx.init_) {
             ctx.init_ = true
 
-            Assert(node.target.id.length > 0)
+            _assert(node.target.id.length > 0)
             ctx.targetName_ = node.target.id
 
             // 解释iter
@@ -77,7 +77,7 @@ class For extends BaseInterpreter {
 
         // 结束
         ss.pop()
-        this.end(this.type, state.node)
+        this.exit(state.node)
     }
 }
 

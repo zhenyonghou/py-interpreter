@@ -1,6 +1,6 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
-import {Assert as __assert} from '../../utils'
+import { _assert } from '../../common/functions'
 import {quickInterpret} from './node-eval-utils/utils'
 import {AssertContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
@@ -10,12 +10,12 @@ class Assert extends BaseInterpreter {
     type = AstTree.NodeType.Assert
 
     interpret(ss: StateStack, state: State) {
-        const node = state.node as AstTree.Assert
-        const ctx = state.ctx as AssertContext
-
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.Assert
+        const ctx = state.ctx as AssertContext
 
         if (!ctx.testDone_) {
             ctx.testDone_ = true
@@ -25,7 +25,7 @@ class Assert extends BaseInterpreter {
         }
 
         const value = ScopeHelper.lookupX(state.scope, ctx.value_)
-        __assert(value, node.msg == null ? "Assert警告" : node.msg)
+        _assert(value, node.msg == null ? "Assert警告" : node.msg)
 
         ss.pop()
     }

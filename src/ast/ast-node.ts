@@ -2,7 +2,7 @@ import { KV } from "../common/typescript"
 import { _str } from "../python/builtins"
 import {Scope} from '../scope/scope'
 
-enum NodeType {
+export enum NodeType {
     Name = "Name",
     Constant = "Constant",
     Module = "Module",
@@ -46,11 +46,11 @@ enum NodeType {
     comprehension = "comprehension",
     ModFormat = "ModFormat",
     FunctionRun = "FunctionRun",
-    CreateInstance = "CreateInstance"
+    CreateInstance = "CreateInstance",
 }
 
 export interface BaseNode {
-    type: string
+    type: NodeType | string
     lineno ?: number
     end_lineno ?: number
     col_offset ?: number
@@ -63,7 +63,7 @@ export interface ctx {
 }
 
 export interface Name extends BaseNode {
-    type: NodeType.Name
+    type: NodeType.Name // 枚举成员成为了类型, 我们可以说某些成员 只能是枚举成员的值
     id: string
     ctx: ctx
 }
@@ -224,7 +224,7 @@ export interface For extends BaseNode {
 }
 
 export interface arg extends BaseNode {
-    type: "arg"
+    // type: "arg"
     arg: string
     annotation: any
 }
@@ -336,14 +336,14 @@ export class MetaClass {
 
 // 自定义的节点，字符串格式化时使用
 export class ModFormat implements BaseNode {
-    type:string = NodeType.ModFormat
+    type = NodeType.ModFormat
     left: _str
     right: any
 }
 
 // 自定义的节点，在函数执行时使用
 export class FunctionRun implements BaseNode {
-    type: string = NodeType.FunctionRun
+    type = NodeType.FunctionRun
     // meta: MetaFunction = null
     funcDef: FunctionDef = null
     args: Map<string, any> = null
@@ -351,14 +351,12 @@ export class FunctionRun implements BaseNode {
 
 // 自定义的节点，在函数执行时使用
 export class CreateInstance implements BaseNode {
-    type: string = NodeType.CreateInstance
+    type = NodeType.CreateInstance
     metaClass: MetaClass = null
 }
 
-type Node = Name | Constant | Module | Expr | Assign | AugAssign | Assert | arguments | Call | BinOp | BinOpOperator | Compare | CompareOperator 
+export type Node = Name | Constant | Module | Expr | Assign | AugAssign | Assert | arguments | Call | BinOp | BinOpOperator | Compare | CompareOperator 
 | BoolOp | BoolOpOperator | UnaryOp | UnaryOpOperator | List | Dict | Tuple | While | For | Pass | If | IfExp | Continue | Break 
 | Return | FunctionDef | Starred | keyword | Global | Subscript | Attribute | Delete | Slice | Import | alias | ClassDef | ListComp
 | comprehension
 | ModFormat | FunctionRun | CreateInstance
-
-export {Node, NodeType}

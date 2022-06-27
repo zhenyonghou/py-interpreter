@@ -9,11 +9,12 @@ import { BaseInterpreter } from './__base'
 class Tuple extends BaseInterpreter {
     type = AstTree.NodeType.Tuple
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.Tuple
-        const ctx = state.ctx as TupleContext
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.Tuple
+        const ctx = state.ctx as TupleContext
 
         while(ctx.n_ <= node.elts.length) {
             if (ctx.n_ > 0) {
@@ -35,7 +36,7 @@ class Tuple extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(ctx.list_)
+        ss.setTopCtxValue(new ConstantRet(ctx.list_))
     }
 }
 

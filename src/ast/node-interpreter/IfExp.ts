@@ -8,12 +8,13 @@ import { BaseInterpreter } from './__base'
 class IfExp extends BaseInterpreter {
     type = AstTree.NodeType.IfExp
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.IfExp
-        const ctx = state.ctx as IfExpContext
         if (!this.askWhenBegin(state)) {
             return
         }
 
+        const node = state.node as AstTree.IfExp
+        const ctx = state.ctx as IfExpContext
+        
         // 执行test
         if (ctx.n_ === 0) {
             ctx.n_++
@@ -40,7 +41,7 @@ class IfExp extends BaseInterpreter {
         
         // 结束
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = ctx.value_
+        ss.setTopCtxValue(ctx.value_)
     }
 }
 

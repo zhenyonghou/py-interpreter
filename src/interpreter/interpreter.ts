@@ -2,16 +2,18 @@ import * as AstTree from '../ast/ast-node'
 import { State, StateStack } from '../state'
 import { Scope, ScopeType } from '../scope/scope'
 import { NodeInterpreterSets } from '../ast/node-interpreter-sets'
+import { ModuleContext } from '../ast/interpret-context'
 import { Declaration } from '../scope/declaration'
 import * as pyBuiltins from '../python/builtins'
 import VariablesCollecter from '../external/variables-collecter'
 import { Debugger, DebuggerCommand } from '../external/debugger'
-import {buildFunctionRunner} from '../ast/node-interpreter/node-eval-utils/function-run-helper'
+import { buildFunctionRunner } from '../ast/node-interpreter/node-eval-utils/function-run-helper'
+import { _assert } from '../common/functions'
 
 class Interpreter {
     protected ast: AstTree.Node = null
     protected rootScope: Scope = null
-    protected stateStack: StateStack = []
+    protected stateStack: StateStack = new StateStack()
     protected nodeInterpreterSets: NodeInterpreterSets = null
 
     public debugger: Debugger = new Debugger()
@@ -23,6 +25,10 @@ class Interpreter {
     private stepping: boolean = false
 
     public done: boolean = false
+
+    private scanConter: number = 0
+
+    // private interpretKeyStack: Array<AstTree.NodeType> = []
 
     // Module begin时触发
     public whenBegin: () => void
@@ -74,13 +80,16 @@ class Interpreter {
         const scope = new Scope(ScopeType.Function, null)
         scope.addExternal(this.builtinsDeclare, this.externalDeclare)
 
-        this.stateStack = [new State(this.ast, scope)]
+        this.stateStack.reset(new State(this.ast, scope))
         this.rootScope = scope
 
         this.variablesCollecter = new VariablesCollecter(this.stateStack, 1)
 
         this.debugger.reset()
         this.done = false
+        this.scanConter = 0
+
+        this.preInterpret()
     }
 
     public registerDeclare(name: string, fn: any) {
@@ -89,6 +98,40 @@ class Interpreter {
 
     public clearRegistered() {
         this.externalDeclare.clear()
+    }
+
+    /**
+     * 解释之前预先加载上function和class
+     */
+    public preInterpret() {
+        this.scanConter++
+        const self = this
+        function fn() {
+            const state = self.stateStack.top()
+            const ty = state.node.type
+
+            if (ty == AstTree.NodeType.Module
+                || ty == AstTree.NodeType.FunctionDef) {    // 预处理期间仅处理函数，不处理类了，因为类比较复杂，似乎也没必要
+                    self.nodeInterpreterSets.interpret(
+                        self.stateStack,
+                        self.onEnterNode.bind(self),
+                        self.onNodeInternalStep.bind(self),
+                        self.onExitNode.bind(self))
+            } else {
+                self.stateStack.pop()
+            }
+
+            if (ty == AstTree.NodeType.Module && (state.ctx as ModuleContext).done_) {
+                return
+            }
+
+            fn()
+        }
+        fn()
+
+        // 在结尾处清理
+        this.stateStack.reset(new State(this.ast, this.rootScope))
+        this.scanConter ++
     }
 
     /**
@@ -105,9 +148,9 @@ class Interpreter {
     protected stepOne() {
         this.nodeInterpreterSets.interpret(
             this.stateStack,
-            this.onNodeBegin.bind(this),
-            this.onNodeInterrupt.bind(this),
-            this.onNodeEnd.bind(this))
+            this.onEnterNode.bind(this),
+            this.onNodeInternalStep.bind(this),
+            this.onExitNode.bind(this))
     }
 
     /**
@@ -115,6 +158,10 @@ class Interpreter {
      * 外面执行Timer.do里在调用stepOver前需要判断解释器是否执行完。
      */
     public stepOver() {
+        if (this.scanConter == 0) {
+            this.preInterpret()
+        }
+
         if (this.done) {
             return
         }
@@ -128,7 +175,6 @@ class Interpreter {
 
         const self = this
         function nextStep() {
-            // self.stepOne()
             try {
                 self.stepOne()
             } catch (err) {
@@ -157,28 +203,47 @@ class Interpreter {
         pyBuiltins.__output.print = fn
     }
 
-    private onNodeBegin(ty: AstTree.NodeType, node: AstTree.Node): boolean {
+    private onEnterNode(node: AstTree.Node): boolean {
+        const ty = node.type
+        if (this.scanConter == 1) {
+            return true
+        }
+
         if (ty == AstTree.NodeType.Module) {
             this.whenBegin && this.whenBegin()
         }
 
-        const shouldStay = this.debugger.checkNodeBegin(ty, node)
+        if (ty == AstTree.NodeType.FunctionDef || ty == AstTree.NodeType.Assign) {
+            if (this.stateStack.in(AstTree.NodeType.ClassDef)) {
+                return false
+            }
+        }
+
+        const shouldStay = this.debugger.checkNodeBegin(ty as AstTree.NodeType, node)
         if (shouldStay) {
             this.idle = true
-            this.whenStep(this.debugger.lineNo, ty)
+            this.whenStep(this.debugger.lineNo, ty as AstTree.NodeType)
             return false
         }
         return true
     }
 
-    private onNodeInterrupt(ty: AstTree.NodeType, node: AstTree.Node) {
-        this.debugger.checkNodeInterrupt(ty, node)
+    private onNodeInternalStep(ty: AstTree.NodeType, node: AstTree.Node) {
+        _assert(ty === node.type)
+        if (this.scanConter == 1) {
+            return
+        }
+
+        this.debugger.checkNodeInternalStep(ty, node)
         this.idle = true
         this.whenStep(this.debugger.lineNo, ty)
     }
 
-    private onNodeEnd(ty: AstTree.NodeType) {
-        if (ty == AstTree.NodeType.Module) {
+    private onExitNode(node: AstTree.Node) {
+        if (this.scanConter == 1) {
+            return
+        }
+        if (node.type == AstTree.NodeType.Module) {
             this.debugger.lineNo = -1
             this.done = true
             this.whenDone && this.whenDone()

@@ -9,12 +9,12 @@ import { BaseInterpreter } from './__base'
 class Slice extends BaseInterpreter {
     type = AstTree.NodeType.Slice
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.Slice
-        const ctx = state.ctx as SliceContext
-
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.Slice
+        const ctx = state.ctx as SliceContext
 
         if (!ctx.lowerDone_) {
             ctx.lowerDone_ = true
@@ -63,7 +63,7 @@ class Slice extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new _slice(ctx.lowerValue_, ctx.upperValue_, ctx.stepValue_)
+        ss.setTopCtxValue(new _slice(ctx.lowerValue_, ctx.upperValue_, ctx.stepValue_))
     }
 }
 

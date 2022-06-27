@@ -10,7 +10,7 @@ class Pass extends BaseInterpreter {
             return
         }
         ss.pop()
-        ss[ss.length - 1].ctx.control_ = ControlKey.Pass
+        ss.setTopCtxControl(ControlKey.Pass)
         return
     }
 }

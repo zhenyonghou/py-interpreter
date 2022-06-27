@@ -9,11 +9,12 @@ import { BaseInterpreter } from './__base'
 class keyword extends BaseInterpreter {
     type = AstTree.NodeType.keyword
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.keyword
-        const ctx = state.ctx as keywordContext
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.keyword
+        const ctx = state.ctx as keywordContext
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
@@ -26,7 +27,7 @@ class keyword extends BaseInterpreter {
 
         // 结束
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new keywordRet(node.arg, value)
+        ss.setTopCtxValue(new keywordRet(node.arg, value))
     }
 }
 

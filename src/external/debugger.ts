@@ -62,7 +62,7 @@ class Debugger {
         return false
     }
 
-    public checkNodeInterrupt(ty: string, node: AstTree.Node): boolean {
+    public checkNodeInternalStep(ty: string, node: AstTree.Node): boolean {
         if ('lineno' in node) {
             this.lineNo = node.lineno
         }

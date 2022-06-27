@@ -11,7 +11,7 @@ class Continue extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.control_ = ControlKey.Continue
+        ss.setTopCtxControl(ControlKey.Continue)
         return
     }
 }

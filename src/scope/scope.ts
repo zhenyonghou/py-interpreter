@@ -9,7 +9,7 @@
  */
 
 import { Declaration } from './declaration'
-import { Assert } from '../utils'
+import { _assert } from '../common/functions'
 
 /**
  * 不需要定义Enclosed，因为Scope具有层级结构，会向上查找变量.
@@ -115,7 +115,7 @@ class Scope {
             this.parent.del(name)
             return
         }
-        Assert(false, `del时找不到"${name}"`)
+        _assert(false, `del时找不到"${name}"`)
     }
 
     lookup(name: string): any {

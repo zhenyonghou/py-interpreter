@@ -18,7 +18,7 @@ class CreateInstance extends BaseInterpreter {
             // 拷贝方法
             Object.assign(ctx.obj, node.metaClass.methods)
 
-            if (!this.beginStep(this.type, state.node)) {
+            if (!this.enter(state.node)) {
                 return
             }
         }
@@ -33,8 +33,8 @@ class CreateInstance extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.returnData_ = new ConstantRet(ctx.obj)    // 在call上执行的，而call是从returnData_里取值的
-        this.end(this.type, state.node)
+        ss.setTopCtxReturn(new ConstantRet(ctx.obj))    // 在call上执行的，而call是从returnData_里取值的
+        this.exit(state.node)
     }
 }
 

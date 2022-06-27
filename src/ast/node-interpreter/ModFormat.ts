@@ -1,6 +1,6 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
-import {Assert} from '../../utils'
+import {_assert} from '../../common/functions'
 import {ModFormatContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import {ConstantRet} from './node-eval-utils/types'
@@ -68,7 +68,7 @@ function tokenize(f: string) {
             i--
             continue
         } else {
-            Assert(false, `不支持的字符:${String.fromCharCode(c)}`)
+            _assert(false, `不支持的字符:${String.fromCharCode(c)}`)
         }
     }
 
@@ -159,11 +159,12 @@ function format(s: string, args: _tuple) {
 class ModFormat extends BaseInterpreter {
     type = AstTree.NodeType.ModFormat
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.ModFormat
-        const ctx = state.ctx as ModFormatContext
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.ModFormat
+        const ctx = state.ctx as ModFormatContext
 
         if (!ctx.rightDone_) {
             ctx.rightDone_ = true
@@ -181,7 +182,7 @@ class ModFormat extends BaseInterpreter {
         let s = format(node.left._obj, rightValue)
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(new _str(s))
+        ss.setTopCtxValue(new ConstantRet(new _str(s)))
     }
 }
 

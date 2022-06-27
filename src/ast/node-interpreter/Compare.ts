@@ -43,13 +43,13 @@ class Compare extends BaseInterpreter {
                     if (leftValue instanceof _str) {    // 通过hasOwnProperty("__eq__")判断不行，__eq__是Object的属性
                         if (!leftValue.__eq__(rightValue)) {
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            ss.setTopCtxValue(new ConstantRet(false))
                             return
                         }
                     } else {
                         if (leftValue != rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            ss.setTopCtxValue(new ConstantRet(false))
                             return
                         }
                     }
@@ -59,13 +59,13 @@ class Compare extends BaseInterpreter {
                     if (leftValue instanceof _str) {
                         if (leftValue.__eq__(rightValue)) {
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            ss.setTopCtxValue(new ConstantRet(false))
                             return
                         }
                     } else {
                         if (leftValue == rightValue) {  // 结束
                             ss.pop()
-                            ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                            ss.setTopCtxValue(new ConstantRet(false))
                             return
                         }
                     }
@@ -73,42 +73,42 @@ class Compare extends BaseInterpreter {
                 case "Gt":
                     if (leftValue <= rightValue) {  // 结束
                         ss.pop()
-                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        ss.setTopCtxValue(new ConstantRet(false))
                         return
                     }
                     break
                 case "GtE":
                     if (leftValue < rightValue) {  // 结束
                         ss.pop()
-                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        ss.setTopCtxValue(new ConstantRet(false))
                         return
                     }
                     break
                 case "Lt":
                     if (leftValue >= rightValue) {  // 结束
                         ss.pop()
-                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        ss.setTopCtxValue(new ConstantRet(false))
                         return
                     }
                     break
                 case "LtE":
                     if (leftValue > rightValue) {  // 结束
                         ss.pop()
-                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        ss.setTopCtxValue(new ConstantRet(false))
                         return
                     }
                     break
                 case "In":
                     if (!(rightValue.__contains__(leftValue))) {  // 结束
                         ss.pop()
-                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        ss.setTopCtxValue(new ConstantRet(false))
                         return
                     }
                     break
                 case "NotIn":
                     if (rightValue.__contains__(leftValue)) {  // 结束
                         ss.pop()
-                        ss[ss.length - 1].ctx.value_ = new ConstantRet(false)
+                        ss.setTopCtxValue(new ConstantRet(false))
                         return
                     }
                     break
@@ -122,7 +122,7 @@ class Compare extends BaseInterpreter {
                 }
             } else { // 结束
                 ss.pop()
-                ss[ss.length - 1].ctx.value_ = new ConstantRet(true)
+                ss.setTopCtxValue(new ConstantRet(true))
                 return
             }
         }

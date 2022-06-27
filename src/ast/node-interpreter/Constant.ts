@@ -18,7 +18,7 @@ class Constant extends BaseInterpreter {
         }
 
         ss.pop()
-        ss[ss.length - 1].ctx.value_ = new ConstantRet(_ret)
+        ss.setTopCtxValue(new ConstantRet(_ret))
     }
 }
 

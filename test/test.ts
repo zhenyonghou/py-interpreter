@@ -66,6 +66,9 @@ import code_401 from './t_401'
 import code_402 from './t_402'
 import code_403 from './t_403'
 
+// 测试二次扫描功能
+import code_500 from './t_500'
+
 // 随机抽取的算法，用于验证解释器
 import code_1000 from './t_1000'
 

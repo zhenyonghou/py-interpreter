@@ -11,12 +11,12 @@ import { BaseInterpreter } from './__base'
 class Subscript extends BaseInterpreter {
     type = AstTree.NodeType.Subscript
     interpret (ss: StateStack, state: State) {
-        const node = state.node as AstTree.Subscript
-        const ctx = state.ctx as SubscriptContext
-
         if (!this.askWhenBegin(state)) {
             return
         }
+
+        const node = state.node as AstTree.Subscript
+        const ctx = state.ctx as SubscriptContext
 
         if (!ctx.valueDone_) {
             ctx.valueDone_ = true
@@ -43,9 +43,9 @@ class Subscript extends BaseInterpreter {
 
         ss.pop()
         if (node.ctx.type == "Load") {
-            ss[ss.length - 1].ctx.value_ = new ConstantRet(getSubscripe(ctx.subscriptValue_, sliceValue))
+            ss.setTopCtxValue(new ConstantRet(getSubscripe(ctx.subscriptValue_, sliceValue)))
         } else {
-            ss[ss.length - 1].ctx.value_ = new SubscriptRet(ctx.subscriptValue_, sliceValue)
+            ss.setTopCtxValue(new SubscriptRet(ctx.subscriptValue_, sliceValue))
         }
     }
 }

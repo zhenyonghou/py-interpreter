@@ -18,7 +18,7 @@ class ClassDef extends BaseInterpreter {
             ctx.begin = true
             ctx.cls.classname = node.name
             ctx.scope = new Scope(ScopeType.Function, state.scope)    // 新建作用域, 用于存储类的成员
-            if (!this.beginStep(this.type, state.node)) {
+            if (!this.enter(state.node)) {
                 return
             }
         }
