@@ -1,6 +1,6 @@
 import {KV} from '../common/typescript'
 import * as AstTree from './ast-node'
-import {ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet} from './node-interpreter/node-eval-utils/types'
+import {ControlKey, keywordRet, NameRet, ConstantRet, AttributeRet, MMInstance} from './node-interpreter/node-eval-utils/types'
 import {_list, _dict, _tuple} from '../python/builtins'
 import {Scope, ScopeType} from '../scope/scope'
 
@@ -47,7 +47,6 @@ export class ExprContext extends BaseEvalContext {
 export class CallContext extends BaseEvalContext {
     funcStep_: number = 0
     argN_: number = 0
-    // args_: _list = new _list()
     args_: Array<any> = []
     keywordsN_: number = 0
     keywords_: Array<keywordRet> = []
@@ -198,15 +197,22 @@ export class ImportContext extends BaseEvalContext {
 }
 
 export class ClassDefContext extends BaseEvalContext {
+    baseN_: number = 0
+
     bodyN_: number = 0
     cls: AstTree.MetaClass = new AstTree.MetaClass()
     scope: Scope = null
 }
 
 export class CreateInstanceContext extends BaseEvalContext {
+    callInit_: boolean = false
     initDone_: boolean = false
 
-    obj: KV<any> = {}
+    copyProperties_: boolean = false
+
+    baseN_: number = 0
+
+    obj: MMInstance = new MMInstance()
 }
 
 export class comprehensionContext extends BaseEvalContext {

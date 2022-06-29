@@ -1,7 +1,9 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
 import {Scope, ScopeType} from '../../scope/scope'
+import {quickInterpret} from './node-eval-utils/utils'
 import {ClassDefContext} from '../interpret-context'
+import ScopeHelper from '../../scope/scope-helper'
 import { BaseInterpreter } from './__base'
 
 /**
@@ -18,9 +20,26 @@ class ClassDef extends BaseInterpreter {
             ctx.begin = true
             ctx.cls.classname = node.name
             ctx.scope = new Scope(ScopeType.Function, state.scope)    // 新建作用域, 用于存储类的成员
+
             if (!this.enter(state.node)) {
                 return
             }
+        }
+
+        while (ctx.baseN_ < node.bases.length) {
+            if (ctx.baseN_ > 0) {
+                const cls = ScopeHelper.lookupX(state.scope, ctx.value_)
+                ctx.cls.bases.push(cls)
+            }
+            if (quickInterpret(node.bases[ctx.baseN_++], state.scope, ss, ctx)) {
+                return
+            }
+        }
+
+        if (ctx.baseN_ > 0 && ctx.baseN_ == node.bases.length) {
+            ctx.baseN_++    // 当ctx.baseN_大于node.bases.length来标识解析base结束，从而省去一个标识结束的变量
+            const cls = ScopeHelper.lookupX(state.scope, ctx.value_)    // MateClass类型
+            ctx.cls.bases.push(cls)
         }
 
         if (ctx.bodyN_ < node.body.length) {

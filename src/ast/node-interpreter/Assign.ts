@@ -5,7 +5,7 @@ import { AssignContext } from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
 import { setSubscripe, quickInterpret } from './node-eval-utils/utils'
 import { _assert } from '../../common/functions'
-import { NameRet, ConstantRet, SubscriptRet, AttributeRet } from './node-eval-utils/types'
+import { NameRet, ConstantRet, SubscriptRet, AttributeRet, MMInstance } from './node-eval-utils/types'
 import { _tuple, iterate, iter } from '../../python/builtins'
 import { BaseInterpreter } from './__base'
 
@@ -32,7 +32,25 @@ const doAssign = (left: any, right: any, scope: Scope) => {
         }
     }
     else if (left instanceof AttributeRet) {
-        left.obj[left.attr] = right
+        if (left.obj instanceof MMInstance) {
+            let _obj = left.obj
+            while(_obj) {
+                if (_obj.hasOwnProperty(left.attr)) {
+                    _obj[left.attr] = right
+                    break
+                } else if (_obj.bases.length > 0) {
+                    _obj = _obj.bases[0]
+                } else {
+                    _obj = null
+                }
+            }
+            
+            if (_obj == null) {
+                left.obj[left.attr] = right
+            }
+        } else {
+            left.obj[left.attr] = right
+        }
     }
     else {
         _assert(false, `Assign有不支持的类型`)

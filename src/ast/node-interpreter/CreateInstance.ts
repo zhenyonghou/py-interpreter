@@ -1,5 +1,6 @@
 import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
+import {createInstance} from './node-eval-utils/create-instance'
 import { CreateInstanceContext } from '../interpret-context'
 import { ConstantRet} from './node-eval-utils/types'
 import {buildMethodRunner} from './node-eval-utils/function-run-helper'
@@ -8,28 +9,48 @@ import { BaseInterpreter } from './__base'
 class CreateInstance extends BaseInterpreter {
     type = AstTree.NodeType.CreateInstance
     interpret (ss: StateStack, state: State) {
+        if (!this.askWhenBegin(state)) {
+            return
+        }
+
         const node = state.node as AstTree.CreateInstance
         const ctx = state.ctx as CreateInstanceContext
-        if (!ctx.begin) {
-            ctx.begin = true
 
-            // 拷贝属性
+        if (!ctx.copyProperties_) {
+            ctx.copyProperties_ = true
+            // 拷贝属性和方法
             Object.assign(ctx.obj, node.metaClass.attributes)
-            // 拷贝方法
             Object.assign(ctx.obj, node.metaClass.methods)
+        }
 
-            if (!this.enter(state.node)) {
+        // 实例化父类对象
+        while (node.metaClass.bases.length > 0 && ctx.baseN_ <= node.metaClass.bases.length) {
+            if (ctx.baseN_ > 0) {
+                ctx.obj.bases.push((ctx.returnData_ as ConstantRet).value)
+            }
+
+            if (ctx.baseN_ < node.metaClass.bases.length) {
+                ss.push(createInstance([], node.metaClass.bases[ctx.baseN_++], true))
                 return
+            } else {
+                ctx.baseN_++
             }
         }
 
         // 调用构造函数
-        if (!ctx.initDone_ && "__init__" in ctx.obj) {
+        if (ctx.callInit_ && !ctx.initDone_) {
             ctx.initDone_ = true
-            const args = state.scope.get("args")
-            // initMethod.parentScope.set("self", ctx.obj)
-            ss.push(buildMethodRunner(args, null, ctx.obj, "__init__"))
-            return
+            if ("__init__" in ctx.obj) {
+                const args = state.scope.get("args")
+                ss.push(buildMethodRunner(args, null, ctx.obj, "__init__"))
+                return
+            } else if (ctx.obj.bases.length > 0) {  // 目前比较尴尬：只检查一个父类，且只检查一层，并不检查父类的父类
+                const _super = ctx.obj.bases[0]
+                if ("__init__" in _super) {
+                    ss.push(buildMethodRunner([], null, _super, "__init__"))
+                    return
+                }
+            }
         }
 
         ss.pop()

@@ -298,9 +298,10 @@ export interface alias extends BaseNode {
 export interface ClassDef extends BaseNode {
     type: NodeType.ClassDef
     name: string
-    bases: Array<any>
+    bases: Array<Name>
     keywords: Array<any>
     body: Array<any>
+    decorator_list: Array<any>
 }
 
 export interface comprehension extends BaseNode {
@@ -332,6 +333,8 @@ export class MetaClass {
     classname: string = ""
     attributes: KV<any> = {}
     methods: KV<any> = {}
+
+    bases: Array<MetaClass> = []
 }
 
 // 自定义的节点，字符串格式化时使用

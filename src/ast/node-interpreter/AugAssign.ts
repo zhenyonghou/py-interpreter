@@ -2,7 +2,7 @@ import * as AstTree from '../ast-node'
 import {State, StateStack} from '../../state'
 import {AugAssignContext} from '../interpret-context'
 import ScopeHelper from '../../scope/scope-helper'
-import { NameRet, SubscriptRet} from './node-eval-utils/types'
+import { AttributeRet, NameRet, SubscriptRet, MMInstance} from './node-eval-utils/types'
 import {quickInterpret} from './node-eval-utils/utils'
 import { BaseInterpreter } from './__base'
 
@@ -24,6 +24,7 @@ class AugAssign extends BaseInterpreter {
         }
 
         if (!ctx.targetDone_) {
+            ctx.targetDone_ = true
             ctx.rightValue_ = ScopeHelper.lookupX(state.scope, ctx.value_)
             if (quickInterpret(node.target, state.scope, ss, ctx)) {
                 return
@@ -31,6 +32,7 @@ class AugAssign extends BaseInterpreter {
         }
 
         const operator = node.op.type
+
         if (ctx.value_ instanceof NameRet) {
             let value = ScopeHelper.lookupX(state.scope, ctx.value_.name)
             switch(operator) {
@@ -94,6 +96,47 @@ class AugAssign extends BaseInterpreter {
                     break
                 default:
                     throw new Error(`不支持的操作符${operator}`)
+            }
+        } else if (ctx.value_ instanceof AttributeRet) {
+            let value = ScopeHelper.lookupX(state.scope, ctx.value_)
+            switch(operator) {
+                case "Add":
+                    value += ctx.rightValue_
+                    break
+                case "Sub":
+                    value -= ctx.rightValue_
+                    break
+                case "Mult":
+                    value *= ctx.rightValue_
+                    break
+                case "Div":
+                    value /= ctx.rightValue_
+                    break
+                case "Mod":
+                    value %= ctx.rightValue_
+                    break
+                default:
+                    throw new Error(`不支持的操作符${operator}`)
+            }
+            // state.scope.set(ctx.value_.name, value)
+            if (ctx.value_.obj instanceof MMInstance) {
+                let _obj = ctx.value_.obj
+                while(_obj) {
+                    if (_obj.hasOwnProperty(ctx.value_.attr)) {
+                        _obj[ctx.value_.attr] = value
+                        break
+                    } else if (_obj.bases.length > 0) {
+                        _obj = _obj.bases[0]
+                    } else {
+                        _obj = null
+                    }
+                }
+                
+                if (_obj == null) {
+                    ctx.value_.obj[ctx.value_.attr] = value
+                }
+            } else {
+                ctx.value_.obj[ctx.value_.attr] = value
             }
         }
         

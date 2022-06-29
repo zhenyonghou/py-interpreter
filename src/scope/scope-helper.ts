@@ -1,6 +1,7 @@
 
 import { Scope } from "./scope"
-import {AttributeRet, ConstantRet, NameRet, StarredRet, SubscriptRet} from '../ast/node-interpreter/node-eval-utils/types'
+import {AttributeRet, ConstantRet, MMInstance, NameRet, StarredRet, SubscriptRet} from '../ast/node-interpreter/node-eval-utils/types'
+import { _assert } from "../common/functions"
 
 class ScopeHelper {
     static lookup(scope: Scope, varName: string): any {
@@ -61,6 +62,25 @@ class ScopeHelper {
                 return obj[x.slice]
             }
         }  else if (x instanceof AttributeRet) {
+            if (x.obj instanceof MMInstance) {
+                let _obj = x.obj as MMInstance
+                while(_obj) {
+                    if (_obj.hasOwnProperty(x.attr)) {
+                        return _obj[x.attr]
+                    }
+
+                    if (_obj.bases.length > 0) {
+                        _obj = _obj.bases[0]
+                    } else {
+                        _obj = null
+                    }
+                }
+                if (_obj == null) {
+                    throw new Error(`找不到对象的属性:${x.attr}`)
+                }
+                return null
+            }
+
             if ('__getitem__' in x.obj) {
                 return x.obj.__getitem__(x.attr)
             } else {

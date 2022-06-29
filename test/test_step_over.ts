@@ -58,7 +58,15 @@ import code_280 from './t_280'
 import code_400 from './t_400'
 import code_401 from './t_401'
 import code_402 from './t_402'
+
+// 类的继承
 import code_403 from './t_403'
+import code_404 from './t_404'
+import code_405 from './t_405'
+import code_406 from './t_406'
+import code_407 from './t_407'
+// 测试二次扫描功能
+import code_500 from './t_500'
 
 // 随机抽取的算法，用于验证解释器
 import code_1000 from './t_1000'
@@ -70,9 +78,10 @@ import Interpreter from '../src/index'
 // Interpreter.GlobalDeclaration.set("traffic_light_color", () => "red")
 // Interpreter.GlobalDeclaration.set("car_reach_light", () => false)
 
-const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, code_050, code_051, code_052, code_053, code_054, code_055,
-    code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, code_180, 
-    code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401, code_402]
+const codeList = [code_001, code_002, code_003, code_004, code_005, code_007, code_050, code_051, code_052, code_053, code_054, 
+    code_055, code_080, code_081, code_082, code_083, code_084, code_085, code_086, code_100, code_150, code_151, code_152, 
+    code_180, code_181, code_182, code_183, code_190, code_191, code_192, code_230, code_280, code_400, code_401, code_402, 
+    code_403, code_404, code_405, code_406, code_407, code_500]
 // const codeList = [code_086]
 
 const start = () => {

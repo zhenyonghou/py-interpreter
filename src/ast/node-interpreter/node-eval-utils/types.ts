@@ -1,6 +1,7 @@
 import { _dict, _list, _str, _tuple } from '../../../python/builtins'
+import {KV} from '../../../common/typescript'
 
-enum ControlKey {
+export enum ControlKey {
     Null     = "",
     Pass     = "pass",
     Continue = "continue",
@@ -8,14 +9,15 @@ enum ControlKey {
     Return   = "return"
 }
 
-class ConstantRet {
-    value: string | number | bigint | boolean | RegExp | null | bigint | Array<any> | _tuple | _dict | _list | _str
+export class ConstantRet {
+    value: any
+    // value: string | number | bigint | boolean | RegExp | null | bigint | Array<any> | _tuple | _dict | _list | _str
     constructor(v: any) {
         this.value = v
     }
 }
 
-class NameRet {
+export class NameRet {
     name: string
     ctxType: "Load" | "Store"
     constructor(v: string, ctxType: "Load" | "Store") {
@@ -24,14 +26,14 @@ class NameRet {
     }
 }
 
-class StarredRet {
+export class StarredRet {
     name: string
     constructor(v: string) {
         this.name = v
     }
 }
 
-class keywordRet {
+export class keywordRet {
     arg: string
     value: any
     constructor(arg: string, value: any) {
@@ -40,7 +42,7 @@ class keywordRet {
     }
 }
 
-class SubscriptRet {
+export class SubscriptRet {
     obj: any  // object
     slice: string | number
 
@@ -50,7 +52,7 @@ class SubscriptRet {
     }
 }
 
-class AttributeRet {
+export class AttributeRet {
     obj: any  // object
     attr: string
 
@@ -60,4 +62,7 @@ class AttributeRet {
     }
 }
 
-export {ConstantRet, NameRet, StarredRet, keywordRet, ControlKey, SubscriptRet, AttributeRet}
+export class MMInstance {
+    [index: string]: any
+    bases: Array<MMInstance> = []
+}
