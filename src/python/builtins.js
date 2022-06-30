@@ -925,7 +925,6 @@ _dict.prototype.__class__ = _dict
 
 // ============ str ============
 
-
 function str(s) {
     return new _str(s);
 }
@@ -1164,6 +1163,11 @@ class _str {
     upper() {
         return str(this._obj.toUpperCase());
     }
+}
+
+export const object = { // object类
+    name: "object",
+    bases: []
 }
 
 _str.__name__ = 'str'

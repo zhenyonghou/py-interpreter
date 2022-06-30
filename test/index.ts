@@ -1,5 +1,5 @@
-// import {start} from "./test_step_interpreter"
-import {start} from "./test_step_over"
+import {start} from "./test_one"
+// import {start} from "./test_all"
 
 window.onload = () => {
     start()
